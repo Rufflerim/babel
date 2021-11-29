@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{8bde1452-27e7-4dc4-b9b7-f821113842d8}</ProjectGuid>
+    <ProjectGuid>{b09f358f-4106-4f15-94e2-d9a934c16db8}</ProjectGuid>
     <RootNamespace>Gaemi00</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -72,17 +72,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>Gaemi00</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>Gaemi00</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>Gaemi00</TargetName>
     <IncludePath>..\Externals\SDL2-2.0.16\include;..\Externals\SDL2_ttf-2.0.15\include;..\Externals\SDL2_mixer-2.0.4\include;..\Externals\STB;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Rufflerim\DumbKnights\dumb-knights\Externals\SDL2-2.0.16\lib\x64;C:\Rufflerim\DumbKnights\dumb-knights\Externals\SDL2_ttf-2.0.15\lib\x64;C:\Rufflerim\DumbKnights\dumb-knights\Externals\SDL2_mixer-2.0.4\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\Externals\SDL2-2.0.16\lib\x64;..\Externals\SDL2_ttf-2.0.15\lib\x64;..\Externals\SDL2_mixer-2.0.4\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>Gaemi00</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -154,13 +158,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Define.h" />
+    <None Include="cpp.hint" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Gaemi-00.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Define.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Gaemi-00.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
