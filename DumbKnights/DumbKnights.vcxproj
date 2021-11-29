@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Gaemi-00\Gaemi-00.vcxproj">
       <Project>{8bde1452-27e7-4dc4-b9b7-f821113842d8}</Project>
     </ProjectReference>
