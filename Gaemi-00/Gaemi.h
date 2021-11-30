@@ -10,13 +10,6 @@
 #define GAPI __declspec(dllimport)
 #endif
 
-// Cette classe est exportée à partir de la dll
-class GAPI CGaemi00 {
-public:
-	CGaemi00(void);
-	// TODO: ajoutez ici vos méthodes.
-};
+#include "Defines.h"
 
-extern GAPI int nGaemi00;
-
-GAPI int fnGaemi00(void);
+GAPI int display(const str& message);
