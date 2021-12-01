@@ -2,6 +2,10 @@
 
 #include <string>
 
+// General macro
+#define GASSERTIONS_ENABLED
+
+
 // Unsigned integers
 typedef unsigned char u8;
 typedef unsigned short u16;

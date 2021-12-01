@@ -2,7 +2,7 @@
 
 #include <Gaemi.h>
 #include <Log.h>
-
+#include <Asserts.h>
 
 int main() {
 	LOG(engine::LogLevel::Trace) << "Gaemi is ready";
@@ -13,5 +13,6 @@ int main() {
 	LOG(engine::LogLevel::Fatal) << "Gaemi is ready";
 
 	LOG(engine::LogLevel::Trace) << "Hello World";
+
 	return 0;
 }

@@ -161,6 +161,7 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asserts.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Gaemi.h" />

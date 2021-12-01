@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Defines.h"
-#include "Gaemi.h"
+#include "pch.h"
 #include <fstream>
 #include <sstream>
 #include <array>
@@ -78,6 +77,7 @@ namespace engine {
 #elif GRELEASE
 	constexpr i32 MAX_LOG_LEVEL = static_cast<i32>(LogLevel::Error);
 #endif // GDEBUG
+
 }
 
 #define LOG(level)											\

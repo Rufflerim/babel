@@ -105,3 +105,6 @@ array<char, 19> engine::Log::getDate()
 
 }
 
+void engine::reportAssertionFailure(const str& expression, const str& message, const char* codeFile, i32 codeLine) {
+	LOG(LogLevel::Fatal) << "Assertion failure: " << expression << ", message: " << message << ", in file: " << codeFile << " line: " << codeLine;
+}

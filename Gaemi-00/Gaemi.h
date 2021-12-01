@@ -9,7 +9,3 @@
 #else
 #define GAPI __declspec(dllimport)
 #endif
-
-#include "Defines.h"
-
-GAPI int display(const str& message);
