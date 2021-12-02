@@ -1,18 +1,12 @@
 #include <iostream>
-
-#include <Gaemi.h>
-#include <Log.h>
-#include <Asserts.h>
+#include "Game.h"
+#include <Entry.h>
 
 int main() {
-	LOG(engine::LogLevel::Trace) << "Gaemi is ready";
-	LOG(engine::LogLevel::Debug) << "Gaemi is ready";
-	LOG(engine::LogLevel::Info) << "Gaemi is ready";
-	LOG(engine::LogLevel::Warning) << "Gaemi is ready";
-	LOG(engine::LogLevel::Error) << "Gaemi is ready";
-	LOG(engine::LogLevel::Fatal) << "Gaemi is ready";
 
-	LOG(engine::LogLevel::Trace) << "Hello World";
+	// Game instance
+	Game game = Game::instance();
 
-	return 0;
+	// Start engine
+	return engine::Entry::start(game);
 }
