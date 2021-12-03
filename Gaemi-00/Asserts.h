@@ -1,5 +1,6 @@
 #pragma once
-#include "pch.h"
+#ifndef ASSERTS_H
+#define ASSERTS_H
 
 #ifdef GASSERTIONS_ENABLED
 
@@ -53,5 +54,7 @@
 	#define GASSERT(expr)
 	#define GASSERT_MSG(expr, message)
 	#define GASSERT_DEBUG(expr, message)
+
+#endif
 
 #endif

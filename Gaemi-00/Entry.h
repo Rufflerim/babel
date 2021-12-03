@@ -1,5 +1,9 @@
 #pragma once
-#include "pch.h"
+#ifndef ENTRY_H
+#define ENTRY_H
+
+#include "Gaemi.h"
+#include "IGame.h"
 
 namespace engine {
 
@@ -10,3 +14,5 @@ namespace engine {
 	};
 
 }
+
+#endif

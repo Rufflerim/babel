@@ -1,4 +1,6 @@
 #pragma once
+#ifndef DEFINES_H
+#define DEFINES_H
 
 #include <string>
 
@@ -57,4 +59,6 @@ STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 	#define GDEBUG 1
 #elif defined(NDEBUG)
 	#define GRELEASE 1
+#endif
+
 #endif

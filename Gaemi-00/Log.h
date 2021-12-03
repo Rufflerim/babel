@@ -1,9 +1,12 @@
 #pragma once
+#ifndef LOG_H
+#define LOG_H
 
-#include "pch.h"
 #include <fstream>
 #include <sstream>
 #include <array>
+#include "Defines.h"
+#include "Gaemi.h"
 
 #define GAME_LOG_FILE "game.log"
 
@@ -85,3 +88,5 @@ namespace engine {
 	;														\
 	else													\
 		engine::Log().get(level)
+
+#endif

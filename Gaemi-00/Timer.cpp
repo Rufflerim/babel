@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "SDL_timer.h"
+#include "Timer.h"
+#include <SDL_timer.h>
 
 using engine::Timer;
 

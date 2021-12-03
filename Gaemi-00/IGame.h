@@ -1,5 +1,8 @@
 #pragma once
-#include "Timer.h"
+#ifndef IGAME_H
+#define IGAME_H
+
+#include "GameTime.h"
 
 namespace engine {
 
@@ -28,3 +31,5 @@ namespace engine {
 	};
 
 }
+
+#endif

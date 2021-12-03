@@ -1,5 +1,6 @@
-#include "pch.h"
 #include "Log.h"
+#include "Asserts.h"
+
 #include <iostream>
 
 #ifdef GPLATFORM_WINDOWS
@@ -8,15 +9,16 @@
 #endif // GPLATFORM_WINDOWS
 
 using engine::Log;
+using engine::LogLevel;
 
 std::ofstream Log::file;
 
-Log::Log()
+GAPI Log::Log()
 {
 	file.open(GAME_LOG_FILE, std::fstream::app);
 }
 
-Log::~Log() 
+GAPI Log::~Log()
 {
 	// Write both in file and in stream
 	// when losing the log object scope
@@ -33,7 +35,7 @@ Log::~Log()
 	file.close();
 }
 
-std::ostringstream& engine::Log::get(LogLevel level)
+GAPI std::ostringstream& engine::Log::get(LogLevel level)
 {
 	// TODO Assert file exists
 
@@ -44,7 +46,7 @@ std::ostringstream& engine::Log::get(LogLevel level)
 	return os;
 }
 
-void Log::restart()
+GAPI void Log::restart()
 {
 	file.open(GAME_LOG_FILE, std::fstream::trunc);
 	file.close();

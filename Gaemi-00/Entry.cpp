@@ -1,7 +1,8 @@
-#include "pch.h"
 #include "Entry.h"
 #include "Engine.h"
+#include "Log.h"
 
+using engine::Engine;
 
 GAPI int engine::Entry::start(engine::IGame& game)
 {

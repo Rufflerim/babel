@@ -10,10 +10,5 @@
 // ajouter les en-têtes à précompiler ici
 #include "framework.h"
 #include "Gaemi.h"
-#include "Defines.h"
-#include "Asserts.h"
-#include "Log.h"
-#include "IGame.h"
-#include "Timer.h"
 
 #endif //PCH_H

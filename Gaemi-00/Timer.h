@@ -1,22 +1,12 @@
 #pragma once
-#include "pch.h"
+#ifndef TIMER_H
+#define TIMER_H
 
+#include "GameTime.h"
 #include <chrono>
 
 constexpr f32 TARGET_FPS = 60.0f;
 constexpr f32 MIN_FRAME_DURATION = 1.0f / TARGET_FPS;
-
-struct GameTime {
-	/// <summary>
-	/// Delta time in seconds
-	/// </summary>
-	f64 dt;
-
-	/// <summary>
-	/// Time since beginning of the game
-	/// </summary>
-	f64 totalTime;
-};
 
 namespace engine {
 
@@ -40,8 +30,10 @@ namespace engine {
 		void delayTime();
 
 	private:
-		std::chrono::time_point<std::chrono::high_resolution_clock> frameStartTime{};
-		std::chrono::time_point<std::chrono::high_resolution_clock> frameEndTime{};
+		std::chrono::time_point<std::chrono::high_resolution_clock> frameStartTime { std::chrono::high_resolution_clock::now() };
+		std::chrono::time_point<std::chrono::high_resolution_clock> frameEndTime { std::chrono::high_resolution_clock::now() };
 	};
 
 }
+
+#endif
