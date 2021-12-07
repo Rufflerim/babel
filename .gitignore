@@ -19,31 +19,31 @@
 mono_crash.*
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
+SDL/[Dd]ebug/
+SDL/[Dd]ebugPublic/
+SDL/[Rr]elease/
+SDL/[Rr]eleases/
+SDL/x64/
+SDL/x86/
+SDL/[Aa][Rr][Mm]/
+SDL/[Aa][Rr][Mm]64/
+SDL/bld/
+SDL/[Bb]in/
+SDL/[Oo]bj/
+SDL/[Ll]og/
+SDL/[Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory
-.vs/
+SDL/.vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
 # Visual Studio 2017 auto generated files
-Generated\ Files/
+SDL/Generated\ Files/
 
 # MSTest test Results
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
+SDL/[Tt]est[Rr]esult*/
+SDL/[Bb]uild[Ll]og.*
 
 # NUnit
 *.VisualState.xml
@@ -51,17 +51,17 @@ TestResult.xml
 nunit-*.xml
 
 # Build Results of an ATL Project
-[Dd]ebugPS/
-[Rr]eleasePS/
+SDL/[Dd]ebugPS/
+SDL/[Rr]eleasePS/
 dlldata.c
 
 # Benchmark Results
-BenchmarkDotNet.Artifacts/
+SDL/BenchmarkDotNet.Artifacts/
 
 # .NET Core
 project.lock.json
 project.fragment.lock.json
-artifacts/
+SDL/artifacts/
 
 # StyleCop
 StyleCopReport.xml
@@ -99,7 +99,7 @@ StyleCopReport.xml
 _Chutzpah*
 
 # Visual C++ cache files
-ipch/
+SDL/ipch/
 *.aps
 *.ncb
 *.opendb
@@ -119,57 +119,57 @@ ipch/
 *.e2e
 
 # TFS 2012 Local Workspace
-$tf/
+SDL/$tf/
 
 # Guidance Automation Toolkit
 *.gpState
 
 # ReSharper is a .NET coding add-in
-_ReSharper*/
-*.[Rr]e[Ss]harper
-*.DotSettings.user
+SDL/_ReSharper*/
+SDL/*.[Rr]e[Ss]harper
+SDL/*.DotSettings.user
 
 # TeamCity is a build add-in
-_TeamCity*
+SDL/_TeamCity*
 
 # DotCover is a Code Coverage Tool
 *.dotCover
 
 # AxoCover is a Code Coverage Tool
-.axoCover/*
-!.axoCover/settings.json
+SDL/.axoCover/*
+!SDL/.axoCover/settings.json
 
 # Visual Studio code coverage results
 *.coverage
 *.coveragexml
 
 # NCrunch
-_NCrunch_*
-.*crunch*.local.xml
-nCrunchTemp_*
+SDL/_NCrunch_*
+SDL/.*crunch*.local.xml
+SDL/nCrunchTemp_*
 
 # MightyMoose
 *.mm.*
-AutoTest.Net/
+SDL/AutoTest.Net/
 
 # Web workbench (sass)
-.sass-cache/
+SDL/.sass-cache/
 
 # Installshield output folder
-[Ee]xpress/
+SDL/[Ee]xpress/
 
 # DocProject is a documentation generator add-in
-DocProject/buildhelp/
-DocProject/Help/*.HxT
-DocProject/Help/*.HxC
-DocProject/Help/*.hhc
-DocProject/Help/*.hhk
-DocProject/Help/*.hhp
-DocProject/Help/Html2
-DocProject/Help/html
+SDL/DocProject/buildhelp/
+SDL/DocProject/Help/*.HxT
+SDL/DocProject/Help/*.HxC
+SDL/DocProject/Help/*.hhc
+SDL/DocProject/Help/*.hhk
+SDL/DocProject/Help/*.hhp
+SDL/DocProject/Help/Html2
+SDL/DocProject/Help/html
 
 # Click-Once directory
-publish/
+SDL/publish/
 
 # Publish Web Output
 *.[Pp]ublish.xml
@@ -182,7 +182,7 @@ publish/
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
 # in these scripts will be unencrypted
-PublishScripts/
+SDL/PublishScripts/
 
 # NuGet Packages
 *.nupkg
@@ -199,18 +199,18 @@ PublishScripts/
 *.nuget.targets
 
 # Microsoft Azure Build Output
-csx/
+SDL/csx/
 *.build.csdef
 
 # Microsoft Azure Emulator
-ecf/
-rcf/
+SDL/ecf/
+SDL/rcf/
 
 # Windows Store app package directories and files
-AppPackages/
-BundleArtifacts/
-Package.StoreAssociation.xml
-_pkginfo.txt
+SDL/AppPackages/
+SDL/BundleArtifacts/
+SDL/Package.StoreAssociation.xml
+SDL/_pkginfo.txt
 *.appx
 *.appxbundle
 *.appxupload
@@ -222,7 +222,7 @@ _pkginfo.txt
 !?*.[Cc]ache/
 
 # Others
-ClientBin/
+SDL/ClientBin/
 ~$*
 *~
 *.dbmdl
@@ -230,7 +230,7 @@ ClientBin/
 *.jfm
 *.pfx
 *.publishsettings
-orleans.codegen.cs
+SDL/orleans.codegen.cs
 
 # Including strong name files can present a security risk
 # (https://github.com/github/gitignore/pull/2483#issue-259490424)
@@ -241,17 +241,17 @@ orleans.codegen.cs
 #bower_components/
 
 # RIA/Silverlight projects
-Generated_Code/
+SDL/Generated_Code/
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,
 # because we have git ;-)
-_UpgradeReport_Files/
-Backup*/
-UpgradeLog*.XML
-UpgradeLog*.htm
-ServiceFabricBackup/
-*.rptproj.bak
+SDL/_UpgradeReport_Files/
+SDL/Backup*/
+SDL/UpgradeLog*.XML
+SDL/UpgradeLog*.htm
+SDL/ServiceFabricBackup/
+SDL/*.rptproj.bak
 
 # SQL Server files
 *.mdf
@@ -292,20 +292,20 @@ node_modules/
 **/*.DesktopClient/ModelManifest.xml
 **/*.Server/GeneratedArtifacts
 **/*.Server/ModelManifest.xml
-_Pvt_Extensions
+SDL/_Pvt_Extensions
 
 # Paket dependency manager
-.paket/paket.exe
-paket-files/
+SDL/.paket/paket.exe
+SDL/paket-files/
 
 # FAKE - F# Make
-.fake/
+SDL/.fake/
 
 # CodeRush personal settings
-.cr/personal
+SDL/.cr/personal
 
 # Python Tools for Visual Studio (PTVS)
-__pycache__/
+SDL/__pycache__/
 *.pyc
 
 # Cake - Uncomment if you are using it
@@ -325,10 +325,10 @@ __pycache__/
 *.xsd.cs
 
 # OpenCover UI analysis results
-OpenCover/
+SDL/OpenCover/
 
 # Azure Stream Analytics local run output
-ASALocalRun/
+SDL/ASALocalRun/
 
 # MSBuild Binary and Structured Log
 *.binlog
@@ -337,23 +337,106 @@ ASALocalRun/
 *.nvuser
 
 # MFractors (Xamarin productivity tool) working folder
-.mfractor/
+SDL/.mfractor/
 
 # Local History for Visual Studio
-.localhistory/
+SDL/.localhistory/
 
 # BeatPulse healthcheck temp database
-healthchecksdb
+SDL/healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
-MigrationBackup/
+SDL/MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
-.ionide/
+SDL/.ionide/
+
+
+
+
+
+# ------------------------------- Unreal gitignore  ------------------------------- #
+
+# Visual Studio 2015 user specific files
+.vs/
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.ipa
+
+# These project files can be generated by the engine
+*.xcodeproj
+*.xcworkspace
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Precompiled Assets
+Unreal/DumbKnights/SourceArt/**/*.png
+Unreal/DumbKnights/SourceArt/**/*.tga
+
+# Binary Files
+Unreal/DumbKnights/Binaries/*
+Unreal/DumbKnights/Plugins/*/Binaries/*
+
+# Builds
+Unreal/DumbKnights/Build/*
+
+# Whitelist PakBlacklist-<BuildConfiguration>.txt files
+!Unreal/DumbKnights/Build/*/
+Unreal/DumbKnights/Build/*/**
+!Unreal/DumbKnights/Build/*/PakBlacklist*.txt
+
+# Don't ignore icon files in Build
+!Unreal/DumbKnights/Build/**/*.ico
+
+# Built data for maps
+*_BuiltData.uasset
+
+# Configuration files generated by the Editor
+Unreal/DumbKnights/Saved/*
+
+# Compiled source files for the engine to use
+Unreal/DumbKnights/Intermediate/*
+Unreal/DumbKnights/Plugins/*/Intermediate/*
+
+# Cache files for the editor to use
+Unreal/DumbKnights/DerivedDataCache/*
+
 
 # ------------------------------- User defined gitignore  ------------------------------- #
 
 # Version all Externals folder
-!Externals/SDL2-2.0.16/lib/*
-!Externals/SDL2_ttf-2.0.15/lib/*
-!Externals/SDL2_mixer-2.0.4/lib/*
+!SDL/Externals/SDL2-2.0.16/lib/*
+!SDL/Externals/SDL2_ttf-2.0.15/lib/*
+!SDL/Externals/SDL2_mixer-2.0.4/lib/*
+
