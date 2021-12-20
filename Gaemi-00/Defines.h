@@ -3,10 +3,11 @@
 #define DEFINES_H
 
 #include <string>
+#include "../Externals/stb_image/stb_image.h"
 
 // General macro
 #define GASSERTIONS_ENABLED
-
+#define STB_IMAGE_IMPLEMENTATION
 
 // Unsigned integers
 typedef unsigned char u8;
@@ -30,7 +31,12 @@ typedef int b32;
 // String
 typedef std::string str;
 
-#define STATIC_ASSERT static_assert
+// Static assertion
+#if defined(__clang__) || defined(__gcc__)
+    #define STATIC_ASSERT _Static_assert
+#else
+    #define STATIC_ASSERT static_assert
+#endif
 
 // Ensure all types are of the correct size
 STATIC_ASSERT(sizeof(u8) == 1, "Expected u8 to be 1 byte.");

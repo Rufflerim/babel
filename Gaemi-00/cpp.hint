@@ -1,2 +1,0 @@
-#define GAPI __declspec(dllexport)
-#define GAPI __declspec(dllimport)

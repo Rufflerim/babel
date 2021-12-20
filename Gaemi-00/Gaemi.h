@@ -5,7 +5,7 @@
 // GAPI comme étant importées à partir d'une DLL, tandis que cette DLL considère les symboles
 // définis avec cette macro comme étant exportés.
 #ifdef GAEMI00_EXPORTS
-#define GAPI __declspec(dllexport)
+    #define GAPI __declspec(dllexport)
 #else
-#define GAPI __declspec(dllimport)
+    #define GAPI __declspec(dllimport)
 #endif
