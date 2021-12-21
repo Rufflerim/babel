@@ -11,3 +11,11 @@ target_link_libraries(${PROJECT_NAME} SDL2)
 ## Define a symbol for dll export, cf. Gaemi.h
 target_compile_definitions(${PROJECT_NAME} PRIVATE GAEMI00_EXPORTS=1)
 
+## Post build DLL copy
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/Gaemi-00.dll
+    ${CMAKE_CURRENT_BINARY_DIR}/../
+    COMMENT "---- Copy Engine DLL"
+)

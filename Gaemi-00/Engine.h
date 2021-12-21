@@ -9,8 +9,8 @@
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
 constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
-constexpr i32 WINDOW_WIDTH = 450;
-constexpr i32 WINDOW_HEIGHT = 800;
+constexpr i32 WINDOW_WIDTH = 1280;
+constexpr i32 WINDOW_HEIGHT = 720;
 
 
 namespace engine {

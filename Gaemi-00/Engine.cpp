@@ -14,8 +14,6 @@ void engine::Engine::init(IGame& game)
 	bool inputsIgnited = inputManager.init();
 	bool windowIgnited = window.init(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, false);
 
-
-
 	state.isInitialized = inputsIgnited && windowIgnited;
 	if (!state.isInitialized) {
 		LOG(LogLevel::Fatal) << "Engine subsystems failed at init. Shutting down.";
