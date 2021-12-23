@@ -3,33 +3,45 @@
 #define DEFINES_H
 
 #include <string>
+#include <bitset>
 #include "../Externals/stb_image/stb_image.h"
 
 // General macro
 #define GASSERTIONS_ENABLED
 #define STB_IMAGE_IMPLEMENTATION
 
-// Unsigned integers
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned long long u64;
+// General types
+// -- Unsigned integers
+using u8 = unsigned char;
+using u16 = unsigned short;
+using u32 = unsigned int;
+using u64 = unsigned long long;
 
-// Signed integers
-typedef signed char i8;
-typedef signed short i16;
-typedef signed int i32;
-typedef signed long long i64;
+// -- Signed integers
+using i8 =  signed char;
+using i16 = signed short;
+using i32 = signed int;
+using i64 = signed long long;
 
-// Floating point
-typedef float f32;
-typedef double f64;
+// -- Floating point
+using f32 = float;
+using f64 = double;
 
-// Booleans
-typedef int b32;
+// -- Booleans
+using b32 = int;
 
-// String
-typedef std::string str;
+// -- String
+using str = std::string;
+
+// ECS
+// -- Constants
+constexpr u8 MAX_COMPONENTS = 32;
+constexpr u32 MAX_ENTITIES = 5000;
+// -- Types
+using Entity = u32;
+using ComponentType = u8;
+using Signature = std::bitset<MAX_COMPONENTS>;
+
 
 // Static assertion
 #if defined(__clang__) || defined(__gcc__)

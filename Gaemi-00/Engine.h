@@ -12,7 +12,6 @@ constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
 constexpr i32 WINDOW_WIDTH = 1280;
 constexpr i32 WINDOW_HEIGHT = 720;
 
-
 namespace engine {
 
 	struct EngineState {
