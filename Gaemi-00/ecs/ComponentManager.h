@@ -19,7 +19,7 @@ namespace engine::ecs {
         template<typename T>
         void registerComponent() {
             const char* typeName = typeid(T).name();
-            GASSERT_DEBUG(componentTypes.find(typeName) == componentTypes.end(), "Registering component type more than once.");
+            GASSERT_DEBUG(componentTypes.find(typeName) == componentTypes.end(), "Registering component type more than once.")
 
             // Add this component type to the component type map
             componentTypes.insert({typeName, nextComponentType});
@@ -37,7 +37,7 @@ namespace engine::ecs {
         template<typename T>
         ComponentType getComponentType() {
             const char* typeName = typeid(T).name();
-            GASSERT_DEBUG(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.");
+            GASSERT_DEBUG(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.")
 
             return componentTypes[typeName];
         }
@@ -89,7 +89,7 @@ namespace engine::ecs {
         template<typename T>
         std::shared_ptr<ComponentArray<T>> getComponentArray() {
             const char* typeName = typeid(T).name();
-            GASSERT_DEBUG(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.");
+            GASSERT_DEBUG(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.")
             return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
         }
     };

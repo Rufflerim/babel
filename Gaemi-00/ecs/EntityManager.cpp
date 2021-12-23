@@ -13,7 +13,7 @@ EntityManager::EntityManager() {
 }
 
 Entity EntityManager::createEntity() {
-    GASSERT_DEBUG(livingEntityCount < MAX_ENTITIES, "Too many entities exist");
+    GASSERT_DEBUG(livingEntityCount < MAX_ENTITIES, "Too many entities exist")
     Entity id = availableEntities.front();
     availableEntities.pop();
     ++livingEntityCount;
@@ -21,7 +21,7 @@ Entity EntityManager::createEntity() {
 }
 
 void EntityManager::destroyEntity(Entity entity) {
-    GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity out of range");
+    GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity out of range")
     signatures[entity].reset();
     availableEntities.push(entity);
     --livingEntityCount;

@@ -25,7 +25,7 @@ namespace engine::ecs {
         template<typename T>
         std::shared_ptr<T> RegisterSystem() {
             const char* typeName = typeid(T).name();
-            GASSERT_DEBUG(systems.find(typeName) == systems.end(), "Registering system more than once.");
+            GASSERT_DEBUG(systems.find(typeName) == systems.end(), "Registering system more than once.")
 
             auto system = std::make_shared<T>();
             systems.insert({typeName, system});
@@ -38,7 +38,7 @@ namespace engine::ecs {
         template<typename T>
         void SetSignature(Signature signature) {
             const char* typeName = typeid(T).name();
-            GASSERT_DEBUG(systems.find(typeName) != systems.end(), "System used before registered.");
+            GASSERT_DEBUG(systems.find(typeName) != systems.end(), "System used before registered.")
 
             signatures.insert({typeName, signature});
         }

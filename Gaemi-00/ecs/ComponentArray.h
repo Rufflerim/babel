@@ -27,7 +27,7 @@ namespace engine::ecs {
         /// \param entity Entity in which we want to add the component
         /// \param component Component we add to the entity
         void insertComponentData(Entity entity, T component) {
-            GASSERT_DEBUG(mEntityToIndexMap.find(entity) == mEntityToIndexMap.end(), "Component added to same entity more than once.");
+            GASSERT_DEBUG(mEntityToIndexMap.find(entity) == mEntityToIndexMap.end(), "Component added to same entity more than once.")
             size_t newIndex = size;
             entityToIndex[entity] = newIndex;
             indexToEntity[newIndex] = entity;
@@ -38,7 +38,7 @@ namespace engine::ecs {
         /// Removes component data about gven entity
         /// \param entity Entity we want to delete the component data
         void removeComponentData(Entity entity) {
-            GASSERT_DEBUG(entityToIndex.find(entity) != entityToIndex.end(), "Removing non-existent component.");
+            GASSERT_DEBUG(entityToIndex.find(entity) != entityToIndex.end(), "Removing non-existent component.")
 
             // Copy element at end into deleted element's place to maintain density
             size_t indexOfRemovedEntity = entityToIndex[entity];
@@ -59,7 +59,7 @@ namespace engine::ecs {
         /// \param entity The entity we want its component data
         /// \return Component of given entity
         T& getData(Entity entity) {
-            GASSERT_DEBUG(entityToIndex.find(entity) != entityToIndex.end(), "Retrieving non-existent component");
+            GASSERT_DEBUG(entityToIndex.find(entity) != entityToIndex.end(), "Retrieving non-existent component")
             return componentArray[entityToIndex[entity]];
         }
 

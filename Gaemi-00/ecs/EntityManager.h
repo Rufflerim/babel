@@ -31,7 +31,7 @@ namespace engine::ecs {
         /// \param entity Entity we want to set the signature on
         /// \param signature Signature to set
         void setSignature(Entity entity, Signature signature) {
-            GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity ID is out of range");
+            GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity ID is out of range")
             signatures[entity] = signature;
         }
 
@@ -39,7 +39,7 @@ namespace engine::ecs {
         /// \param entity Entity we want the signature from
         /// \return The signature of an entity
         Signature getSignature(Entity entity) {
-            GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity ID is out of range");
+            GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity ID is out of range")
             return signatures[entity];
         }
 
