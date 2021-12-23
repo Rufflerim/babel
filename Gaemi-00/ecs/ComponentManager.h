@@ -83,7 +83,9 @@ namespace engine::ecs {
         // The component type to be assigned to the next registered component - starting at 0
         ComponentType nextComponentType {};
 
-        // Convenience function to get the statically casted pointer to the ComponentArray of type T.
+        /// Convenience function to get the statically casted pointer to the ComponentArray of type T.
+        /// \tparam T
+        /// \return
         template<typename T>
         std::shared_ptr<ComponentArray<T>> getComponentArray() {
             const char* typeName = typeid(T).name();
