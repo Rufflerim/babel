@@ -4,7 +4,7 @@
 #include <SDL_events.h>
 
 
-using engine::InputState;
+using engine::input::InputState;
 
 void engine::Engine::init(IGame& game)
 {

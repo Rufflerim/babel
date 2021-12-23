@@ -1,18 +1,17 @@
 #include "InputManager.h"
-#include "Log.h"
+#include "../Log.h"
 
-bool engine::InputManager::init()
-{
+using engine::input::InputManager;
+
+bool InputManager::init() {
 	LOG(LogLevel::Trace) << "Inputs initialized";
     return true;
 }
 
-void engine::InputManager::close()
-{
+void InputManager::close() {
 }
 
-void engine::InputManager::processSDLEvent(SDL_Event& event, bool& engineIsRunning)
-{
+void InputManager::processSDLEvent(SDL_Event& event, bool& engineIsRunning) {
 	switch (event.type)
 	{
 	case SDL_QUIT:

@@ -4,7 +4,7 @@
 
 #include "Defines.h"
 #include "IGame.h"
-#include "InputManager.h"
+#include "input/InputManager.h"
 #include "Window.h"
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
@@ -46,7 +46,7 @@ namespace engine {
 		/// Process inputs with InputhManager
 		/// </summary>
 		/// <returns>Global inputs state</returns>
-		InputState inputs();
+		input::InputState inputs();
 
 		/// <summary>
 		/// Update logic 
@@ -61,7 +61,7 @@ namespace engine {
 
 	private:
 		EngineState state {};
-		InputManager inputManager {};
+		input::InputManager inputManager {};
 		Window window{ "Dumb Knights " };
 	};
 

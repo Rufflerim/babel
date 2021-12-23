@@ -4,7 +4,7 @@
 
 #include <SDL_events.h>
 
-namespace engine {
+namespace engine::input {
 
 	struct InputState {
 

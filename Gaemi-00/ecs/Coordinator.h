@@ -11,6 +11,96 @@
 #include "EntityManager.h"
 #include "SystemManager.h"
 
+/**
+ * Example of the ECS coordinator use.
+ *
+ *
+
+Coordinator gCoordinator;
+
+struct Gravity {
+	Vec3 force;
+};
+
+struct RigidBody {
+	Vec3 velocity;
+	Vec3 acceleration;
+};
+
+struct Transform {
+	Vec3 position;
+	Vec3 rotation;
+	Vec3 scale;
+};
+
+extern Coordinator gCoordinator;
+
+void PhysicsSystem::Update(float dt) {
+	for (auto const& entity : mEntities) {
+		auto& rigidBody = gCoordinator.GetComponent<RigidBody>(entity);
+		auto& transform = gCoordinator.GetComponent<Transform>(entity);
+		auto const& gravity = gCoordinator.GetComponent<Gravity>(entity);
+
+		transform.position += rigidBody.velocity * dt;
+		rigidBody.velocity += gravity.force * dt;
+	}
+}
+
+int main() {
+	gCoordinator.init();
+
+	gCoordinator.registerComponent<Gravity>();
+	gCoordinator.registerComponent<RigidBody>();
+	gCoordinator.registerComponent<Transform>();
+
+	auto physicsSystem = gCoordinator.registerSystem<PhysicsSystem>();
+
+	Signature signature;
+	signature.set(gCoordinator.getComponentType<Gravity>());
+	signature.set(gCoordinator.getComponentType<RigidBody>());
+	signature.set(gCoordinator.getComponentType<Transform>());
+	gCoordinator.setSystemSignature<PhysicsSystem>(signature);
+
+	std::vector<Entity> entities(MAX_ENTITIES);
+
+	std::default_random_engine generator;
+	std::uniform_real_distribution<float> randPosition(-100.0f, 100.0f);
+	std::uniform_real_distribution<float> randRotation(0.0f, 3.0f);
+	std::uniform_real_distribution<float> randScale(3.0f, 5.0f);
+	std::uniform_real_distribution<float> randGravity(-10.0f, -1.0f);
+
+	float scale = randScale(generator);
+
+	for (auto& entity : entities) {
+		entity = gCoordinator.createEntity();
+		gCoordinator.addComponent(entity, Gravity {Vec3(0.0f, randGravity(generator), 0.0f) });
+		gCoordinator.AddComponent(
+			entity,
+			RigidBody{
+				.velocity = Vec3(0.0f, 0.0f, 0.0f),
+				.acceleration = Vec3(0.0f, 0.0f, 0.0f)
+			});
+		gCoordinator.AddComponent(
+			entity,
+			Transform{
+				.position = Vec3(randPosition(generator), randPosition(generator), randPosition(generator)),
+				.rotation = Vec3(randRotation(generator), randRotation(generator), randRotation(generator)),
+				.scale = Vec3(scale, scale, scale)
+			});
+	}
+
+	float dt = 0.0f;
+	while (!quit) {
+		auto startTime = std::chrono::high_resolution_clock::now();
+		physicsSystem->Update(dt);
+		auto stopTime = std::chrono::high_resolution_clock::now();
+		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
+	}
+}
+ *
+ */
+
+
 namespace engine::ecs {
     class Coordinator {
         /// Initialize ECS coordination
@@ -105,6 +195,5 @@ namespace engine::ecs {
         std::unique_ptr<SystemManager> systemManager;
     };
 }
-
 
 #endif //ECS_COORDINATOR_H
