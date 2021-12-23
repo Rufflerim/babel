@@ -25,7 +25,7 @@ namespace engine::ecs {
 
         /// Destroy a given entity and invalidate its signature
         /// \param entity Entity ID
-        void destroyEntity(Entity entity);
+        void onDestroyEntity(Entity entity);
 
         /// Set a given signature to a given entity
         /// \param entity Entity we want to set the signature on

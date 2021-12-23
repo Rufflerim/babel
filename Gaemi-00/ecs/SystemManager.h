@@ -23,7 +23,7 @@ namespace engine::ecs {
         /// \tparam T System type
         /// \return Shared pointer to the system
         template<typename T>
-        std::shared_ptr<T> RegisterSystem() {
+        std::shared_ptr<T> registerSystem() {
             const char* typeName = typeid(T).name();
             GASSERT_DEBUG(systems.find(typeName) == systems.end(), "Registering system more than once.")
 
@@ -36,7 +36,7 @@ namespace engine::ecs {
         /// \tparam T System type
         /// \param signature Signature associated with this system
         template<typename T>
-        void SetSignature(Signature signature) {
+        void setSignature(Signature signature) {
             const char* typeName = typeid(T).name();
             GASSERT_DEBUG(systems.find(typeName) != systems.end(), "System used before registered.")
 

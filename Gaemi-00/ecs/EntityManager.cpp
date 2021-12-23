@@ -20,7 +20,7 @@ Entity EntityManager::createEntity() {
     return id;
 }
 
-void EntityManager::destroyEntity(Entity entity) {
+void EntityManager::onDestroyEntity(Entity entity) {
     GASSERT_DEBUG(entity < MAX_ENTITIES, "Entity out of range")
     signatures[entity].reset();
     availableEntities.push(entity);
