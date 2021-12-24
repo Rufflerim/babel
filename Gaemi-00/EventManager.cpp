@@ -15,6 +15,7 @@ bool EventManager::init() {
     if (isInitialized) return false;
     isInitialized = true;
     Locator::provide(this);
+    LOG(LogLevel::Trace) << "Events initialized";
     return true;
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 #include <IGame.h>
+#include <SceneManager.h>
+
 
 class Game : public engine::IGame
 {
@@ -32,5 +34,6 @@ public:
 
 private:
 	Game() = default;
+    scene::SceneManager sceneManager;
 };
 

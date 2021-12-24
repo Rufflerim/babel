@@ -51,7 +51,7 @@ namespace engine {
         void* listener { nullptr };
         EventCallback* callback { nullptr };
 
-        bool operator==(const Subscription& other) {
+        bool operator==(const Subscription& other) const {
             return listener == other.listener && callback == other.callback;
         }
     };
