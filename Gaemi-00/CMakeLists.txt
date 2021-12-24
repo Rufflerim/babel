@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(Gaemi-00)
 set(CMAKE_CXX_STANDARD 17)
 
+add_subdirectory( math )
 add_subdirectory( ecs )
 add_subdirectory( input )
 

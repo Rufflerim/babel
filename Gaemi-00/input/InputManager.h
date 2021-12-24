@@ -3,45 +3,67 @@
 #define INPUTMANAGER_H
 
 #include <SDL_events.h>
+#include "../Defines.h"
+#include "KeyboardState.h"
+#include "MouseState.h"
+#include "ControllerState.h"
+#include "../math/Vec2.h"
+
+
 
 namespace engine::input {
 
-	struct InputState {
+    enum class ButtonState {
+        None,
+        Pressed,
+        Released,
+        Held
+    };
 
-	};
+    struct InputState {
+        KeyboardState keyboard;
+        MouseState mouse;
+        ControllerState controller;
+    };
 
-	class InputManager
-	{
-	public:
-		InputManager() = default;
+    class InputManager {
+    public:
+        InputManager(u32 windowWidthP, u32 windowHeightP);
+        InputManager() = delete;
 
-		/// <summary>
-		/// Init input manager
-		/// </summary>
-		/// <returns>True is properly initialized</returns>
-		bool init();
+        bool init();
 
-		/// <summary>
-		/// Close input manager and free memory
-		/// </summary>
-		void close();
+        void close();
 
-		/// <summary>
-		/// Fill the input state thanks to SDL event
-		/// </summary>
-		/// <param name="event">A SDL event</param>
-		void processSDLEvent(SDL_Event& event, bool& engineIsRunning);
+        const InputState& getInputState() const { return inputState; }
 
-		/// <summary>
-		/// Return all input states of the game
-		/// </summary>
-		/// <returns>Complete input state</returns>
-		const InputState& getInputState() { return inputState; }
+        // Returns isRunning status
+        void processSDLEvent(SDL_Event& event);
 
+        void preUpdate();
 
-	private:
-		InputState inputState {};
-	};
+        void update();
+
+        bool getIsCursorDisplayed() const { return isCursorDisplayed; }
+
+        void setMouseCursor(bool isCursorDisplayedP);
+
+        void setMouseRelativeMode(bool isMouseRelativeOnP);
+
+    private:
+        u32 windowWidth { 1280 };
+        u32 windowHeight { 720 };
+        InputState inputState {};
+        bool isCursorDisplayed { false };
+        SDL_GameController* controllerPtr { nullptr };
+
+        f32 filter1D(int input);
+        Vec2 filter2D(int inputX, int inputY);
+    };
+
+    constexpr i32 CONTROLLER_DEAD_ZONE_1D = 250;
+    constexpr f32 CONTROLLER_DEAD_ZONE_2D = 8000.0f;
+    constexpr i32 CONTROLLER_MAX_VALUE = 30000;
 }
 
 #endif

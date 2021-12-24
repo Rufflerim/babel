@@ -6,6 +6,7 @@
 #include "IGame.h"
 #include "input/InputManager.h"
 #include "Window.h"
+#include "EventManager.h"
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
 constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
@@ -60,9 +61,30 @@ namespace engine {
 		void draw();
 
 	private:
+        /// Game engine state
 		EngineState state {};
-		input::InputManager inputManager {};
+
+        /// Management of inputs
+		input::InputManager inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
+
+        /// Global event management
+        EventManager eventManager {};
+
+        /// Game window
 		Window window{ "Dumb Knights " };
+
+        /// Callback for engine events
+        EventCallback onEngineEvent = [this](EventCode code, void* sender, void* listInst, EventContext context) {
+            return this->handleEngineEvent(code, sender, listInst, context);
+        };
+
+        /// Apply engine events management
+        /// \param code Event type
+        /// \param sender Event sender
+        /// \param listenerInstance Event listener if specific
+        /// \param context Event additional data
+        /// \return True if an event occured
+        bool handleEngineEvent(EventCode code, void* sender, void* listenerInstance, EventContext context);
 	};
 
 }

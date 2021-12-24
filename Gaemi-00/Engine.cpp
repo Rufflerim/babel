@@ -6,21 +6,23 @@
 
 using engine::input::InputState;
 
-void engine::Engine::init(IGame& game)
-{
+void engine::Engine::init(IGame& game) {
 	state.game = &game;
 
 	// Init everything
 	bool inputsIgnited = inputManager.init();
 	bool windowIgnited = window.init(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, false);
+    bool eventsIgnited = eventManager.init();
+    eventManager.subscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
 
-	state.isInitialized = inputsIgnited && windowIgnited;
+	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited;
 	if (!state.isInitialized) {
 		LOG(LogLevel::Fatal) << "Engine subsystems failed at init. Shutting down.";
 		// Shut down all systems
 		inputManager.close();
-	}
-	else {
+        eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
+        eventManager.close();
+	} else {
 		state.isRunning = true;
 		state.isPaused = false;
 		LOG(LogLevel::Info) << "Engine started.";
@@ -28,8 +30,7 @@ void engine::Engine::init(IGame& game)
 
 }
 
-void engine::Engine::run()
-{
+void engine::Engine::run() {
 	// Timer for delta time
 	Timer timer;
 	GameTime time;
@@ -55,30 +56,42 @@ void engine::Engine::run()
 	}
 }
 
-void engine::Engine::close()
-{
+void engine::Engine::close() {
+    eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
+    eventManager.close();
 	window.close();
 	inputManager.close();
 	LOG(LogLevel::Info) << "Engine closed.";
 	LOG(LogLevel::Trace) << "Bye :)";
 }
 
-InputState engine::Engine::inputs()
-{
-	SDL_Event event;
+InputState engine::Engine::inputs() {
+    inputManager.preUpdate();
+    SDL_Event event;
 	while (SDL_PollEvent(&event)) {
-		inputManager.processSDLEvent(event, state.isRunning);
+		inputManager.processSDLEvent(event);
 	}
+    inputManager.update();
 
 	return inputManager.getInputState();
 }
 
-void engine::Engine::update(GameTime time)
-{
+void engine::Engine::update(GameTime time) {
 	state.game->update(time);
 }
 
-void engine::Engine::draw()
-{
+void engine::Engine::draw() {
 	state.game->draw();
+}
+
+bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* listenerInstance, EventContext context) {
+    switch (code) {
+        case EventCode::ApplicationQuit:
+            LOG(LogLevel::Trace) << "EventCode::ApplicationQuit received, closing application.";
+            state.isRunning = false;
+            return true;
+        default:
+            break;
+    }
+    return false;
 }
