@@ -30,7 +30,7 @@ namespace scene {
     class SceneManager {
     public:
         SceneManager();
-        ~SceneManager();
+        ~SceneManager() = default;
 
         void update(GameTime time);
         void draw();
@@ -41,10 +41,12 @@ namespace scene {
         void switchTo(SceneType type);
         void remove(SceneType type);
 
+        SceneType currentScene { SceneType::GameMap };
+
     private:
         template<class T>
         void registerScene(SceneType type) {
-            sceneFactory[type] = []() {
+            sceneFactories[type] = []() {
                 return std::make_unique<T>();
             };
         }
@@ -55,7 +57,7 @@ namespace scene {
         vector<unique_ptr<IScene>> scenes;
         vector<SceneType> sceneTypes;
         vector<SceneType> scenesToRemove;
-        SceneFactory sceneFactory;
+        SceneFactory sceneFactories;
     };
 
 }

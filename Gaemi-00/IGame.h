@@ -24,6 +24,11 @@ namespace engine {
 		/// </summary>
 		virtual void draw() = 0;
 
+        /// <summary>
+        /// Updates what need to be updated after drawing
+        /// </summary>
+        virtual void lateUpdate() = 0;
+
 		/// <summary>
 		/// End game
 		/// </summary>

@@ -27,6 +27,11 @@ public:
 	/// </summary>
 	void draw() override;
 
+    /// <summary>
+    /// Updates what need to be updated after drawing
+    /// </summary>
+    void lateUpdate() override;
+
 	/// <summary>
 	/// End game
 	/// </summary>

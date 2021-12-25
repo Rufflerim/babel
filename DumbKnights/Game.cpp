@@ -15,3 +15,7 @@ void Game::draw() {
 void Game::close() {
     sceneManager.close();
 }
+
+void Game::lateUpdate() {
+    sceneManager.processRequests();
+}
