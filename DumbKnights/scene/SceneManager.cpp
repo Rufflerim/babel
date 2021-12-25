@@ -8,41 +8,50 @@
 #include "GameMap.h"
 
 scene::SceneManager::SceneManager() {
+    // Reserve scene storage
+    scenes.reserve(MAX_SCENE_DEPTH);
+    sceneTypes.reserve(MAX_SCENE_DEPTH);
+    // Register scene types
     registerScene<GameMap>(SceneType::GameMap);
     registerScene<GamePause>(SceneType::GamePause);
-    scenes.emplace_back(SceneType::GameMap, sceneFactory[SceneType::GameMap]());
+
+
+
+    scenes.push_back(std::move(sceneFactory[SceneType::GameMap]()));
+    sceneTypes.push_back(SceneType::GameMap);
 }
 
 scene::SceneManager::~SceneManager() {
-    for(auto& scene : scenes) {
-        scene.second->onClose();
-    }
-    for(auto& scene : scenes) {
-        delete scene.second;
-    }
+
 }
 
 void scene::SceneManager::update(GameTime time) {
     // Look for the last non locking scene in scenes' stack
     auto nonLockingItr = std::find_if(rbegin(scenes), rend(scenes),
-                                      [](auto& scene) { return !scene.second->isNonLocking(); });
+                                      [](auto& scene) { return !scene->isNonLocking(); });
     // Convert to forward iterator on the same element
     auto forwardItr = --(nonLockingItr.base());
     // Draw non locking scenes with the right order
     for(; forwardItr != end(scenes); ++forwardItr) {
-        forwardItr->second->update(time);
+        (*forwardItr)->update(time);
     }
 }
 
 void scene::SceneManager::draw() {
     // Look for the last transparent scene in scenes' stack
     auto transparentItr = std::find_if(rbegin(scenes), rend(scenes),
-                                       [](auto& scene) { return !scene.second->isTransparent(); });
+                                       [](auto& scene) { return !scene->isTransparent(); });
     // Convert to forward iterator on the same element
     auto forwardItr = --(transparentItr.base());
     // Draw transparent scenes with the right order
     for(; forwardItr != end(scenes); ++forwardItr) {
-        forwardItr->second->draw();
+        (*forwardItr)->draw();
+    }
+}
+
+void scene::SceneManager::close() {
+    for(auto& scene : scenes) {
+        scene->onClose();
     }
 }
 
@@ -69,3 +78,4 @@ void scene::SceneManager::createScene(scene::SceneType type) {
 void scene::SceneManager::removeScene(scene::SceneType type) {
 
 }
+

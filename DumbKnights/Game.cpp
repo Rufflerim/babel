@@ -13,5 +13,5 @@ void Game::draw() {
 }
 
 void Game::close() {
-
+    sceneManager.close();
 }

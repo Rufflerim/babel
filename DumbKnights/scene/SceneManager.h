@@ -19,18 +19,22 @@ using std::unique_ptr;
 
 namespace scene {
 
-    /// Contains a stack of scenes in an ordered and coherent map
-    using SceneContainer = vector<pair<SceneType, IScene*>>;
-
     /// Store prepared functions to generate scenes
-    using SceneFactory = unordered_map<SceneType, std::function<IScene*(void)>>;
+    using SceneFactory = unordered_map<SceneType, std::function<unique_ptr<IScene>(void)>>;
 
+    /// Max depth in the scene stack
+    constexpr i32 MAX_SCENE_DEPTH = 10;
+
+    /// Manage scene execution and transition.
+    ///
     class SceneManager {
     public:
         SceneManager();
         ~SceneManager();
+
         void update(GameTime time);
         void draw();
+        void close();
 
         void processRequests();
         bool hasScene(SceneType type) const;
@@ -41,16 +45,17 @@ namespace scene {
         template<class T>
         void registerScene(SceneType type) {
             sceneFactory[type] = []() {
-                return new T();
+                return std::make_unique<T>();
             };
         }
 
         void createScene(SceneType type);
         void removeScene(SceneType type);
 
-        SceneContainer scenes {};
-        vector<SceneType> scenesToRemove {};
-        SceneFactory sceneFactory {};
+        vector<unique_ptr<IScene>> scenes;
+        vector<SceneType> sceneTypes;
+        vector<SceneType> scenesToRemove;
+        SceneFactory sceneFactory;
     };
 
 }

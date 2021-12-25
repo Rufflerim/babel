@@ -34,6 +34,6 @@ public:
 
 private:
 	Game() = default;
-    scene::SceneManager sceneManager;
+    scene::SceneManager sceneManager {};
 };
 
