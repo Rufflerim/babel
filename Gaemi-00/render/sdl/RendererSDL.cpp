@@ -17,8 +17,8 @@ bool engine::render::sdl::RendererSDL::init(engine::Window &window) {
 }
 
 void engine::render::sdl::RendererSDL::drawRectangle(const Rectangle &rectangle, const Color &color) {
-    SDL_Rect fillRect = { static_cast<i32>(rectangle.offset.x),
-                          static_cast<i32>(rectangle.offset.y),
+    SDL_Rect fillRect = { static_cast<i32>(rectangle.origin.x),
+                          static_cast<i32>(rectangle.origin.y),
                           static_cast<i32>(rectangle.size.x),
                           static_cast<i32>(rectangle.size.y)
     };

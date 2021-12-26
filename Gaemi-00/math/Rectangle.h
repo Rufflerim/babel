@@ -8,9 +8,13 @@
 #include "Vec2.h"
 
 namespace gmath {
+    /// Rectangle representation
     class Rectangle {
     public:
-        Vec2 offset { 0, 0 };
+        /// Origin, offset or position of the rectangle
+        Vec2 origin {0, 0 };
+
+        /// Size of the rectangle, horizontal then vertical
         Vec2 size { 1, 1 };
     };
 }

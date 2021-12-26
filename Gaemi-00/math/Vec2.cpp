@@ -7,7 +7,7 @@
 
 using gmath::Vec2;
 
-Vec2::Vec2(float x, float y) : x { x }, y { y } {
+Vec2::Vec2(f32 x, f32 y) : x { x }, y { y } {
 
 }
 
@@ -15,6 +15,17 @@ Vec2::Vec2() : x { 0 }, y { 0 } {
 
 }
 
-float Vec2::length() const {
+f32 Vec2::length() const {
     return gmath::sqrt(x * x + y * y);
+}
+
+f32 gmath::Vec2::squareLength() const {
+    return x * x + y * y;
+}
+
+Vec2& gmath::Vec2::normalize() {
+    f32 len = length();
+    x = x / len;
+    y = y / len;
+    return *this;
 }

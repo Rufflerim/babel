@@ -10,8 +10,8 @@ void RenderingSystem::draw(engine::ecs::Coordinator &coordinator, engine::render
         auto &rectangle = coordinator.getComponent<ColorRectangle>(entity);
 
 
-        gmath::Rectangle rect {Vec2{transform.position.x + rectangle.rectangle.offset.x,
-                                   transform.position.y + rectangle.rectangle.offset.y},
+        gmath::Rectangle rect {Vec2{transform.position.x + rectangle.rectangle.origin.x,
+                                   transform.position.y + rectangle.rectangle.origin.y},
                               Vec2{rectangle.rectangle.size.x,
                                    rectangle.rectangle.size.y}
         };
