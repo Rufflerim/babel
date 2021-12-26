@@ -8,6 +8,7 @@
 #include "../math/Vec2.h"
 #include "../Defines.h"
 
+using gmath::Vec2;
 
 namespace engine::input {
     enum class ButtonState;

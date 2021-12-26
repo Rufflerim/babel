@@ -1,6 +1,8 @@
 #pragma once
 #include <IGame.h>
 #include <SceneManager.h>
+#include <Coordinator.h>
+#include <SDL_render.h>
 
 
 class Game : public engine::IGame
@@ -25,7 +27,7 @@ public:
 	/// <summary>
 	/// Renders the world
 	/// </summary>
-	void draw() override;
+    void draw(SDL_Renderer *pRenderer) override;
 
     /// <summary>
     /// Updates what need to be updated after drawing
@@ -39,6 +41,8 @@ public:
 
 private:
 	Game() = default;
-    scene::SceneManager sceneManager {};
+    engine::ecs::Coordinator coordinator {};
+    scene::SceneManager sceneManager { coordinator };
+
 };
 

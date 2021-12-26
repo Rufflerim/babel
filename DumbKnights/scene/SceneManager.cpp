@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <Log.h>
+#include <SDL_render.h>
 #include "VectorUtils.h"
 #include "SceneManager.h"
 #include "GamePause.h"
@@ -11,7 +12,9 @@
 
 using scene::SceneType;
 
-scene::SceneManager::SceneManager() {
+
+scene::SceneManager::SceneManager(engine::ecs::Coordinator &coordinator)
+: coordinator { coordinator } {
     // Reserve scene storage
     scenes.reserve(MAX_SCENE_DEPTH);
     sceneTypes.reserve(MAX_SCENE_DEPTH);
@@ -35,7 +38,7 @@ void scene::SceneManager::update(GameTime time) {
     }
 }
 
-void scene::SceneManager::draw() {
+void scene::SceneManager::draw(SDL_Renderer *pRenderer) {
     // Look for the last transparent scene in scenes' stack
     auto transparentItr = std::find_if(rbegin(scenes), rend(scenes),
                                        [](auto& scene) { return !scene->isTransparent(); });
@@ -43,7 +46,7 @@ void scene::SceneManager::draw() {
     auto forwardItr = --(transparentItr.base());
     // Draw transparent scenes with the right order
     for(; forwardItr != end(scenes); ++forwardItr) {
-        (*forwardItr)->draw();
+        (*forwardItr)->draw(pRenderer);
     }
 }
 
@@ -86,6 +89,7 @@ void scene::SceneManager::switchTo(SceneType type) {
             scenes.back()->inactivate();
         }
         createScene(type);
+        scenes.back()->onInit();
         scenes.back()->activate();
     }
 }
@@ -114,3 +118,4 @@ void scene::SceneManager::removeScene(SceneType type) {
     scenes.erase(sceneItr);
     sceneTypes.erase(typeItr);
 }
+

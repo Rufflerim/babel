@@ -64,6 +64,16 @@ STATIC_ASSERT(sizeof(i64) == 8, "Expected i64 to be 8 bytes.");
 STATIC_ASSERT(sizeof(f32) == 4, "Expected f32 to be 4 bytes.");
 STATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 
+constexpr std::uint32_t fnv1a_32(char const* s, std::size_t count)
+{
+	return ((count ? fnv1a_32(s, count - 1) : 2166136261u) ^ s[count]) * 16777619u; // NOLINT (hicpp-signed-bitwise)
+}
+
+constexpr std::uint32_t operator "" _hash(char const* s, std::size_t count)
+{
+	return fnv1a_32(s, count);
+}
+
 // Platform detection
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 	#define GPLATFORM_WINDOWS 1

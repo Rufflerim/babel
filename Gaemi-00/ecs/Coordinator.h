@@ -101,8 +101,9 @@ int main() {
  */
 
 
-namespace engine::ecs {
+namespace engine { namespace ecs {
     class Coordinator {
+    public:
         /// Initialize ECS coordination
         void init();
 
@@ -181,7 +182,8 @@ namespace engine::ecs {
         /// \return Shared pointer to the system
         template<typename T>
         std::shared_ptr<T> registerSystem() {
-            return systemManager->registerSystem<T>();
+            auto system = systemManager->registerSystem<T>();
+            return system;
         }
 
         template<typename T>
@@ -194,6 +196,6 @@ namespace engine::ecs {
         std::unique_ptr<EntityManager> entityManager;
         std::unique_ptr<SystemManager> systemManager;
     };
-}
+} }
 
 #endif //ECS_COORDINATOR_H

@@ -49,7 +49,9 @@ void engine::Engine::run() {
 		update(time);
 
 		// Draw
-		draw();
+        SDL_RenderClear(window.getRenderer());
+        draw(window.getRenderer());
+        SDL_RenderPresent(window.getRenderer());
 
 		// Time delay if game loop is faster than target FPS
 		timer.delayTime();
@@ -80,8 +82,8 @@ void engine::Engine::update(GameTime time) {
 	state.game->update(time);
 }
 
-void engine::Engine::draw() {
-	state.game->draw();
+void engine::Engine::draw(SDL_Renderer *pRenderer) {
+    state.game->draw(pRenderer);
 }
 
 bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* listenerInstance, EventContext context) {

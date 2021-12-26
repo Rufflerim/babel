@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <functional>
 #include <memory>
+#include <Coordinator.h>
 
 using std::vector;
 using std::pair;
@@ -29,11 +30,11 @@ namespace scene {
     ///
     class SceneManager {
     public:
-        SceneManager();
+        explicit SceneManager(engine::ecs::Coordinator& coordinator);
         ~SceneManager() = default;
 
         void update(GameTime time);
-        void draw();
+        void draw(SDL_Renderer *pRenderer);
         void close();
 
         void processRequests();
@@ -46,8 +47,8 @@ namespace scene {
     private:
         template<class T>
         void registerScene(SceneType type) {
-            sceneFactories[type] = []() {
-                return std::make_unique<T>();
+            sceneFactories[type] = [this]() {
+                return std::make_unique<T>(coordinator);
             };
         }
 
@@ -58,6 +59,7 @@ namespace scene {
         vector<SceneType> sceneTypes;
         vector<SceneType> scenesToRemove;
         SceneFactory sceneFactories;
+        engine::ecs::Coordinator& coordinator;
     };
 
 }

@@ -11,7 +11,7 @@
 
 using std::unordered_map;
 
-namespace engine::ecs {
+namespace engine { namespace ecs {
     class ComponentManager {
     public:
         /// Register component for later use.
@@ -65,7 +65,7 @@ namespace engine::ecs {
         /// \return Component from the entity
         template<typename T>
         T& getComponent(Entity entity) {
-            return getComponentArray<T>()->getComponentData(entity);
+            return getComponentArray<T>()->getData(entity);
         }
 
         /// Notify each component array that an entity has been destroyed
@@ -93,6 +93,6 @@ namespace engine::ecs {
             return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
         }
     };
-}
+} }
 
 #endif //ECS_COMPONENTMANAGER_H

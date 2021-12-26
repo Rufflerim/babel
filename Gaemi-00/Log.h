@@ -56,7 +56,7 @@ namespace engine {
 		/// </summary>
 		/// <param name="level">LogLevel to translate to a string</param>
 		/// <returns>String corresponding to the LogLevel</returns>
-		str getLabel(LogLevel level);
+		static str getLabel(LogLevel level);
 
 		/// <summary>
 		/// PLATFORM DEPENDANT
@@ -64,14 +64,14 @@ namespace engine {
 		/// </summary>
 		/// <param name="message">Message to write</param>
 		/// <param name="level">LogLevel that will be changed in a color</param>
-		void consoleWrite(const str& message, LogLevel level);
+		static void consoleWrite(const str& message, LogLevel level);
 
 		/// <summary>
 		/// PLATFORM DEPENDANT
 		/// Get an iso date on 19 chars
 		/// </summary>
 		/// <returns>Iso date</returns>
-		array<char, 19> getDate();
+		static array<char, 19> getDate();
 	};
 
 	// Log only if we pass a certain LogLevel

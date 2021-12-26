@@ -3,6 +3,7 @@
 //
 
 #include <GameTime.h>
+#include <Coordinator.h>
 
 #ifndef SCENE_ISCENE_H
 #define SCENE_ISCENE_H
@@ -10,7 +11,9 @@
 namespace scene {
     class IScene {
     public:
-        virtual ~IScene() {}
+        explicit IScene(engine::ecs::Coordinator& coordinator) : coordinator { coordinator } {}
+
+        virtual ~IScene() = default;
 
         virtual void onInit() = 0;
 
@@ -22,7 +25,7 @@ namespace scene {
 
         virtual void update(GameTime time) = 0;
 
-        virtual void draw() = 0;
+        virtual void draw(SDL_Renderer *pRenderer) = 0;
 
         bool isTransparent() const { return transparent; }
 
@@ -34,10 +37,12 @@ namespace scene {
 
     protected:
         /// True if the scene under this scene in the stack must draw
-        bool transparent{false};
+        bool transparent{ false };
 
         /// True if the scene under this scene in the stack must update
-        bool nonLocking{false};
+        bool nonLocking{ false };
+
+        engine::ecs::Coordinator& coordinator;
     };
 }
 #endif //SCENE_ISCENE_H

@@ -10,13 +10,9 @@
 #include <unordered_map>
 #include "../Defines.h"
 #include "../Asserts.h"
+#include "System.h"
 
-namespace engine::ecs {
-    class System {
-    public:
-        std::set<Entity> entities;
-    };
-
+namespace engine { namespace ecs {
     class SystemManager {
     public:
         /// Create a pointer to the system and return it so it can be used externally
@@ -24,7 +20,7 @@ namespace engine::ecs {
         /// \return Shared pointer to the system
         template<typename T>
         std::shared_ptr<T> registerSystem() {
-            const char* typeName = typeid(T).name();
+            const char* const typeName = typeid(T).name();
             GASSERT_DEBUG(systems.find(typeName) == systems.end(), "Registering system more than once.")
 
             auto system = std::make_shared<T>();
@@ -59,7 +55,7 @@ namespace engine::ecs {
         /// Map from system type string pointer to a system pointer
         std::unordered_map<const char*, std::shared_ptr<System>> systems {};
     };
-}
+} }
 
 
 #endif //ECS_SYSTEMMANAGER_H

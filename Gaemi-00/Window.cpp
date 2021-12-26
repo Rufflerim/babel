@@ -21,6 +21,11 @@ bool engine::Window::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen
 		return false;
 	}
 
+	renderer = std::unique_ptr<SDL_Renderer, SDLRendererDestroyer>(
+			SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED)
+	);
+	SDL_SetRenderDrawColor( renderer.get(), 0x00, 0x00, 0x00, 0xFF );
+
 	LOG(LogLevel::Trace) << "Window initialized";
 	return true;
 }

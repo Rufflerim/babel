@@ -6,7 +6,7 @@ add_executable(${CMAKE_PROJECT_NAME} DumbKnights/main.cpp)
 target_link_libraries(${CMAKE_PROJECT_NAME} DumbKnights-Game Gaemi-00)
 
 ## Setup compilation
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=1)
 elseif(CMAKE_BUILD_TYPE MATCHES Release)

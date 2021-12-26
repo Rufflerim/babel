@@ -9,7 +9,7 @@
 #include "ControllerState.h"
 #include "../math/Vec2.h"
 
-
+using gmath::Vec2;
 
 namespace engine::input {
 

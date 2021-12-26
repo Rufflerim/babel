@@ -58,7 +58,7 @@ namespace engine {
 		/// <summary>
 		/// Draw everything
 		/// </summary>
-		void draw();
+        void draw(SDL_Renderer *pRenderer);
 
 	private:
         /// Game engine state

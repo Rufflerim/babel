@@ -9,6 +9,9 @@
 
 namespace scene {
     class GamePause : public IScene {
+    public:
+        explicit GamePause(engine::ecs::Coordinator& coordinator);
+
         void onInit() override;
 
         void onClose() override;
@@ -19,7 +22,7 @@ namespace scene {
 
         void update(GameTime time) override;
 
-        void draw() override;
+        void draw(SDL_Renderer *pRenderer) override;
     };
 }
 

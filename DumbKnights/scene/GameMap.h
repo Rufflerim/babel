@@ -5,11 +5,15 @@
 #ifndef SCENE_GAMEMAP_H
 #define SCENE_GAMEMAP_H
 
+#include <SDL_render.h>
 #include "IScene.h"
+#include "../components/RenderingSystem.h"
 
 namespace scene {
     class GameMap : public IScene {
     public:
+        explicit GameMap(engine::ecs::Coordinator& coordinator);
+
         void onInit() override;
 
         void onClose() override;
@@ -20,9 +24,12 @@ namespace scene {
 
         void update(GameTime time) override;
 
-        void draw() override;
+        void draw(SDL_Renderer *pRenderer) override;
 
-        u32 count;
+    private:
+        std::shared_ptr<RenderingSystem> rendering;
+        std::vector<Entity> entities { 100 };
+
     };
 }
 

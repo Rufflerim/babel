@@ -13,7 +13,7 @@
 using std::queue;
 using std::array;
 
-namespace engine::ecs {
+namespace engine { namespace ecs {
     class EntityManager {
     public:
         /// Initialize all entities. MAX_ENTITIES number is set in Defines.h.
@@ -53,6 +53,6 @@ namespace engine::ecs {
         /// Total living entities - used to keep limits on how many exist
         u32 livingEntityCount { 0 };
     };
-}
+} }
 
 #endif //GAEMI_00_ECS_ENTITYMANAGER_H

@@ -7,21 +7,24 @@
 
 #include "../Defines.h"
 
-class Vec2 {
-public:
-    Vec2();
-    Vec2(float x, float y);
-    float length();
+namespace gmath {
+    class Vec2 {
+    public:
+        Vec2();
 
-    Vec2& operator*=(float factor) {
-        x *= factor;
-        y *= factor;
-        return *this;
-    }
+        Vec2(float x, float y);
 
-    float x;
-    float y;
-};
+        float length() const;
 
+        Vec2 &operator*=(float factor) {
+            x *= factor;
+            y *= factor;
+            return *this;
+        }
+
+        float x;
+        float y;
+    };
+}
 
 #endif //MATH_VEC2_H

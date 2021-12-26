@@ -18,6 +18,12 @@ namespace engine {
 		}
 	};
 
+    struct SDLRendererDestroyer {
+        void operator()(SDL_Renderer* renderer) const {
+            SDL_DestroyRenderer(renderer);
+        }
+    };
+
 	class Window
 	{
 	public:
@@ -51,7 +57,7 @@ namespace engine {
 		/// <returns>Raw SDL_Window pointer</returns>
 		SDL_Window* get() { return window.get(); }
 
-
+        SDL_Renderer* getRenderer() { return renderer.get(); }
 
 
 	private:
@@ -60,7 +66,10 @@ namespace engine {
 		/// </summary>
 		std::unique_ptr<SDL_Window, SDLWindowDestroyer> window;
 
-		/// <summary>
+        std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> renderer;
+
+
+        /// <summary>
 		/// Window title
 		/// </summary>
 		str title { "" };

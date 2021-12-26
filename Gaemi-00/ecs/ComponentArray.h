@@ -13,7 +13,7 @@
 using std::array;
 using std::unordered_map;
 
-namespace engine::ecs {
+namespace engine { namespace ecs {
     class IComponentArray {
     public:
         virtual ~IComponentArray() = default;
@@ -27,7 +27,7 @@ namespace engine::ecs {
         /// \param entity Entity in which we want to add the component
         /// \param component Component we add to the entity
         void insertComponentData(Entity entity, T component) {
-            GASSERT_DEBUG(mEntityToIndexMap.find(entity) == mEntityToIndexMap.end(), "Component added to same entity more than once.")
+            GASSERT_DEBUG(entityToIndex.find(entity) == entityToIndex.end(), "Component added to same entity more than once.")
             size_t newIndex = size;
             entityToIndex[entity] = newIndex;
             indexToEntity[newIndex] = entity;
@@ -85,6 +85,6 @@ namespace engine::ecs {
         /// Converts a component array index to the relative entity ID
         unordered_map<size_t, Entity> indexToEntity;
     };
-}
+} }
 
 #endif //ECS_COMPONENTARRAY_H
