@@ -10,8 +10,8 @@ using gmath::Vec2;
 
 scene::GameMap::GameMap(engine::ecs::Coordinator &coordinator) : IScene(coordinator) {
     coordinator.init();
-    entities.reserve(5000);
-    for(int i = 0; i < 5000; ++i) {
+    entities.reserve(500);
+    for(int i = 0; i < 500; ++i) {
         entities.push_back(0);
     }
 }

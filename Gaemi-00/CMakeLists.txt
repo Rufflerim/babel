@@ -14,7 +14,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(${PROJECT_NAME} SDL2 ecs input render_sdl)
 
 ## Define a symbol for dll export, cf. Gaemi.h
-target_compile_definitions(${PROJECT_NAME} PRIVATE GAEMI00_EXPORTS=1)
+target_compile_definitions(${PROJECT_NAME} PUBLIC GAEMI00_EXPORTS=1)
 
 ## Post build DLL copy
 add_custom_command(

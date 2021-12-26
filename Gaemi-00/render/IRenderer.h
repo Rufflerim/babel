@@ -15,7 +15,7 @@ using gmath::Color;
 using gmath::Vec2;
 using gmath::Rectangle;
 
-namespace engine::render {
+namespace engine { namespace render {
     class IRenderer {
     public:
         virtual ~IRenderer() = default;
@@ -42,6 +42,6 @@ namespace engine::render {
         /// Close renderer
         virtual void close() = 0;
     };
-}
+} }
 
 #endif //RENDER_IRENDERERBACKEND_H

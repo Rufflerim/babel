@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "Log.h"
 #include <SDL_timer.h>
 
 using engine::Timer;
@@ -23,6 +24,7 @@ void Timer::delayTime()
 
     std::chrono::duration<f64> frameDelayWithoutMinDuration = frameEnd - frameStartTime;
     f64 frameDelayWithoutMinDurationSeconds = frameDelayWithoutMinDuration.count();
+    //LOG(LogLevel::Debug) << frameDelayWithoutMinDurationSeconds;
     if (frameDelayWithoutMinDurationSeconds < MIN_FRAME_DURATION) {
         u32 sleepTime = static_cast<u32>((MIN_FRAME_DURATION - frameDelayWithoutMinDurationSeconds) * 1000);
         SDL_Delay(sleepTime);
