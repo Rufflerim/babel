@@ -34,7 +34,7 @@ namespace scene {
         ~SceneManager() = default;
 
         void update(GameTime time);
-        void draw(SDL_Renderer *pRenderer);
+        void draw(engine::render::IRenderer& rendererBackend);
         void close();
 
         void processRequests();

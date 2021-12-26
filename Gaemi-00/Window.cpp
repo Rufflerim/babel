@@ -7,8 +7,7 @@ engine::Window::Window(str titleP) : title { titleP }
 {
 }
 
-bool engine::Window::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen)
-{
+bool engine::Window::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) {
 	// Create SDL window pointer
 	SDL_WindowFlags flags = SDL_WINDOW_SHOWN;
 	window = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(
@@ -21,21 +20,14 @@ bool engine::Window::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen
 		return false;
 	}
 
-	renderer = std::unique_ptr<SDL_Renderer, SDLRendererDestroyer>(
-			SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED)
-	);
-	SDL_SetRenderDrawColor( renderer.get(), 0x00, 0x00, 0x00, 0xFF );
-
 	LOG(LogLevel::Trace) << "Window initialized";
 	return true;
 }
 
-void engine::Window::close()
-{
+void engine::Window::close() {
 }
 
-void engine::Window::updateFPSCounter(const GameTime& time)
-{
+void engine::Window::updateFPSCounter(const GameTime& time) {
 	f64 elapsed = time.totalTime - lastElapsed;
 	if (elapsed > DURATION_BETWEEN_FPS_DISPLAY) {
 		// Compute fps number

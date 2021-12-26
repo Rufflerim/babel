@@ -59,8 +59,8 @@ void scene::GameMap::update(GameTime time) {
 
 }
 
-void scene::GameMap::draw(SDL_Renderer *pRenderer) {
-    rendering->draw(coordinator, pRenderer);
+void scene::GameMap::draw(engine::render::IRenderer& renderer) {
+    rendering->draw(coordinator, renderer);
 }
 
 

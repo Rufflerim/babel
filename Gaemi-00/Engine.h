@@ -7,6 +7,9 @@
 #include "input/InputManager.h"
 #include "Window.h"
 #include "EventManager.h"
+#include "render/sdl/RendererSDL.h"
+
+using engine::render::sdl::RendererSDL;
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
 constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
@@ -58,7 +61,7 @@ namespace engine {
 		/// <summary>
 		/// Draw everything
 		/// </summary>
-        void draw(SDL_Renderer *pRenderer);
+        void draw(render::IRenderer& rendererBackend);
 
 	private:
         /// Game engine state
@@ -72,6 +75,9 @@ namespace engine {
 
         /// Game window
 		Window window{ "Dumb Knights " };
+
+        /// Engine renderer
+        RendererSDL renderer {};
 
         /// Callback for engine events
         EventCallback onEngineEvent = [this](EventCode code, void* sender, void* listInst, EventContext context) {

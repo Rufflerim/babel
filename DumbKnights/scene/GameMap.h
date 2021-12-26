@@ -6,6 +6,7 @@
 #define SCENE_GAMEMAP_H
 
 #include <SDL_render.h>
+#include <render/IRenderer.h>
 #include "IScene.h"
 #include "../components/RenderingSystem.h"
 
@@ -24,7 +25,7 @@ namespace scene {
 
         void update(GameTime time) override;
 
-        void draw(SDL_Renderer *pRenderer) override;
+        void draw(engine::render::IRenderer& renderer) override;
 
     private:
         std::shared_ptr<RenderingSystem> rendering;

@@ -14,14 +14,13 @@ void engine::Engine::init(IGame& game) {
 	bool windowIgnited = window.init(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, false);
     bool eventsIgnited = eventManager.init();
     eventManager.subscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
+    bool rendererIgnited = renderer.init(window);
 
-	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited;
+	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited && rendererIgnited;
 	if (!state.isInitialized) {
 		LOG(LogLevel::Fatal) << "Engine subsystems failed at init. Shutting down.";
 		// Shut down all systems
-		inputManager.close();
-        eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
-        eventManager.close();
+        close();
 	} else {
 		state.isRunning = true;
 		state.isPaused = false;
@@ -38,7 +37,6 @@ void engine::Engine::run() {
 	state.game->load();
 	// Loop
 	while (state.isRunning) {
-		// TODO Compute delta time
 		time = timer.computeTime(time);
 
 		// Inputs
@@ -49,9 +47,10 @@ void engine::Engine::run() {
 		update(time);
 
 		// Draw
-        SDL_RenderClear(window.getRenderer());
-        draw(window.getRenderer());
-        SDL_RenderPresent(window.getRenderer());
+        renderer.clearScreen();
+        renderer.beginDraw();
+        draw(renderer);
+        renderer.endDraw();
 
 		// Time delay if game loop is faster than target FPS
 		timer.delayTime();
@@ -59,6 +58,7 @@ void engine::Engine::run() {
 }
 
 void engine::Engine::close() {
+    renderer.close();
     eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
     eventManager.close();
 	window.close();
@@ -82,8 +82,8 @@ void engine::Engine::update(GameTime time) {
 	state.game->update(time);
 }
 
-void engine::Engine::draw(SDL_Renderer *pRenderer) {
-    state.game->draw(pRenderer);
+void engine::Engine::draw(render::IRenderer& rendererBackend) {
+    state.game->draw(rendererBackend);
 }
 
 bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* listenerInstance, EventContext context) {

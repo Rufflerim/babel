@@ -2,7 +2,7 @@
 #ifndef IGAME_H
 #define IGAME_H
 
-#include <SDL_render.h>
+#include <render/IRenderer.h>
 #include "GameTime.h"
 
 namespace engine {
@@ -23,7 +23,7 @@ namespace engine {
 		/// <summary>
 		/// Renders the world
 		/// </summary>
-		virtual void draw(SDL_Renderer *pRenderer) = 0;
+		virtual void draw(render::IRenderer& rendererBackend) = 0;
 
         /// <summary>
         /// Updates what need to be updated after drawing

@@ -25,7 +25,7 @@ void scene::GamePause::update(GameTime time) {
 
 }
 
-void scene::GamePause::draw(SDL_Renderer *pRenderer) {
+void scene::GamePause::draw(engine::render::IRenderer& renderer) {
 
 }
 

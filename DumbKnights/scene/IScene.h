@@ -25,7 +25,7 @@ namespace scene {
 
         virtual void update(GameTime time) = 0;
 
-        virtual void draw(SDL_Renderer *pRenderer) = 0;
+        virtual void draw(engine::render::IRenderer& renderer) = 0;
 
         bool isTransparent() const { return transparent; }
 

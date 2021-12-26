@@ -9,8 +9,8 @@ void Game::update(GameTime time) {
     sceneManager.update(time);
 }
 
-void Game::draw(SDL_Renderer *pRenderer) {
-    sceneManager.draw(pRenderer);
+void Game::draw(engine::render::IRenderer& rendererBackend) {
+    sceneManager.draw(rendererBackend);
 }
 
 void Game::close() {

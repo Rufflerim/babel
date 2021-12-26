@@ -27,7 +27,7 @@ public:
 	/// <summary>
 	/// Renders the world
 	/// </summary>
-    void draw(SDL_Renderer *pRenderer) override;
+    void draw(engine::render::IRenderer& rendererBackend) override;
 
     /// <summary>
     /// Updates what need to be updated after drawing

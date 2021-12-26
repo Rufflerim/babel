@@ -5,6 +5,7 @@
 #ifndef SCENE_GAMEPAUSE_H
 #define SCENE_GAMEPAUSE_H
 
+#include <render/IRenderer.h>
 #include "IScene.h"
 
 namespace scene {
@@ -22,7 +23,7 @@ namespace scene {
 
         void update(GameTime time) override;
 
-        void draw(SDL_Renderer *pRenderer) override;
+        void draw(engine::render::IRenderer& renderer) override;
     };
 }
 

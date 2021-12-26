@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <Log.h>
 #include <SDL_render.h>
+#include <render/IRenderer.h>
 #include "VectorUtils.h"
 #include "SceneManager.h"
 #include "GamePause.h"
@@ -38,7 +39,7 @@ void scene::SceneManager::update(GameTime time) {
     }
 }
 
-void scene::SceneManager::draw(SDL_Renderer *pRenderer) {
+void scene::SceneManager::draw(engine::render::IRenderer& renderer) {
     // Look for the last transparent scene in scenes' stack
     auto transparentItr = std::find_if(rbegin(scenes), rend(scenes),
                                        [](auto& scene) { return !scene->isTransparent(); });
@@ -46,7 +47,7 @@ void scene::SceneManager::draw(SDL_Renderer *pRenderer) {
     auto forwardItr = --(transparentItr.base());
     // Draw transparent scenes with the right order
     for(; forwardItr != end(scenes); ++forwardItr) {
-        (*forwardItr)->draw(pRenderer);
+        (*forwardItr)->draw(renderer);
     }
 }
 

@@ -8,11 +8,12 @@
 #include <System.h>
 #include <Coordinator.h>
 #include <SDL_render.h>
+#include <render/IRenderer.h>
 #include "Components.h"
 
 class RenderingSystem : public engine::ecs::System {
 public:
-    void draw(engine::ecs::Coordinator &coordinator, SDL_Renderer *pRenderer);
+    void draw(engine::ecs::Coordinator &coordinator, engine::render::IRenderer& renderer);
 };
 
 
