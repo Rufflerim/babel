@@ -28,7 +28,7 @@ namespace scene {
 
     private:
         std::shared_ptr<RenderingSystem> rendering;
-        std::vector<Entity> entities { 100 };
+        std::vector<Entity> entities;
 
     };
 }
