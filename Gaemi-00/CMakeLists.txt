@@ -7,11 +7,12 @@ add_subdirectory( math )
 add_subdirectory( ecs )
 add_subdirectory( input )
 add_subdirectory( render/sdl )
+add_subdirectory( asset )
 
 file( GLOB Gaemi_SOURCES *.cpp )
 add_library( ${PROJECT_NAME} SHARED ${Gaemi_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(${PROJECT_NAME} SDL2 ecs input render_sdl)
+target_link_libraries(${PROJECT_NAME} SDL2 sdl_stb_image ecs input render_sdl asset)
 
 ## Define a symbol for dll export, cf. Gaemi.h
 target_compile_definitions(${PROJECT_NAME} PUBLIC GAEMI00_EXPORTS=1)

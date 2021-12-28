@@ -5,4 +5,4 @@ target_include_directories(render_sdl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 ## Needed to avoid warning LNK4217
 target_compile_definitions(render_sdl PUBLIC GAEMI00_EXPORTS=1)
 
-target_link_libraries(render_sdl SDL2 math)
+target_link_libraries(render_sdl SDL2 math stb_image)

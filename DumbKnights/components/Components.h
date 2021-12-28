@@ -26,4 +26,9 @@ struct ColorRectangle {
     Rectangle rectangle;
 };
 
+struct Sprite {
+    str textureName;
+    Vec2 origin;
+};
+
 #endif //COMPONENTS_COMPONENTS_H

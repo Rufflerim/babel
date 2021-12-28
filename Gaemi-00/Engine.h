@@ -8,6 +8,7 @@
 #include "Window.h"
 #include "EventManager.h"
 #include "render/sdl/RendererSDL.h"
+#include "asset/AssetManager.h"
 
 using engine::render::sdl::RendererSDL;
 
@@ -78,6 +79,9 @@ namespace engine {
 
         /// Engine renderer
         RendererSDL renderer {};
+
+        /// Asset manager
+        asset::AssetManager assetManager {};
 
         /// Callback for engine events
         EventCallback onEngineEvent = [this](EventCode code, void* sender, void* listInst, EventContext context) {

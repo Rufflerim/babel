@@ -8,7 +8,10 @@
 
 // General macro
 #define GASSERTIONS_ENABLED
-#define STB_IMAGE_IMPLEMENTATION
+
+
+// SDL_STB_image
+#define SDL_STBIMAGE_IMPLEMENTATION
 
 // General types
 // -- Unsigned integers

@@ -10,6 +10,12 @@ message("---- Linking SBT Image Write")
 add_library(stb_image_write INTERFACE)
 target_include_directories(stb_image_write INTERFACE stb_image_write)
 
+## SDL with SBT image
+message("---- Linking SDL-SBT Image")
+add_library(sdl_stb_image INTERFACE)
+target_include_directories(sdl_stb_image INTERFACE sdl_stb_image)
+
+
 ## SDL2
 message("---- Linking SDL2")
 add_library(SDL2 INTERFACE)

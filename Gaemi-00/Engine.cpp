@@ -15,8 +15,9 @@ void engine::Engine::init(IGame& game) {
     bool eventsIgnited = eventManager.init();
     eventManager.subscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
     bool rendererIgnited = renderer.init(window);
+    bool assetsIgnited = assetManager.init(renderer);
 
-	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited && rendererIgnited;
+	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited && rendererIgnited && assetsIgnited;
 	if (!state.isInitialized) {
 		LOG(LogLevel::Fatal) << "Engine subsystems failed at init. Shutting down.";
 		// Shut down all systems
@@ -58,6 +59,7 @@ void engine::Engine::run() {
 }
 
 void engine::Engine::close() {
+    assetManager.close();
     renderer.close();
     eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
     eventManager.close();
