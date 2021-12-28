@@ -7,7 +7,6 @@
 
 #include <unordered_map>
 #include "Assets.h"
-#include "../../Externals/stb_image/stb_image.h"
 #include "../render/IRenderer.h"
 #include <memory>
 

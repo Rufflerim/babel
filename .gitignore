@@ -358,7 +358,7 @@ cmake-build-*
 # ------------------------------- User defined gitignore  ------------------------------- #
 
 # Version all Externals folder
-!Externals/SDL2-2.0.16/lib/*
+!Externals/SDL2-2.0.18/lib/*
 !Externals/SDL2_ttf-2.0.15/lib/*
 !Externals/SDL2_mixer-2.0.4/lib/*
 

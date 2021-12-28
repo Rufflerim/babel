@@ -4,7 +4,6 @@
 
 #include <string>
 #include <bitset>
-#include "../Externals/stb_image/stb_image.h"
 
 // General macro
 #define GASSERTIONS_ENABLED
@@ -12,6 +11,9 @@
 
 // SDL_STB_image
 #define SDL_STBIMAGE_IMPLEMENTATION
+#define STBI_NO_LINEAR
+#define STBI_NO_HDR
+
 
 // General types
 // -- Unsigned integers

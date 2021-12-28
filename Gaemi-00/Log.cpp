@@ -87,7 +87,7 @@ void Log::consoleWrite(const str& message, LogLevel level)
 	SetConsoleTextAttribute(consoleHandle, levels[static_cast<i32>(level)]);
 	OutputDebugStringA(message.c_str());
 	LPDWORD numberWritten {};
-	WriteConsoleA(consoleHandle, message.c_str(), static_cast<DWORD>(message.length()), numberWritten, 0);
+	WriteConsoleA(consoleHandle, message.c_str(), static_cast<DWORD>(message.length()), numberWritten, nullptr);
 }
 
 array<char, 19> engine::Log::getDate()

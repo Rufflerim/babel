@@ -26,7 +26,8 @@ std::shared_ptr<engine::render::sdl::Texture> engine::asset::AssetManager::getTe
 bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) {
     bool result = false;
     // Load a pixel surface that fits the texture
-    SDL_Surface* surf = STBIMG_Load(path.c_str());
+    SDL_RWops *file = SDL_RWFromFile(path.c_str(), "rb");
+    SDL_Surface *surf = STBIMG_Load_RW(file, 1);
     // In cas of error, creates a 256 * 256 magenta surface
     if (surf == nullptr) {
         LOG(LogLevel::Error) << "Could not load SDL texture: " << path;
