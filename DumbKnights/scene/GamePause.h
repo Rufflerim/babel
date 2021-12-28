@@ -21,7 +21,7 @@ namespace scene {
 
         void inactivate() override;
 
-        void update(GameTime time) override;
+        void update(const GameTime& time, const InputState& inputState) override;
 
         void draw(engine::render::IRenderer& renderer) override;
     };

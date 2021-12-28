@@ -44,7 +44,7 @@ void engine::Engine::run() {
 
 		// Update
 		window.updateFPSCounter(time);
-		update(time);
+		update(time, inputState);
 
 		// Draw
         renderer.clearScreen();
@@ -78,8 +78,8 @@ InputState engine::Engine::inputs() {
 	return inputManager.getInputState();
 }
 
-void engine::Engine::update(GameTime time) {
-	state.game->update(time);
+void engine::Engine::update(const GameTime& time, const input::InputState& inputState) {
+	state.game->update(time, inputState);
 }
 
 void engine::Engine::draw(render::IRenderer& rendererBackend) {

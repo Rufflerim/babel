@@ -55,7 +55,7 @@ void scene::GameMap::inactivate() {
 
 }
 
-void scene::GameMap::update(GameTime time) {
+void scene::GameMap::update(const GameTime& time, const InputState& inputState) {
 
 }
 

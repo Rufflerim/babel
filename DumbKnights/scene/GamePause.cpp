@@ -21,7 +21,7 @@ void scene::GamePause::inactivate() {
 
 }
 
-void scene::GamePause::update(GameTime time) {
+void scene::GamePause::update(const GameTime& time, const InputState& inputState) {
 
 }
 

@@ -5,8 +5,8 @@ void Game::load() {
 
 }
 
-void Game::update(GameTime time) {
-    sceneManager.update(time);
+void Game::update(const GameTime& time, const InputState& inputState) {
+    sceneManager.update(time, inputState);
 }
 
 void Game::draw(engine::render::IRenderer& rendererBackend) {

@@ -22,7 +22,7 @@ public:
 	/// Update state of the world
 	/// </summary>
 	/// <param name="time">Game time</param>
-	void update(GameTime time) override;
+	void update(const GameTime& time, const InputState& inputState) override;
 
 	/// <summary>
 	/// Renders the world

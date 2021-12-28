@@ -56,7 +56,7 @@ namespace engine {
 		/// Update logic 
 		/// </summary>
 		/// <param name="time">Game time</param>
-		void update(GameTime time);
+		void update(const GameTime& time, const input::InputState& inputState);
 
 		/// <summary>
 		/// Draw everything

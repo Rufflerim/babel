@@ -3,7 +3,10 @@
 #define IGAME_H
 
 #include <render/IRenderer.h>
+#include <InputManager.h>
 #include "GameTime.h"
+
+using engine::input::InputState;
 
 namespace engine {
 
@@ -18,7 +21,7 @@ namespace engine {
 		/// Update state of the world
 		/// </summary>
 		/// <param name="time">Game time</param>
-		virtual void update(GameTime time) = 0;
+		virtual void update(const GameTime& time, const InputState& inputState) = 0;
 
 		/// <summary>
 		/// Renders the world

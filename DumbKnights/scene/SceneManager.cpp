@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <Log.h>
-#include <SDL_render.h>
 #include <render/IRenderer.h>
 #include "VectorUtils.h"
 #include "SceneManager.h"
@@ -12,7 +11,6 @@
 #include "GameMap.h"
 
 using scene::SceneType;
-
 
 scene::SceneManager::SceneManager(engine::ecs::Coordinator &coordinator)
 : coordinator { coordinator } {
@@ -27,7 +25,7 @@ scene::SceneManager::SceneManager(engine::ecs::Coordinator &coordinator)
     switchTo(SceneType::GameMap);
 }
 
-void scene::SceneManager::update(GameTime time) {
+void scene::SceneManager::update(const GameTime& time, const InputState& inputState) {
     // Look for the last non locking scene in scenes' stack
     auto nonLockingItr = std::find_if(rbegin(scenes), rend(scenes),
                                       [](auto& scene) { return !scene->isNonLocking(); });
@@ -35,7 +33,7 @@ void scene::SceneManager::update(GameTime time) {
     auto forwardItr = --(nonLockingItr.base());
     // Draw non locking scenes with the right order
     for(; forwardItr != end(scenes); ++forwardItr) {
-        (*forwardItr)->update(time);
+        (*forwardItr)->update(time, inputState);
     }
 }
 

@@ -2,11 +2,14 @@
 // Created by gaetz on 24/12/2021.
 //
 
-#include <GameTime.h>
-#include <Coordinator.h>
-
 #ifndef SCENE_ISCENE_H
 #define SCENE_ISCENE_H
+
+#include <GameTime.h>
+#include <Coordinator.h>
+#include <InputManager.h>
+
+using engine::input::InputState;
 
 namespace scene {
     class IScene {
@@ -23,7 +26,7 @@ namespace scene {
 
         virtual void inactivate() = 0;
 
-        virtual void update(GameTime time) = 0;
+        virtual void update(const GameTime& time, const InputState& inputState) = 0;
 
         virtual void draw(engine::render::IRenderer& renderer) = 0;
 

@@ -12,11 +12,13 @@
 #include <functional>
 #include <memory>
 #include <Coordinator.h>
+#include <InputManager.h>
 
 using std::vector;
 using std::pair;
 using std::unordered_map;
 using std::unique_ptr;
+using engine::input::InputState;
 
 namespace scene {
 
@@ -33,7 +35,7 @@ namespace scene {
         explicit SceneManager(engine::ecs::Coordinator& coordinator);
         ~SceneManager() = default;
 
-        void update(GameTime time);
+        void update(const GameTime& time, const InputState& inputState);
         void draw(engine::render::IRenderer& rendererBackend);
         void close();
 
