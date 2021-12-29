@@ -2,8 +2,6 @@
 #ifndef ASSERTS_H
 #define ASSERTS_H
 
-#include "Gaemi.h"
-
 #ifdef GASSERTIONS_ENABLED
 
 	namespace engine {

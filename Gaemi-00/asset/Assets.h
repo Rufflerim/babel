@@ -6,10 +6,9 @@
 #define ASSET_ASSETS_H
 
 #include "../Defines.h"
-#include "../Gaemi.h"
 #include "../render/sdl/Texture.h"
 
-namespace engine::asset {
+namespace engine { namespace asset {
     class Assets {
     public:
         virtual ~Assets() = default;
@@ -31,6 +30,6 @@ namespace engine::asset {
     private:
         static void placeholderMessage() ;
     };
-}
+} }
 
 #endif //ASSET_ASSETS_H

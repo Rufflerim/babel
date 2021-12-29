@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
-
-project(Gaemi-00)
 set(CMAKE_CXX_STANDARD 17)
+project(Gaemi-00)
+add_definitions(-DGEXPORT)
 
 add_subdirectory( math )
 add_subdirectory( ecs )
@@ -14,8 +14,8 @@ add_library( ${PROJECT_NAME} SHARED ${Gaemi_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(${PROJECT_NAME} SDL2 sdl_stb_image ecs input render_sdl asset)
 
-## Define a symbol for dll export, cf. Gaemi.h
-target_compile_definitions(${PROJECT_NAME} PUBLIC GAEMI00_EXPORTS=1)
+## Define a symbol for dll export
+target_compile_definitions(${PROJECT_NAME} PUBLIC GEXPORT=1)
 
 ## Post build DLL copy
 add_custom_command(

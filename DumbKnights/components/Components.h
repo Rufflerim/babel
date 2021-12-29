@@ -16,7 +16,7 @@ using gmath::Rectangle;
 /// Transform for a 2D entity
 struct Transform2D {
     Vec2 position;
-    float rotation { 0 };
+    f64 rotation { 0.0 };
     Vec2 scale;
 };
 
@@ -29,6 +29,7 @@ struct ColorRectangle {
 struct Sprite {
     str textureName;
     Vec2 origin;
+    engine::render::Flip flip { engine::render::Flip::None };
 };
 
 #endif //COMPONENTS_COMPONENTS_H

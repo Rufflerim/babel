@@ -6,7 +6,6 @@
 #include <sstream>
 #include <array>
 #include "Defines.h"
-#include "Gaemi.h"
 
 #define GAME_LOG_FILE "game.log"
 

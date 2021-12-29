@@ -10,7 +10,7 @@
 
 using gmath::Vec2;
 
-namespace engine::input {
+namespace engine { namespace input {
 
     enum class ButtonState;
 
@@ -87,7 +87,7 @@ namespace engine::input {
         f32 rightTrigger { 0.0f };
         bool isConnected { false };
     };
-}
+}}
 
 
 #endif //INPUT_CONTROLLERSTATE_H

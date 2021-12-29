@@ -9,6 +9,7 @@
 #include <render/IRenderer.h>
 #include "IScene.h"
 #include "../components/RenderingSystem.h"
+#include "../Locator.h"
 
 namespace scene {
     class GameMap : public IScene {

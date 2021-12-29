@@ -4,14 +4,14 @@
 
 using engine::Engine;
 
-GAPI int engine::Entry::start(engine::IGame& game)
+GAPI int engine::Entry::start(engine::IGame& game, engine::ILocator& locator)
 {
     // Log initialization
     Log::restart();
 
     // Engine
     Engine engine;
-    engine.init(game);
+    engine.init(game, locator);
     engine.run();
     engine.close();
 

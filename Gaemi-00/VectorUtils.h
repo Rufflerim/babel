@@ -20,6 +20,7 @@ public:
 
 template<typename T>
 u32 VectorUtils::getIndex(T element, std::vector<T>& vector) {
+    if (vector.size() == 0) return -1;
     auto itr = std::find(begin(vector), end(vector), element);
     if(itr == end(vector)) return -1;
     return itr - begin(vector);

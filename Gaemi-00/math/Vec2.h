@@ -26,6 +26,10 @@ namespace gmath {
         /// \return Vector's squared length
         f32 squareLength() const;
 
+        bool operator==(const Vec2& other) const {
+            return x == other.x && y == other.y;
+        }
+
         /// Multiply a vector by a float
         /// \param factor Factor of multiplication
         /// \return Same vector, multiplied

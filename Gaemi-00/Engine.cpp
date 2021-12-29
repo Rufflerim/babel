@@ -1,20 +1,22 @@
 #include "Engine.h"
 #include "Log.h"
 #include "Timer.h"
+#include "../DumbKnights/Locator.h"
 #include <SDL_events.h>
 
 
 using engine::input::InputState;
 
-void engine::Engine::init(IGame& game) {
+void engine::Engine::init(IGame& game, ILocator& locator) {
 	state.game = &game;
+    state.locator = &locator;
 
 	// Init everything
-	bool inputsIgnited = inputManager.init();
+	bool inputsIgnited = inputManager.init(&locator);
 	bool windowIgnited = window.init(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, false);
     bool eventsIgnited = eventManager.init();
     eventManager.subscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
-    bool rendererIgnited = renderer.init(window);
+    bool rendererIgnited = renderer.init(&locator, window);
     bool assetsIgnited = assetManager.init(renderer);
 
 	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited && rendererIgnited && assetsIgnited;
@@ -23,9 +25,13 @@ void engine::Engine::init(IGame& game) {
 		// Shut down all systems
         close();
 	} else {
+        // Set state
 		state.isRunning = true;
 		state.isPaused = false;
-		LOG(LogLevel::Info) << "Engine started.";
+        // Setup locator
+		locator.init(&eventManager, &assetManager);
+        // Announce proudly
+        LOG(LogLevel::Info) << "Engine started.";
 	}
 
 }

@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "EventManager.h"
 #include "Engine.h"
-#include "Locator.h"
 
 using engine::EventManager;
 
@@ -14,7 +13,6 @@ array<engine::EventCodeEntry, engine::MAX_EVENT_CODE> EventManager::state {};
 bool EventManager::init() {
     if (isInitialized) return false;
     isInitialized = true;
-    Locator::provide(this);
     LOG(LogLevel::Trace) << "Events initialized";
     return true;
 }

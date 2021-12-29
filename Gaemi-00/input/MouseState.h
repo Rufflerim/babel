@@ -10,7 +10,7 @@
 
 using gmath::Vec2;
 
-namespace engine::input {
+namespace engine { namespace input {
     enum class ButtonState;
 
     class MouseState {
@@ -34,5 +34,5 @@ namespace engine::input {
         Vec2 scrollWheel;
         bool isRelativeMode;
     };
-}
+}}
 #endif //INPUT_MOUSESTATE_H

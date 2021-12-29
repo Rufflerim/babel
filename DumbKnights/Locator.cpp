@@ -4,14 +4,12 @@
 
 #include "Locator.h"
 
-Events* Locator::eventsService {nullptr};
-NullEvents Locator::nullEventsService {};
-Assets* Locator::assetsService {nullptr};
+engine::NullEvents Locator::nullEventsService {};
 NullAssets Locator::nullAssetsService {};
 
-void Locator::init() {
-    eventsService = &nullEventsService;
-    assetsService = &nullAssetsService;
+void Locator::init(Events* events, Assets* assets) {
+    eventsService = events;
+    assetsService = assets;
 }
 
 void Locator::provide(Events* service) {

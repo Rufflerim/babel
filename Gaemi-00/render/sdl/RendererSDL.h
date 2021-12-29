@@ -12,7 +12,7 @@
 
 namespace engine::render::sdl {
     struct SDLRendererDestroyer {
-            void operator()(SDL_Renderer* renderer) const {
+        void operator()(SDL_Renderer* renderer) const {
             SDL_DestroyRenderer(renderer);
         }
     };
@@ -20,18 +20,28 @@ namespace engine::render::sdl {
     class RendererSDL : public IRenderer {
     public:
         RendererSDL() = default;
-        bool init(Window& window) override;
+
+        bool init(engine::ILocator* locator, Window& window) override;
+
         void clearScreen() override;
+
         void beginDraw() override;
-        void drawRectangle(const Rectangle &rectangle, const Color &color) override;
+
+        void drawRectangle(const Rectangle& rectangle, const Color& color) override;
+
         void endDraw() override;
+
         void close() override;
 
+        void drawSprite(Texture* texture, const Rectangle& srcRect, const Rectangle& dstRect,
+                        f64 angle, const Vec2& origin, engine::render::Flip flip) override;
+
     private:
-        std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> renderer { nullptr };
-        gmath::Color clearColor { gmath::Color::BLACK };
-        i32 width { -1 };
-        i32 height { -1 };
+        ILocator* locator{nullptr};
+        std::unique_ptr<SDL_Renderer, SDLRendererDestroyer> renderer{nullptr};
+        gmath::Color clearColor{gmath::Color::BLACK};
+        i32 width{-1};
+        i32 height{-1};
     };
 }
 

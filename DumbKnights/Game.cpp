@@ -1,8 +1,9 @@
 #include <SDL_render.h>
 #include "Game.h"
+#include "SceneType.h"
 
 void Game::load() {
-
+    sceneManager.switchTo(scene::SceneType::GameMap);
 }
 
 void Game::update(const GameTime& time, const InputState& inputState) {

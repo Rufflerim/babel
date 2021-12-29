@@ -20,9 +20,6 @@ scene::SceneManager::SceneManager(engine::ecs::Coordinator &coordinator)
     // Register scene types
     registerScene<GameMap>(SceneType::GameMap);
     registerScene<GamePause>(SceneType::GamePause);
-
-
-    switchTo(SceneType::GameMap);
 }
 
 void scene::SceneManager::update(const GameTime& time, const InputState& inputState) {

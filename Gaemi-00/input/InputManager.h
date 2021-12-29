@@ -8,10 +8,11 @@
 #include "MouseState.h"
 #include "ControllerState.h"
 #include "../math/Vec2.h"
+#include "../ILocator.h"
 
 using gmath::Vec2;
 
-namespace engine::input {
+namespace engine { namespace input {
 
     enum class ButtonState {
         None,
@@ -31,7 +32,7 @@ namespace engine::input {
         InputManager(u32 windowWidthP, u32 windowHeightP);
         InputManager() = delete;
 
-        bool init();
+        bool init(engine::ILocator* locatorP);
 
         void close();
 
@@ -51,6 +52,7 @@ namespace engine::input {
         void setMouseRelativeMode(bool isMouseRelativeOnP);
 
     private:
+        ILocator* locator{nullptr};
         u32 windowWidth { 1280 };
         u32 windowHeight { 720 };
         InputState inputState {};
@@ -64,6 +66,6 @@ namespace engine::input {
     constexpr i32 CONTROLLER_DEAD_ZONE_1D = 250;
     constexpr f32 CONTROLLER_DEAD_ZONE_2D = 8000.0f;
     constexpr i32 CONTROLLER_MAX_VALUE = 30000;
-}
+}}
 
 #endif

@@ -9,6 +9,7 @@
 #include "EventManager.h"
 #include "render/sdl/RendererSDL.h"
 #include "asset/AssetManager.h"
+#include "ILocator.h"
 
 using engine::render::sdl::RendererSDL;
 
@@ -24,6 +25,7 @@ namespace engine {
 		bool isRunning { false };
 		bool isPaused { false };
 		IGame* game;
+        ILocator* locator;
 	};
 
 	class Engine
@@ -35,7 +37,7 @@ namespace engine {
 		/// <summary>
 		/// Init everything in the engine
 		/// </summary>
-		void init(IGame& game);
+		void init(IGame& game, ILocator& locator);
 
 		/// <summary>
 		/// Run the engine. Game loop.

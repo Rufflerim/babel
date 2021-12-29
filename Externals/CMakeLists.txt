@@ -75,7 +75,7 @@ target_link_libraries(SDL2_ttf INTERFACE ${SDL2_ttf_LIBRARIES})
 
 ## Copy dll
 message("-- Copy external DLLs")
-set(BUILD_DIR cmake-build-debug-clang)
+set(BUILD_DIR cmake-build-debug)
 ## Windows
 if(WIN32)
     #### SDL2 dll copy

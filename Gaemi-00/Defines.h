@@ -5,6 +5,23 @@
 #include <string>
 #include <bitset>
 
+// Dll
+#ifdef GEXPORT
+    // Exports
+    #ifdef _MSC_VER
+        #define GAPI __declspec(dllexport)
+    #else
+        #define GAPI __attribute__((visibility("default")))
+    #endif
+#else
+    // Imports
+    #ifdef _MSC_VER
+        #define GAPI __declspec(dllimport)
+    #else
+        #define GAPI
+    #endif
+#endif
+
 // General macro
 #define GASSERTIONS_ENABLED
 

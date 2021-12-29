@@ -1,7 +1,8 @@
 #include <Functions.h>
 #include "InputManager.h"
 #include "../Log.h"
-#include "../Locator.h"
+#include "../ILocator.h"
+#include "../Events.h"
 
 using engine::input::InputManager;
 
@@ -11,7 +12,8 @@ InputManager::InputManager(u32 windowWidthP, u32 windowHeightP) :
 
 }
 
-bool InputManager::init() {
+bool InputManager::init(engine::ILocator* locatorP) {
+    locator = locatorP;
     // Keyboard
     // Assign current state pointer
     inputState.keyboard.currentState = SDL_GetKeyboardState(nullptr);
@@ -43,7 +45,7 @@ void InputManager::close() {
 void InputManager::processSDLEvent(SDL_Event& event) {
     switch (event.type) {
         case SDL_QUIT:
-            Locator::events().fire(EventCode::ApplicationQuit, nullptr, {});
+            locator->events().fire(EventCode::ApplicationQuit, nullptr, {});
             break;
         case SDL_MOUSEWHEEL:
             inputState.mouse.scrollWheel = Vec2 {

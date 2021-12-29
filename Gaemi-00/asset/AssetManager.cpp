@@ -24,7 +24,7 @@ std::shared_ptr<engine::render::sdl::Texture> engine::asset::AssetManager::getTe
 }
 
 bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) {
-    bool result = false;
+    bool result = true;
     // Load a pixel surface that fits the texture
     SDL_RWops *file = SDL_RWFromFile(path.c_str(), "rb");
     SDL_Surface *surf = STBIMG_Load_RW(file, 1);
@@ -33,18 +33,23 @@ bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) 
         LOG(LogLevel::Error) << "Could not load SDL texture: " << path;
         surf = SDL_CreateRGBSurface(0, 256, 256, 32, 0, 0, 0, 0);
         SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 255, 0, 255));
+        result = false;
     }
     // Create a texture from the surface and store it as a shared pointer
+
+    SDL_Texture* t = STBIMG_CreateTexture(
+            reinterpret_cast<SDL_Renderer*>(rendererRef),
+            static_cast<const unsigned char*>(surf->pixels), surf->w, surf->h, 4);
+
     textures[name] = std::make_shared<render::sdl::Texture>(
             name, surf->w, surf->h,
             std::unique_ptr<SDL_PixelFormat>(surf->format),
-            std::unique_ptr<SDL_Texture, SDLTextureDestroyer>(STBIMG_CreateTexture(
-                    reinterpret_cast<SDL_Renderer*>(rendererRef),
-                    static_cast<const unsigned char*>(surf->pixels), surf->w, surf->h, 4)
-            )
+            std::unique_ptr<SDL_Texture, SDLTextureDestroyer>(t)
     );
-    //
+    // Close loading
     SDL_FreeSurface(surf);
-    result = true;
+    if (result) {
+        LOG(LogLevel::Trace) << "Texture " << path << " loaded";
+    }
     return result;
 }

@@ -9,7 +9,7 @@
 #include <memory>
 #include <SDL_render.h>
 
-namespace engine::render::sdl {
+namespace engine { namespace render { namespace sdl {
 
     struct SDLTextureDestroyer {
         void operator()(SDL_Texture* texture) const {
@@ -28,7 +28,7 @@ namespace engine::render::sdl {
         std::unique_ptr<SDL_PixelFormat> pixelFormat;
         std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture;
     };
-}
+} } }
 
 
 #endif //RENDER_SDL_TEXTURE2D_H

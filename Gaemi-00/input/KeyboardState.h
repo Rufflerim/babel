@@ -9,7 +9,7 @@
 #include "../Defines.h"
 
 
-namespace engine::input {
+namespace engine { namespace input {
 
     enum class ButtonState;
 
@@ -25,6 +25,6 @@ namespace engine::input {
         const u8* currentState;
         Uint8 previousState[SDL_NUM_SCANCODES];
     };
-}
+}}
 
 #endif //INPUT_KEYBOARDSTATE_H
