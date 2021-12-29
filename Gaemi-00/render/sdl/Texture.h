@@ -18,14 +18,11 @@ namespace engine { namespace render { namespace sdl {
     };
 
     struct Texture {
-        Texture(str name, i32 width, i32 height,
-                std::unique_ptr<SDL_PixelFormat> pixelFormat,
-                std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture);
+        Texture(str name, i32 width, i32 height, std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture);
 
         str name;
         i32 width;
         i32 height;
-        std::unique_ptr<SDL_PixelFormat> pixelFormat;
         std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture;
     };
 } } }
