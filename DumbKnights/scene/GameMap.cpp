@@ -10,8 +10,8 @@ using gmath::Vec2;
 
 scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordinator) {
     coordinator.init();
-    entities.reserve(500);
-    for (int i = 0; i < 500; ++i) {
+    entities.reserve(1000);
+    for (int i = 0; i < 1000; ++i) {
         entities.push_back(0);
     }
 }
@@ -33,16 +33,16 @@ void scene::GameMap::onInit() {
     coordinator.setSystemSignature<RenderingSystem>(spriteSignature);
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPositionX(100.0f, 1200.0f);
-    std::uniform_real_distribution<float> randPositionY(100.0f, 600.0f);
-    std::uniform_real_distribution<float> randScale(50.0f, 100.0f);
+    std::uniform_real_distribution<float> randPositionX(50.0f, 1200.0f);
+    std::uniform_real_distribution<float> randPositionY(50.0f, 600.0f);
+    std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
     //std::uniform_int_distribution randColor(0, 255);
 
     for (auto& entity: entities) {
         entity = coordinator.createEntity();
         coordinator.addComponent(entity,
                                  Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
-                                             0, Vec2{1.0f, 1.0f}});
+                                             0, Vec2{randScale(generator), randScale(generator)}});
         coordinator.addComponent(entity,
                                  Sprite { "mathieu", Vec2 {} });
 

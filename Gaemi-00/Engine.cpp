@@ -65,11 +65,11 @@ void engine::Engine::run() {
 }
 
 void engine::Engine::close() {
-    assetManager.close();
     renderer.close();
     eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
     eventManager.close();
-	window.close();
+    assetManager.close();
+    window.close();
 	inputManager.close();
 	LOG(LogLevel::Info) << "Engine closed.";
 	LOG(LogLevel::Trace) << "Bye :)";

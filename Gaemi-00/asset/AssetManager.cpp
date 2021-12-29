@@ -4,6 +4,7 @@
 
 #include "AssetManager.h"
 #include "../Log.h"
+#include "../render/sdl/RendererSDL.h"
 #include <sdl_stb_image.h>
 
 using engine::render::sdl::SDLTextureDestroyer;
@@ -30,7 +31,7 @@ bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) 
     SDL_Surface *surf = STBIMG_Load_RW(file, 1);
     // In cas of error, creates a 256 * 256 magenta surface
     if (surf == nullptr) {
-        LOG(LogLevel::Error) << "Could not load SDL texture: " << path;
+        LOG(LogLevel::Error) << "Could not load SDL texture: " << path << ". SDL Error:" << SDL_GetError();
         surf = SDL_CreateRGBSurface(0, 256, 256, 32, 0, 0, 0, 0);
         SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 255, 0, 255));
         result = false;
@@ -38,8 +39,12 @@ bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) 
     // Create a texture from the surface and store it as a shared pointer
 
     SDL_Texture* t = STBIMG_CreateTexture(
-            reinterpret_cast<SDL_Renderer*>(rendererRef),
+            reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(),
             static_cast<const unsigned char*>(surf->pixels), surf->w, surf->h, 4);
+
+    if(t == nullptr) {
+        LOG(LogLevel::Error) << SDL_GetError();
+    }
 
     textures[name] = std::make_shared<render::sdl::Texture>(
             name, surf->w, surf->h,

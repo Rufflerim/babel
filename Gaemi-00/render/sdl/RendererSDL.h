@@ -33,6 +33,8 @@ namespace engine::render::sdl {
 
         void close() override;
 
+        SDL_Renderer* getSdlRenderer() { return renderer.get(); }
+
         void drawSprite(Texture* texture, const Rectangle& srcRect, const Rectangle& dstRect,
                         f64 angle, const Vec2& origin, engine::render::Flip flip) override;
 
