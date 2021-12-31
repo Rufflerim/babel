@@ -27,9 +27,39 @@ struct ColorRectangle {
 };
 
 struct Sprite {
-    str textureName;
     Vec2 origin;
     engine::render::Flip flip { engine::render::Flip::None };
+    str textureName;
+};
+
+struct SpriteAnimation {
+    u16 frameNumber { 0 };
+    u16 frameWidth { 0 };
+    u16 frameHeight { 0 };
+};
+
+struct AnimatedSprite {
+    Vec2 origin;
+    u16 frameIndex { 0 };
+    f32 timeCounter { 0 };
+    u16 currentAnimRow { 0 };
+    std::vector<SpriteAnimation> animations;
+    std::unordered_map<str, u16> animNameToRow;
+    engine::render::Flip flip { engine::render::Flip::None };
+    str textureName { "" };
+
+    AnimatedSprite(const str& texNameP, const Vec2& originP, u16  ) {
+
+    }
+
+    void setCurrentAnim(const str& str) {
+        currentAnimRow = animNameToRow[str];
+    }
+};
+
+struct Move2D {
+    Vec2 acceleration;
+    Vec2 speed;
 };
 
 #endif //COMPONENTS_COMPONENTS_H

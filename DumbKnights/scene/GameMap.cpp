@@ -24,29 +24,39 @@ void scene::GameMap::onInit() {
     coordinator.registerComponent<Transform2D>();
     coordinator.registerComponent<ColorRectangle>();
     coordinator.registerComponent<Sprite>();
+    coordinator.registerComponent<AnimatedSprite>();
+    coordinator.registerComponent<Move2D>();
 
     rendering = coordinator.registerSystem<RenderingSystem>();
 
-    Signature spriteSignature;
-    spriteSignature.set(coordinator.getComponentType<Transform2D>());
-    spriteSignature.set(coordinator.getComponentType<Sprite>());
-    coordinator.setSystemSignature<RenderingSystem>(spriteSignature);
+    Signature animatedSpriteSignature;
+    animatedSpriteSignature.set(coordinator.getComponentType<Transform2D>());
+    //spriteSignature.set(coordinator.getComponentType<Sprite>());
+    animatedSpriteSignature.set(coordinator.getComponentType<AnimatedSprite>());
+    animatedSpriteSignature.set(coordinator.getComponentType<Move2D>());
+    coordinator.setSystemSignature<RenderingSystem>(animatedSpriteSignature);
+
+    Signature moveSignature;
+    moveSignature.set(coordinator.getComponentType<Transform2D>());
+    moveSignature.set(coordinator.getComponentType<Move2D>());
+    coordinator.setSystemSignature<RenderingSystem>(moveSignature);
+
 
     std::default_random_engine generator;
     std::uniform_real_distribution<float> randPositionX(50.0f, 1200.0f);
     std::uniform_real_distribution<float> randPositionY(50.0f, 600.0f);
-    std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
+    //std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
     //std::uniform_int_distribution randColor(0, 255);
 
-    for (auto& entity: entities) {
-        entity = coordinator.createEntity();
-        coordinator.addComponent(entity,
-                                 Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
-                                             0, Vec2{randScale(generator), randScale(generator)}});
-        coordinator.addComponent(entity,
-                                 Sprite { "mathieu", Vec2 {} });
+    Entity furior = coordinator.createEntity();
+    coordinator.addComponent(furior,
+                             Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
+                                         0, Vec2{1.0f, 1.0f}});
+    coordinator.addComponent(furior,
+                             AnimatedSprite { "furior_spritesheet", Vec2 {} });
 
-    }
+
+    entities.push_back(furior);
 }
 
 void scene::GameMap::onClose() {
