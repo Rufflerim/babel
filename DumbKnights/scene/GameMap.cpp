@@ -3,6 +3,7 @@
 //
 
 #include "GameMap.h"
+#include "../components/Components.h"
 #include <Log.h>
 #include <random>
 
@@ -24,22 +25,23 @@ void scene::GameMap::onInit() {
     coordinator.registerComponent<Transform2D>();
     coordinator.registerComponent<ColorRectangle>();
     coordinator.registerComponent<Sprite>();
-    coordinator.registerComponent<AnimatedSprite>();
+    //coordinator.registerComponent<AnimatedSprite>();
     coordinator.registerComponent<Move2D>();
 
-    rendering = coordinator.registerSystem<RenderingSystem>();
+    renderingSystem = coordinator.registerSystem<RenderingSystem>();
+    moveSystem = coordinator.registerSystem<Move2DSystem>();
 
     Signature animatedSpriteSignature;
     animatedSpriteSignature.set(coordinator.getComponentType<Transform2D>());
-    //spriteSignature.set(coordinator.getComponentType<Sprite>());
-    animatedSpriteSignature.set(coordinator.getComponentType<AnimatedSprite>());
-    animatedSpriteSignature.set(coordinator.getComponentType<Move2D>());
+    animatedSpriteSignature.set(coordinator.getComponentType<Sprite>());
+    //animatedSpriteSignature.set(coordinator.getComponentType<AnimatedSprite>());
+    //animatedSpriteSignature.set(coordinator.getComponentType<Move2D>());
     coordinator.setSystemSignature<RenderingSystem>(animatedSpriteSignature);
 
     Signature moveSignature;
     moveSignature.set(coordinator.getComponentType<Transform2D>());
     moveSignature.set(coordinator.getComponentType<Move2D>());
-    coordinator.setSystemSignature<RenderingSystem>(moveSignature);
+    coordinator.setSystemSignature<Move2DSystem>(moveSignature);
 
 
     std::default_random_engine generator;
@@ -53,8 +55,8 @@ void scene::GameMap::onInit() {
                              Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
                                          0, Vec2{1.0f, 1.0f}});
     coordinator.addComponent(furior,
-                             AnimatedSprite { "furior_spritesheet", Vec2 {} });
-
+                             Sprite { "mathieu", Vec2::zero(), engine::render::Flip::None });
+    coordinator.addComponent(furior, Move2D { 100, 0.99 } );
 
     entities.push_back(furior);
 }
@@ -72,11 +74,11 @@ void scene::GameMap::inactivate() {
 }
 
 void scene::GameMap::update(const GameTime& time, const InputState& inputState) {
-
+    moveSystem->update(coordinator, time, inputState);
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {
-    rendering->draw(coordinator, renderer);
+    renderingSystem->draw(coordinator, renderer);
 }
 
 

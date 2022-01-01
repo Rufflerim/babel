@@ -59,7 +59,6 @@ namespace engine { namespace ecs {
         /// \param entity The entity we want its component data
         /// \return Component of given entity
         T& getData(Entity entity) {
-            GASSERT_DEBUG(entityToIndex.find(entity) != entityToIndex.end(), "Retrieving non-existent component")
             return componentArray[entityToIndex[entity]];
         }
 

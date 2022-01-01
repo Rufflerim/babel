@@ -7,9 +7,11 @@
 
 #include <GameTime.h>
 #include <InputManager.h>
+#include <System.h>
 
-class Move2DSystem {
-    void update(const GameTime& time, const engine::input::InputState& inputState);
+class Move2DSystem : public engine::ecs::System {
+public:
+    void update(engine::ecs::Coordinator& coordinator, const GameTime& time, const engine::input::InputState& inputState);
 };
 
 

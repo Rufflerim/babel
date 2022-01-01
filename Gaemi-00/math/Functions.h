@@ -31,7 +31,7 @@ namespace gmath {
         return radians / pi * 180.0f;
     }
 
-    bool nearZero(f32 val, f32 epsilon = 0.001f);
+    bool nearZero(f32 val, f32 epsilon = 0.0001f);
 
     template<typename T>
     T max(const T &a, const T &b) {

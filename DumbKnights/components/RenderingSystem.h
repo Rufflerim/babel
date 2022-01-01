@@ -9,7 +9,6 @@
 #include <Coordinator.h>
 #include <SDL_render.h>
 #include <render/IRenderer.h>
-#include "Components.h"
 
 class RenderingSystem : public engine::ecs::System {
 public:

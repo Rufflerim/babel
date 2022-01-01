@@ -10,6 +10,7 @@
 #include "IScene.h"
 #include "../components/RenderingSystem.h"
 #include "../Locator.h"
+#include "../components/Move2DSystem.h"
 
 namespace scene {
     class GameMap : public IScene {
@@ -29,7 +30,8 @@ namespace scene {
         void draw(engine::render::IRenderer& renderer) override;
 
     private:
-        std::shared_ptr<RenderingSystem> rendering;
+        std::shared_ptr<RenderingSystem> renderingSystem;
+        std::shared_ptr<Move2DSystem> moveSystem;
         std::vector<Entity> entities;
 
     };

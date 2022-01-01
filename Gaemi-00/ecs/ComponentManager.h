@@ -89,7 +89,6 @@ namespace engine { namespace ecs {
         template<typename T>
         std::shared_ptr<ComponentArray<T>> getComponentArray() {
             const char* typeName = typeid(T).name();
-            GASSERT_DEBUG(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.")
             return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
         }
     };

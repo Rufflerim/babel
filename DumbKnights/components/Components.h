@@ -8,6 +8,7 @@
 #include <Vec2.h>
 #include <Color.h>
 #include <Rectangle.h>
+#include <render/IRenderer.h>
 
 using gmath::Vec2;
 using gmath::Color;
@@ -27,9 +28,9 @@ struct ColorRectangle {
 };
 
 struct Sprite {
+    str textureName;
     Vec2 origin;
     engine::render::Flip flip { engine::render::Flip::None };
-    str textureName;
 };
 
 struct SpriteAnimation {
@@ -58,8 +59,13 @@ struct AnimatedSprite {
 };
 
 struct Move2D {
+    f32 maxSpeed {0};
+    f32 decelerationFactor {0};
     Vec2 acceleration;
     Vec2 speed;
+
+    Move2D() = default;
+    Move2D(f32 maxSpeedP, f32 decelerationFactorP) : maxSpeed{maxSpeedP}, decelerationFactor{decelerationFactorP} {}
 };
 
 #endif //COMPONENTS_COMPONENTS_H
