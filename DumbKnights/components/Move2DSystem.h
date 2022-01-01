@@ -11,7 +11,7 @@
 
 class Move2DSystem : public engine::ecs::System {
 public:
-    void update(engine::ecs::Coordinator& coordinator, const GameTime& time, const engine::input::InputState& inputState);
+    void update(engine::ecs::Coordinator& coordinator, const GameTime& time);
 };
 
 

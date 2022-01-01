@@ -24,6 +24,7 @@ f32 gmath::Vec2::squareLength() const {
 }
 
 Vec2& gmath::Vec2::normalize() {
+    if (*this == Vec2::zero()) return *this;
     f32 len = length();
     x = x / len;
     y = y / len;

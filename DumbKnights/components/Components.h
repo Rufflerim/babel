@@ -16,9 +16,9 @@ using gmath::Rectangle;
 
 /// Transform for a 2D entity
 struct Transform2D {
-    Vec2 position;
-    f64 rotation { 0.0 };
-    Vec2 scale;
+    Vec2 position{Vec2::zero()};
+    f64 rotation{0.0};
+    Vec2 scale{Vec2::zero()};
 };
 
 /// Rendering a color rectangle
@@ -28,28 +28,28 @@ struct ColorRectangle {
 };
 
 struct Sprite {
-    str textureName;
-    Vec2 origin;
-    engine::render::Flip flip { engine::render::Flip::None };
+    str textureName{""};
+    Vec2 origin{Vec2::zero()};
+    engine::render::Flip flip{engine::render::Flip::None};
 };
 
 struct SpriteAnimation {
-    u16 frameNumber { 0 };
-    u16 frameWidth { 0 };
-    u16 frameHeight { 0 };
+    u16 frameNumber{0};
+    u16 frameWidth{0};
+    u16 frameHeight{0};
 };
 
 struct AnimatedSprite {
     Vec2 origin;
-    u16 frameIndex { 0 };
-    f32 timeCounter { 0 };
-    u16 currentAnimRow { 0 };
+    u16 frameIndex{0};
+    f32 timeCounter{0};
+    u16 currentAnimRow{0};
     std::vector<SpriteAnimation> animations;
     std::unordered_map<str, u16> animNameToRow;
-    engine::render::Flip flip { engine::render::Flip::None };
-    str textureName { "" };
+    engine::render::Flip flip{engine::render::Flip::None};
+    str textureName{""};
 
-    AnimatedSprite(const str& texNameP, const Vec2& originP, u16  ) {
+    AnimatedSprite(const str& texNameP, const Vec2& originP, u16) {
 
     }
 
@@ -59,13 +59,23 @@ struct AnimatedSprite {
 };
 
 struct Move2D {
-    f32 maxSpeed {0};
-    f32 decelerationFactor {0};
-    Vec2 acceleration;
-    Vec2 speed;
+    f32 maxSpeed{0};
+    f32 decelerationFactor{0};
+    Vec2 acceleration{Vec2::zero()};
+    Vec2 speed{Vec2::zero()};
 
     Move2D() = default;
+
     Move2D(f32 maxSpeedP, f32 decelerationFactorP) : maxSpeed{maxSpeedP}, decelerationFactor{decelerationFactorP} {}
+};
+
+struct Controller {
+    Vec2 inputAxis{Vec2::zero()};
+    bool isPlayer{false};
+
+    Controller() = default;
+
+    explicit Controller(bool isPlayerP) : isPlayer{isPlayerP} {}
 };
 
 #endif //COMPONENTS_COMPONENTS_H
