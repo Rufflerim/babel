@@ -20,25 +20,31 @@ scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordina
 void scene::GameMap::onInit() {
     engine::asset::Assets& assets = Locator::instance().assets();
     assets.loadTexture("Assets/mathieu.png", "mathieu");
+    assets.loadTexture("Assets/furior_spritesheet.png", "furior_spritesheet");
 
     // Load entities
     coordinator.registerComponent<Transform2D>();
     coordinator.registerComponent<ColorRectangle>();
     coordinator.registerComponent<Sprite>();
-    //coordinator.registerComponent<AnimatedSprite>();
+    coordinator.registerComponent<Animator>();
     coordinator.registerComponent<Move2D>();
     coordinator.registerComponent<Controller>();
 
     renderingSystem = coordinator.registerSystem<RenderingSystem>();
     moveSystem = coordinator.registerSystem<Move2DSystem>();
     controllerSystem = coordinator.registerSystem<ControllerSystem>();
+    animationSystem = coordinator.registerSystem<AnimationSystem>();
+
+    Signature spriteSignature;
+    spriteSignature.set(coordinator.getComponentType<Transform2D>());
+    spriteSignature.set(coordinator.getComponentType<Sprite>());
+    coordinator.setSystemSignature<RenderingSystem>(spriteSignature);
 
     Signature animatedSpriteSignature;
-    animatedSpriteSignature.set(coordinator.getComponentType<Transform2D>());
+    animatedSpriteSignature.set(coordinator.getComponentType<Animator>());
     animatedSpriteSignature.set(coordinator.getComponentType<Sprite>());
-    //animatedSpriteSignature.set(coordinator.getComponentType<AnimatedSprite>());
     //animatedSpriteSignature.set(coordinator.getComponentType<Move2D>());
-    coordinator.setSystemSignature<RenderingSystem>(animatedSpriteSignature);
+    coordinator.setSystemSignature<AnimationSystem>(animatedSpriteSignature);
 
     Signature moveSignature;
     moveSignature.set(coordinator.getComponentType<Transform2D>());
@@ -52,20 +58,25 @@ void scene::GameMap::onInit() {
 
 
     std::default_random_engine generator;
-    std::uniform_real_distribution<float> randPositionX(50.0f, 1200.0f);
+    std::uniform_real_distribution<float> randPositionX(50.0f, 600.0f);
     std::uniform_real_distribution<float> randPositionY(50.0f, 600.0f);
     //std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
     //std::uniform_int_distribution randColor(0, 255);
 
     Entity furior = coordinator.createEntity();
-    coordinator.addComponent(furior,
-                             Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
-                                         0, Vec2{1.0f, 1.0f}});
-    coordinator.addComponent(furior,
-                             Sprite { "mathieu", Vec2::zero(), engine::render::Flip::None });
-    coordinator.addComponent(furior, Move2D { 100, 0.99 } );
-    coordinator.addComponent(furior, Controller{true});
-
+    coordinator.addComponent(furior, Transform2D { Vec2 { randPositionX(generator), randPositionY(generator) },
+                                                   0, Vec2 { 1.0f, 1.0f }});
+    coordinator.addComponent(furior, Move2D { 100, 0.99 });
+    coordinator.addComponent(furior, Controller { true });
+    // Animation and sprite setup
+    std::vector<data::AnimationRow> furiorAnimsRows {{ 0, 8, "idle" },
+                                                     { 1, 5, "walk" }};
+    data::AnimationData furiorAnims { 32, 32, 0.1f, "furior_spritesheet", furiorAnimsRows };
+    coordinator.addComponent(furior, Animator { furiorAnims, Vec2::zero(), engine::render::Flip::None });
+    coordinator.addComponent(furior, Sprite { "furior_spritesheet", Vec2::zero(), gmath::Rectangle::nullRectangle,
+                                              Vec2 { static_cast<float>(furiorAnims.frameWidth),
+                                                     static_cast<float>(furiorAnims.frameHeight) },
+                                              engine::render::Flip::None });
     entities.push_back(furior);
 }
 
@@ -84,6 +95,7 @@ void scene::GameMap::inactivate() {
 void scene::GameMap::update(const GameTime& time, const InputState& inputState) {
     controllerSystem->update(coordinator, inputState);
     moveSystem->update(coordinator, time);
+    animationSystem->update(coordinator, time);
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {

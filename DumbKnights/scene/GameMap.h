@@ -12,6 +12,7 @@
 #include "../Locator.h"
 #include "../components/Move2DSystem.h"
 #include "../components/ControllerSystem.h"
+#include "../components/AnimationSystem.h"
 
 namespace scene {
     class GameMap : public IScene {
@@ -34,6 +35,7 @@ namespace scene {
         std::shared_ptr<RenderingSystem> renderingSystem;
         std::shared_ptr<Move2DSystem> moveSystem;
         std::shared_ptr<ControllerSystem> controllerSystem;
+        std::shared_ptr<AnimationSystem> animationSystem;
 
         std::vector<Entity> entities;
 

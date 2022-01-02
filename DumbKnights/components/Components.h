@@ -9,6 +9,8 @@
 #include <Color.h>
 #include <Rectangle.h>
 #include <render/IRenderer.h>
+#include "../data/AnimationData.h"
+#include "../Locator.h"
 
 using gmath::Vec2;
 using gmath::Color;
@@ -16,9 +18,9 @@ using gmath::Rectangle;
 
 /// Transform for a 2D entity
 struct Transform2D {
-    Vec2 position{Vec2::zero()};
-    f64 rotation{0.0};
-    Vec2 scale{Vec2::zero()};
+    Vec2 position { Vec2::zero() };
+    f64 rotation { 0.0 };
+    Vec2 scale { Vec2::zero() };
 };
 
 /// Rendering a color rectangle
@@ -28,54 +30,72 @@ struct ColorRectangle {
 };
 
 struct Sprite {
-    str textureName{""};
-    Vec2 origin{Vec2::zero()};
-    engine::render::Flip flip{engine::render::Flip::None};
+    Vec2 origin { Vec2::zero() };
+    gmath::Rectangle srcRect { gmath::Rectangle::nullRectangle };
+    gmath::Vec2 dstSize { Vec2::zero() };
+    engine::render::Flip flip { engine::render::Flip::None };
+    str textureName { "" };
+
+    Sprite() = default;
+
+    Sprite(const str& textureNameP, const Vec2& originP, const gmath::Rectangle& srcRectP,
+           const Vec2& dstSizeP = Vec2::zero(), engine::render::Flip flipP = engine::render::Flip::None)
+            : textureName { textureNameP }, origin { originP }, srcRect { srcRectP }, dstSize { dstSizeP },
+              flip { flipP } {
+        // If destination size is zero, load it from texture size
+        if (dstSizeP == gmath::Vec2::zero()) {
+            auto tex = Locator::instance().assets().getTexture(textureNameP);
+            dstSize = { static_cast<float>(tex->width), static_cast<float>(tex->height) };
+        }
+    }
 };
 
-struct SpriteAnimation {
-    u16 frameNumber{0};
-    u16 frameWidth{0};
-    u16 frameHeight{0};
+enum class AnimatorState {
+    Play, Stop, Pause
 };
 
-struct AnimatedSprite {
+struct Animator {
     Vec2 origin;
-    u16 frameIndex{0};
-    f32 timeCounter{0};
-    u16 currentAnimRow{0};
-    std::vector<SpriteAnimation> animations;
-    std::unordered_map<str, u16> animNameToRow;
-    engine::render::Flip flip{engine::render::Flip::None};
-    str textureName{""};
+    u16 frameIndex { 0 };
+    u16 currentAnimRow { 0 };
+    f32 timeCounter { 0 };
+    AnimatorState state { AnimatorState::Play };
+    data::AnimationData animations;
+    engine::render::Flip flip { engine::render::Flip::None };
 
-    AnimatedSprite(const str& texNameP, const Vec2& originP, u16) {
+    Animator() = default;
+
+    Animator(const data::AnimationData& animationsP, const Vec2& originP, engine::render::Flip flipP)
+            : animations { animationsP }, origin { originP }, flip { flipP } {
 
     }
 
     void setCurrentAnim(const str& str) {
-        currentAnimRow = animNameToRow[str];
+        auto newAnimItr = std::find_if(begin(animations.rows), end(animations.rows),
+                                       [&](data::AnimationRow& row) { return row.name == str; });
+        currentAnimRow = newAnimItr->row;
     }
 };
 
 struct Move2D {
-    f32 maxSpeed{0};
-    f32 decelerationFactor{0};
-    Vec2 acceleration{Vec2::zero()};
-    Vec2 speed{Vec2::zero()};
+    f32 maxSpeed { 0 };
+    f32 decelerationFactor { 0 };
+    Vec2 acceleration { Vec2::zero() };
+    Vec2 speed { Vec2::zero() };
 
     Move2D() = default;
 
-    Move2D(f32 maxSpeedP, f32 decelerationFactorP) : maxSpeed{maxSpeedP}, decelerationFactor{decelerationFactorP} {}
+    Move2D(f32 maxSpeedP, f32 decelerationFactorP) : maxSpeed { maxSpeedP },
+                                                     decelerationFactor { decelerationFactorP } {}
 };
 
 struct Controller {
-    Vec2 inputAxis{Vec2::zero()};
-    bool isPlayer{false};
+    Vec2 inputAxis { Vec2::zero() };
+    bool isPlayer { false };
 
     Controller() = default;
 
-    explicit Controller(bool isPlayerP) : isPlayer{isPlayerP} {}
+    explicit Controller(bool isPlayerP) : isPlayer { isPlayerP } {}
 };
 
 #endif //COMPONENTS_COMPONENTS_H
