@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory( components )
 add_subdirectory( scene )
+add_subdirectory( data )
+add_subdirectory( world )
 
 file( GLOB Game_SOURCES *.cpp )
 add_library( ${PROJECT_NAME} ${Game_SOURCES} )

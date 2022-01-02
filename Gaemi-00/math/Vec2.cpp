@@ -4,6 +4,7 @@
 
 #include "Vec2.h"
 #include "Functions.h"
+#include "Vec2i.h"
 
 using gmath::Vec2;
 
@@ -29,4 +30,8 @@ Vec2& gmath::Vec2::normalize() {
     x = x / len;
     y = y / len;
     return *this;
+}
+
+gmath::Vec2i gmath::Vec2::toVec2i() {
+    return gmath::Vec2i { gmath::round(x), gmath::round(y) };
 }

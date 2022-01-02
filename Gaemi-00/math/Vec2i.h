@@ -2,26 +2,25 @@
 // Created by gaetz on 23/12/2021.
 //
 
-#ifndef MATH_VEC2_H
-#define MATH_VEC2_H
+#ifndef MATH_VEC2I_H
+#define MATH_VEC2I_H
 
 #include "../Defines.h"
 #include "Functions.h"
 
 
 namespace gmath {
-    constexpr f32 VEC2_FLOAT_EPSILON = 0.000001f;
-    class Vec2i;
+    class Vec2;
 
-    class Vec2 {
+    class Vec2i {
     public:
         /// Default constructor, return a zero vector
-        Vec2();
+        Vec2i();
 
         /// Constructor with x and y params
         /// \param x Horizontal component
         /// \param y Vertical component
-        Vec2(f32 x, f32 y);
+        Vec2i(i32 x, i32 y);
 
         /// Get the vector length
         /// \return Vector's magnitude
@@ -29,12 +28,12 @@ namespace gmath {
 
         /// Get the vector squared length
         /// \return Vector's squared length
-        f32 squareLength() const;
+        u32 squareLength() const;
 
         /// Add a vector to this vector
         /// \param other Vector we want to add
-        /// \return Same vactor, affected by the addition
-        Vec2& operator+=(const Vec2& other) {
+        /// \return Same vector, affected by the addition
+        Vec2i& operator+=(const Vec2i& other) {
             x += other.x;
             y += other.y;
             return *this;
@@ -43,26 +42,26 @@ namespace gmath {
         /// Addition operator
         /// \param r Vector to add
         /// \return New vector, result of the addition
-        Vec2 operator+(const Vec2& r) {
-            Vec2 sum = *this;
+        Vec2i operator+(const Vec2i& r) {
+            Vec2i sum = *this;
             sum += r;
             return sum;
         }
 
-        /// Substract a vector to this vector
-        /// \param other Vector we want to substract
-        /// \return Same vactor, affected by the substraction
-        Vec2& operator-=(const Vec2& other) {
+        /// subtract a vector to this vector
+        /// \param other Vector we want to subtract
+        /// \return Same vactor, affected by the subtraction
+        Vec2i& operator-=(const Vec2i& other) {
             x -= other.x;
             y -= other.y;
             return *this;
         }
 
-        /// Substraction operator
-        /// \param r Vector to substract
-        /// \return New vector, result of the substraction
-        Vec2 operator-(const Vec2& r) {
-            Vec2 sum = *this;
+        /// subtraction operator
+        /// \param r Vector to subtract
+        /// \return New vector, result of the subtraction
+        Vec2i operator-(const Vec2i& r) {
+            Vec2i sum = *this;
             sum -= r;
             return sum;
         }
@@ -70,70 +69,65 @@ namespace gmath {
         /// Equality operator
         /// \param other Tested vector
         /// \return True if vector a nearly equals
-        bool operator==(const Vec2& other) const {
-            Vec2 diff { x - other.x, y - other.y };
-            return gmath::nearZero(diff.x, VEC2_FLOAT_EPSILON) && gmath::nearZero(diff.y, VEC2_FLOAT_EPSILON);
+        bool operator==(const Vec2i& other) const {
+            return x == other.x && y == other.y;
         }
 
-        /// Multiply a vector by a float
+        /// Multiply a vector by a int
         /// \param factor Factor of multiplication
         /// \return Same vector, multiplied
-        Vec2& operator*=(f32 factor) {
+        Vec2i& operator*=(i32 factor) {
             x *= factor;
             y *= factor;
             return *this;
         }
 
-        /// Multiplicator operator, with float
+        /// Multiplicator operator, with int
         /// \param factor Factor
         /// \return New vector, result of the multiplication
-        Vec2 operator*(f32 factor) {
-            Vec2 product = *this;
+        Vec2i operator*(i32 factor) {
+            Vec2i product = *this;
             product *= factor;
             return product;
         }
 
-        /// Multiply a vector by a double
+        /// Multiply a vector by a long int
         /// \param factor Factor of multiplication
         /// \return Same vector, multiplied
-        Vec2& operator*=(f64 factor) {
+        Vec2i& operator*=(i64 factor) {
             x *= static_cast<float>(factor);
             y *= static_cast<float>(factor);
             return *this;
         }
 
-        /// Multiplicator operator, with double
+        /// Multiplicator operator, with long int
         /// \param factor Factor
         /// \return New vector, result of the multiplication
-        Vec2 operator*(f64 factor) {
-            Vec2 product = *this;
+        Vec2i operator*(i64 factor) {
+            Vec2i product = *this;
             product *= factor;
             return product;
         }
 
-        /// Normalize this vector
-        /// \return This vector, normalized
-        Vec2& normalize();
-
-        /// Convert this vector of ints to a vector of int
-        /// \return Corresponding Vec2i
-        Vec2i toVec2i();
-
         /// Horizontal coordinate
-        f32 x{0.0f};
+        i32 x{0};
 
         /// Vertical coordinate
-        f32 y{0.0f};
+        i32 y{0};
 
         /// Zero vector
-        static Vec2 zero() { return {}; };
+        static Vec2i zero() { return {}; };
 
         /// Right vector
-        static Vec2 right() { return {1, 0}; };
+        static Vec2i right() { return {1, 0}; };
 
         /// Up vector
-        static Vec2 up() { return {0, 1}; };
+        static Vec2i up() { return {0, 1}; };
+
+        /// Convert this vector of ints to a vector of float
+        /// \return Corresponding Vec2
+        Vec2 toVec2();
     };
 }
 
-#endif //MATH_VEC2_H
+#endif //MATH_VEC2I_H

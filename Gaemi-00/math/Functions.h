@@ -10,6 +10,9 @@
 
 namespace gmath {
 
+    class Vec2i;
+    class Vec2;
+
     constexpr f32 pi = 3.14159265358979323846f;
     constexpr f32 twoPi = pi * 2.0f;
     constexpr f32 piOver2 = pi * 0.5f;
@@ -91,6 +94,12 @@ namespace gmath {
     inline i32 round(f32 num) {
         return static_cast<i32>(std::round(num));
     }
+
+    inline u32 convert2Dto1DCoords(u32 x, u32 y, u32 rowSize) {
+        return x + y * rowSize;
+    }
+
+    gmath::Vec2i convert1Dto2DCoords(i32 index, i32 rowSize);
 
 /***
  * Tells if value is a power of two. 0 is NOT a power of two.

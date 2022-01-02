@@ -3,6 +3,7 @@
 //
 
 #include "Functions.h"
+#include "Vec2i.h"
 
 bool gmath::nearZero(f32 val, f32 epsilon) {
     if (fabs(val) <= epsilon) {
@@ -10,4 +11,7 @@ bool gmath::nearZero(f32 val, f32 epsilon) {
     } else {
         return false;
     }
+}
+gmath::Vec2i gmath::convert1Dto2DCoords(i32 index, i32 rowSize) {
+    return gmath::Vec2i { index % rowSize, index / rowSize };
 }
