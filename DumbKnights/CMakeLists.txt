@@ -14,7 +14,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC Gaemi-00)
 target_link_libraries(${PROJECT_NAME} Gaemi-00 SDL2 scene comp)
 
 ## Define a symbol for dll import
-target_compile_definitions(${PROJECT_NAME} PUBLIC GEXPORT=0)
+#target_compile_definitions(${PROJECT_NAME} PUBLIC GEXPORT=0)
 
 ## Post build assets copy
 add_custom_command(
