@@ -31,21 +31,21 @@ struct ColorRectangle {
 
 struct Sprite {
     Vec2 origin { Vec2::zero() };
-    gmath::Rectangle srcRect { gmath::Rectangle::nullRectangle };
+    gmath::RectangleInt srcRect { gmath::RectangleInt::nullRectangle };
     gmath::Vec2 dstSize { Vec2::zero() };
     engine::render::Flip flip { engine::render::Flip::None };
     str textureName { "" };
 
     Sprite() = default;
 
-    Sprite(const str& textureNameP, const Vec2& originP, const gmath::Rectangle& srcRectP,
+    Sprite(const str& textureNameP, const Vec2& originP, const gmath::RectangleInt& srcRectP,
            const Vec2& dstSizeP = Vec2::zero(), engine::render::Flip flipP = engine::render::Flip::None)
             : textureName { textureNameP }, origin { originP }, srcRect { srcRectP }, dstSize { dstSizeP },
               flip { flipP } {
         // If destination size is zero, load it from texture size
         if (dstSizeP == gmath::Vec2::zero()) {
             auto tex = Locator::instance().assets().getTexture(textureNameP);
-            dstSize = { static_cast<float>(tex->width), static_cast<float>(tex->height) };
+            dstSize = { static_cast<f32>(tex->width), static_cast<f32>(tex->height) };
         }
     }
 };

@@ -4,6 +4,9 @@
 
 #include "AnimationSystem.h"
 #include "Components.h"
+#include <Vec2i.h>
+
+using gmath::Vec2i;
 
 void AnimationSystem::update(engine::ecs::Coordinator& coordinator, const GameTime& time) {
     for (auto& entity: entities) {
@@ -22,11 +25,11 @@ void AnimationSystem::update(engine::ecs::Coordinator& coordinator, const GameTi
             }
         }
 
-        sprite.srcRect = gmath::Rectangle {
-                Vec2 { static_cast<f32>(animator.frameIndex * animator.animations.frameWidth),
-                       static_cast<f32>(animator.currentAnimRow * animator.animations.frameHeight) },
-                Vec2 { static_cast<f32>(animator.animations.frameWidth),
-                       static_cast<f32>(animator.animations.frameHeight) }};
+        sprite.srcRect = gmath::RectangleInt {
+                Vec2i { animator.frameIndex * animator.animations.frameWidth,
+                       animator.currentAnimRow * animator.animations.frameHeight },
+                Vec2i { animator.animations.frameWidth,
+                       animator.animations.frameHeight }};
 
         /*
         if (animator.)

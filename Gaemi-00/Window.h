@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <SDL.h>
-#include <Rectangle.h>
+#include "../math/RectangleInt.h"
 
 constexpr f64 DURATION_BETWEEN_FPS_DISPLAY = 0.25;
 
@@ -60,7 +60,7 @@ namespace engine {
 
         /// Return window size and position
         /// \return Bounds rectangle
-        const gmath::Rectangle& getBounds() const { return bounds; }
+        const gmath::RectangleInt& getBounds() const { return bounds; }
 
 
 	private:
@@ -68,7 +68,7 @@ namespace engine {
 		std::unique_ptr<SDL_Window, SDLWindowDestroyer> window;
 
 		/// Window title
-		str title { "" };
+		str title;
 
 		/// Last total number of seconds when FPS was display
 		f64 lastElapsed { 0.0 };
@@ -77,7 +77,7 @@ namespace engine {
 		i32 frameCount { 0 };
 
         /// Window bounds
-        gmath::Rectangle bounds;
+        gmath::RectangleInt bounds;
 	};
 
 }

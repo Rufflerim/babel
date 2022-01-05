@@ -10,6 +10,7 @@
 #include "../../Window.h"
 #include <memory>
 
+
 namespace engine::render::sdl {
     struct SDLRendererDestroyer {
         void operator()(SDL_Renderer* renderer) const {
@@ -27,7 +28,7 @@ namespace engine::render::sdl {
 
         void beginDraw() override;
 
-        void drawRectangle(const Rectangle& rectangle, const Color& color) override;
+        void drawRectangle(const gmath::Rectangle& rectangle, const gmath::Color& color) override;
 
         void endDraw() override;
 
@@ -35,8 +36,8 @@ namespace engine::render::sdl {
 
         SDL_Renderer* getSdlRenderer() { return renderer.get(); }
 
-        void drawSprite(Texture* texture, const Rectangle& srcRect, const Rectangle& dstRect,
-                        f64 angle, const Vec2& origin, engine::render::Flip flip) override;
+        void drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::Rectangle& dstRect,
+                        f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) override;
 
     private:
         ILocator* locator{nullptr};

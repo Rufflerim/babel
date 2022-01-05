@@ -73,7 +73,7 @@ void scene::GameMap::onInit() {
                                                      { 1, 5, "walk" }};
     data::AnimationData furiorAnims { 32, 32, 0.1f, "furior_spritesheet", furiorAnimsRows };
     coordinator.addComponent(furior, Animator { furiorAnims, Vec2::zero(), engine::render::Flip::None });
-    coordinator.addComponent(furior, Sprite { "furior_spritesheet", Vec2::zero(), gmath::Rectangle::nullRectangle,
+    coordinator.addComponent(furior, Sprite { "furior_spritesheet", Vec2::zero(), gmath::RectangleInt::nullRectangle,
                                               Vec2 { static_cast<float>(furiorAnims.frameWidth),
                                                      static_cast<float>(furiorAnims.frameHeight) },
                                               engine::render::Flip::None });

@@ -25,8 +25,7 @@ void RenderingSystem::draw(engine::ecs::Coordinator& coordinator, engine::render
         auto texture = Locator::instance().assets().getTexture(sprite.textureName).get();
         gmath::Rectangle dstRect{
                 Vec2{transform.position.x + sprite.origin.x, transform.position.y + sprite.origin.y},
-                Vec2{static_cast<f32>(sprite.dstSize.x) * transform.scale.x,
-                     static_cast<f32>(sprite.dstSize.y) * transform.scale.y}
+                Vec2{sprite.dstSize.x * transform.scale.x, sprite.dstSize.y * transform.scale.y}
         };
         renderer.drawSprite(texture, sprite.srcRect, dstRect, transform.rotation,
                             sprite.origin, sprite.flip);

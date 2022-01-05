@@ -7,15 +7,17 @@
 
 #include "../ILocator.h"
 #include "../Window.h"
-#include "../math/Vec2.h"
 #include "../math/Color.h"
-#include "../math/Rectangle.h"
 
-using gmath::Color;
-using gmath::Vec2;
-using gmath::Rectangle;
+namespace gmath {
+    class Vec2;
+    class Rectangle;
+    class RectangleInt;
+}
 
-namespace engine { namespace render {
+namespace engine {
+
+    namespace render {
 
     enum class Flip {
         None,
@@ -48,14 +50,14 @@ namespace engine { namespace render {
         /// Called to draw a filled colored rectangle
         /// \param rectangle Rectangle coordinates in screen coordinates
         /// \param color Fill color of the rectangle
-        GAPI virtual void drawRectangle(const Rectangle &rectangle, const Color &color) = 0;
+        GAPI virtual void drawRectangle(const gmath::Rectangle &rectangle, const gmath::Color &color) = 0;
 
         GAPI virtual void drawSprite(sdl::Texture* texture,
-                                     const gmath::Rectangle& srcRect,
+                                     const gmath::RectangleInt& srcRect,
                                      const gmath::Rectangle& dstRect,
-                                     const f64 angle,
+                                     f64 angle,
                                      const gmath::Vec2& origin,
-                                     const Flip flip = Flip::None) = 0;
+                                     Flip flip = Flip::None) = 0;
     };
 } }
 
