@@ -51,7 +51,7 @@ void engine::render::sdl::RendererSDL::close() {
 
 }
 
-void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, const Rectangle& dstRect,
+void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, const RectangleInt& dstRect,
                              f64 angle, const Vec2& origin, engine::render::Flip flip) {
     SDL_RendererFlip sdlFlip = SDL_FLIP_NONE;
     switch (flip) {
@@ -74,7 +74,7 @@ void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, cons
     SDL_Rect* srcFinalRect = srcRect == gmath::RectangleInt::nullRectangle ? nullptr : &srcSdlRect;
 
     SDL_Rect dstSdlRect = dstRect.toSdlRect();
-    SDL_Rect* dstFinalRect = dstRect == gmath::Rectangle::nullRectangle ? nullptr : &dstSdlRect;
+    SDL_Rect* dstFinalRect = dstRect == gmath::RectangleInt::nullRectangle ? nullptr : &dstSdlRect;
 
     SDL_RenderCopyEx(renderer.get(), texture->sdlTexture.get(),
                      srcFinalRect, dstFinalRect, angle, &center, sdlFlip);

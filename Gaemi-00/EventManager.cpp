@@ -29,7 +29,7 @@ bool engine::EventManager::subscribe(engine::EventCode code, void *listener, eng
     u16 eventCode = static_cast<u16>(code);
 
     // Check for duplicates
-    for (auto& subscription : state[eventCode].subscriptions) {
+    for (auto const& subscription : state[eventCode].subscriptions) {
         if (subscription.listener == listener) {
             return false;
         }

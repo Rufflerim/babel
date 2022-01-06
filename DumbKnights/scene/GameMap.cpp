@@ -21,6 +21,10 @@ void scene::GameMap::onInit() {
     engine::asset::Assets& assets = Locator::instance().assets();
     assets.loadTexture("Assets/mathieu.png", "mathieu");
     assets.loadTexture("Assets/furior_spritesheet.png", "furior_spritesheet");
+    assets.loadTexture("Assets/tileset1.png", "tileset1");
+
+    // Load map
+    tileMap.load();
 
     // Load entities
     coordinator.registerComponent<Transform2D>();
@@ -99,6 +103,7 @@ void scene::GameMap::update(const GameTime& time, const InputState& inputState) 
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {
+    tileMap.draw(renderer);
     renderingSystem->draw(coordinator, renderer);
 }
 

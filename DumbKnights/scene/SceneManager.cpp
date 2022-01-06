@@ -97,7 +97,7 @@ void scene::SceneManager::remove(SceneType type) {
 void scene::SceneManager::createScene(SceneType type) {
     auto newSceneFactory = sceneFactories.find(type);
     if(newSceneFactory == end(sceneFactories)) {
-        LOG(engine::LogLevel::Warning) << "Scene type not registered. Won't create new scene.";
+        LOG(LogLevel::Warning) << "Scene type not registered. Won't create new scene.";
         return;
     }
     scenes.push_back(std::move(newSceneFactory->second()));

@@ -54,7 +54,7 @@ namespace engine {
 
         GAPI virtual void drawSprite(sdl::Texture* texture,
                                      const gmath::RectangleInt& srcRect,
-                                     const gmath::Rectangle& dstRect,
+                                     const gmath::RectangleInt& dstRect,
                                      f64 angle,
                                      const gmath::Vec2& origin,
                                      Flip flip = Flip::None) = 0;

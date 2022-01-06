@@ -9,7 +9,6 @@
 #endif // GPLATFORM_WINDOWS
 
 using engine::Log;
-using engine::LogLevel;
 
 std::ofstream Log::file;
 

@@ -11,16 +11,16 @@
 
 using std::array;
 
-namespace engine {
+enum class LogLevel {
+    Fatal = 0,
+    Error = 1,
+    Warning,
+    Info,
+    Debug,
+    Trace
+};
 
-	enum class LogLevel {
-		Fatal = 0,
-		Error = 1,
-		Warning,
-		Info,
-		Debug,
-		Trace
-	};
+namespace engine {
 
 	/// <summary>
 	/// Usage : LOG(LogLevel::Info) << "Message";

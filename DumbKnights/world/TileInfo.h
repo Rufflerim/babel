@@ -7,30 +7,25 @@
 
 #include "../Defines.h"
 #include "../components/Components.h"
-#include <Rectangle.h>
 
-constexpr u32 TILE_SIZE = 32;
-constexpr u32 TILESHEET_WIDTH = 512;
-constexpr u32 TILESHEET_HEIGHT = 512;
+constexpr i32 TILE_SIZE = 32;
+constexpr i32 TILESHEET_WIDTH = 512;
+constexpr i32 TILESHEET_HEIGHT = 512;
 
 namespace world {
     /// Hold data and graphics information about a tileset element
     class TileInfo {
     public:
         TileInfo() = default;
-        TileInfo(u32 idP, bool isBlockingP, const str& textureName);
+        TileInfo(i32 idP, bool isBlockingP, const str& textureName);
 
-        u32 id {0};
+        i32 id {0};
         bool isBlocking {false};
         Sprite sprite;
     };
 
-    /// Hold data about a tilemap element
-    struct Tile {
-        explicit Tile(const TileInfo& tileInfoP) : tileInfo { tileInfoP} {}
-
-        const TileInfo& tileInfo;
-    };
+    /// Tilemap elements are unsigned integers, corresponding to TileInfo::id
+    using Tile = i32;
 }
 
 

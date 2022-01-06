@@ -9,6 +9,8 @@
 #include <Color.h>
 #include <Rectangle.h>
 #include <render/IRenderer.h>
+
+#include <utility>
 #include "../data/AnimationData.h"
 #include "../Locator.h"
 
@@ -34,7 +36,7 @@ struct Sprite {
     gmath::RectangleInt srcRect { gmath::RectangleInt::nullRectangle };
     gmath::Vec2 dstSize { Vec2::zero() };
     engine::render::Flip flip { engine::render::Flip::None };
-    str textureName { "" };
+    str textureName;
 
     Sprite() = default;
 
@@ -65,8 +67,8 @@ struct Animator {
 
     Animator() = default;
 
-    Animator(const data::AnimationData& animationsP, const Vec2& originP, engine::render::Flip flipP)
-            : animations { animationsP }, origin { originP }, flip { flipP } {
+    Animator(data::AnimationData animationsP, const Vec2& originP, engine::render::Flip flipP)
+            : animations { std::move(animationsP) }, origin { originP }, flip { flipP } {
 
     }
 

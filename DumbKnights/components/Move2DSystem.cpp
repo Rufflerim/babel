@@ -8,7 +8,7 @@
 #include "Components.h"
 
 void Move2DSystem::update(engine::ecs::Coordinator& coordinator, const GameTime& time) {
-    for(auto& entity : entities) {
+    for(auto entity : entities) {
         auto& transform = coordinator.getComponent<Transform2D>(entity);
         auto& move = coordinator.getComponent<Move2D>(entity);
 

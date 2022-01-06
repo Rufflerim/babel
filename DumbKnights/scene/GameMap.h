@@ -13,6 +13,7 @@
 #include "../components/Move2DSystem.h"
 #include "../components/ControllerSystem.h"
 #include "../components/AnimationSystem.h"
+#include "../world/TileMap.h"
 
 namespace scene {
     class GameMap : public IScene {
@@ -38,7 +39,7 @@ namespace scene {
         std::shared_ptr<AnimationSystem> animationSystem;
 
         std::vector<Entity> entities;
-
+        world::TileMap tileMap { "map1"};
     };
 }
 

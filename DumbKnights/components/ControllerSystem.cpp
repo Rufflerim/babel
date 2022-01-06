@@ -6,7 +6,7 @@
 #include "Components.h"
 
 void ControllerSystem::update(engine::ecs::Coordinator& coordinator, const engine::input::InputState& inputState) {
-    for (auto& entity: entities) {
+    for (auto entity: entities) {
         auto& controller = coordinator.getComponent<Controller>(entity);
         if (!controller.isPlayer) return;
 

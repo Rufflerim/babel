@@ -9,7 +9,7 @@
 using gmath::Vec2i;
 
 void AnimationSystem::update(engine::ecs::Coordinator& coordinator, const GameTime& time) {
-    for (auto& entity: entities) {
+    for (auto entity: entities) {
         auto& animator = coordinator.getComponent<Animator>(entity);
         auto& sprite = coordinator.getComponent<Sprite>(entity);
 

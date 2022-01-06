@@ -6,6 +6,7 @@
 #define MATH_RECTANGLE_H
 
 #include "Vec2.h"
+#include <SDL_rect.h>
 
 namespace gmath {
     /// Rectangle representation
@@ -19,7 +20,7 @@ namespace gmath {
 
         /// Convert a rectangle to a SDL Rect
         /// \return New sdl rect with this rectangle size
-        const SDL_Rect toSdlRect() const;
+        SDL_Rect toSdlRect() const;
 
         /// Check rectangle equality
         /// \param other Other rectangle
