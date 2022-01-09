@@ -60,6 +60,7 @@ namespace engine { namespace ecs {
         }
 
         /// Get a reference to a component from the array for a given entity
+        /// BEWARE: this costs more than call the component array then call getData on each component.
         /// \tparam T Component class
         /// \param entity The entity from which we want the component
         /// \return Component from the entity
@@ -73,6 +74,15 @@ namespace engine { namespace ecs {
         /// \param entity
         void onEntityDestroyed(Entity entity);
 
+        /// Convenience function to get the statically casted pointer to the ComponentArray of type T.
+        /// \tparam T Component class
+        /// \return Shared pointer to a component array
+        template<typename T>
+        std::shared_ptr<ComponentArray<T>> getComponentArray() {
+            const char* typeName = typeid(T).name();
+            return std::static_pointer_cast<ComponentArray<T>>(componentArrays.at(typeName));
+        }
+
     private:
         // Map from type string pointer to a component type
         unordered_map<const char*, ComponentType> componentTypes {};
@@ -82,15 +92,6 @@ namespace engine { namespace ecs {
 
         // The component type to be assigned to the next registered component - starting at 0
         ComponentType nextComponentType {};
-
-        /// Convenience function to get the statically casted pointer to the ComponentArray of type T.
-        /// \tparam T
-        /// \return
-        template<typename T>
-        std::shared_ptr<ComponentArray<T>> getComponentArray() {
-            const char* typeName = typeid(T).name();
-            return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
-        }
     };
 } }
 

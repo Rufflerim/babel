@@ -6,11 +6,15 @@
 #include "Components.h"
 
 void ControllerSystem::update(engine::ecs::Coordinator& coordinator, const engine::input::InputState& inputState) {
+
+    auto controllerComps = coordinator.getComponentArray<Controller>();
+    auto moveComps = coordinator.getComponentArray<Move2D>();
+
     for (auto entity: entities) {
-        auto& controller = coordinator.getComponent<Controller>(entity);
+        auto& controller = controllerComps->getData(entity);
         if (!controller.isPlayer) return;
 
-        auto& move = coordinator.getComponent<Move2D>(entity);
+        auto& move = moveComps->getData(entity);
         controller.inputAxis = Vec2::zero();
         if (inputState.keyboard.getKeyState(SDL_SCANCODE_D) == engine::input::ButtonState::Held) {
             controller.inputAxis.x = 1;

@@ -11,8 +11,12 @@
 using gmath::Vec2i;
 
 void RenderingSystem::draw(engine::ecs::Coordinator& coordinator, engine::render::IRenderer& renderer) {
+
+    auto transformComps = coordinator.getComponentArray<Transform2D>();
+    auto spriteComps = coordinator.getComponentArray<Sprite>();
+
     for (auto entity: entities) {
-        auto& transform = coordinator.getComponent<Transform2D>(entity);
+        auto& transform = transformComps->getData(entity);
 
         /* Draw rectangle
         auto &rectangle = coordinator.getComponent<ColorRectangle>(entity);
@@ -24,7 +28,7 @@ void RenderingSystem::draw(engine::ecs::Coordinator& coordinator, engine::render
         renderer.drawRectangle(rect, rectangle.color);
          */
 
-        auto& sprite = coordinator.getComponent<Sprite>(entity);
+        auto& sprite = spriteComps->getData(entity);
         auto texture = Locator::instance().assets().getTexture(sprite.textureName).get();
         gmath::RectangleInt dstRect {
                 Vec2i { static_cast<i32>(transform.position.x + sprite.origin.x),

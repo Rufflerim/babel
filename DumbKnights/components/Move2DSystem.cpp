@@ -8,9 +8,13 @@
 #include "Components.h"
 
 void Move2DSystem::update(engine::ecs::Coordinator& coordinator, const GameTime& time) {
+
+    auto transformComps = coordinator.getComponentArray<Transform2D>();
+    auto moveComps = coordinator.getComponentArray<Move2D>();
+
     for(auto entity : entities) {
-        auto& transform = coordinator.getComponent<Transform2D>(entity);
-        auto& move = coordinator.getComponent<Move2D>(entity);
+        auto& transform = transformComps->getData(entity);
+        auto& move = moveComps->getData(entity);
 
         if(move.acceleration == gmath::Vec2::zero() && move.speed == gmath::Vec2::zero()) return;
         move.speed += move.acceleration * time.dt;

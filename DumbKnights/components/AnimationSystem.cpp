@@ -9,9 +9,16 @@
 using gmath::Vec2i;
 
 void AnimationSystem::update(engine::ecs::Coordinator& coordinator, const GameTime& time) {
+
+
+    auto animatorComps = coordinator.getComponentArray<Animator>();
+    auto spriteComps = coordinator.getComponentArray<Sprite>();
+    //auto& animator = coordinator.getComponent<Animator>(entity);
+    //auto& sprite = coordinator.getComponent<Sprite>(entity);
+
     for (auto entity: entities) {
-        auto& animator = coordinator.getComponent<Animator>(entity);
-        auto& sprite = coordinator.getComponent<Sprite>(entity);
+        auto& animator = animatorComps->getData(entity);
+        auto& sprite = spriteComps->getData(entity);
 
         // PLay state, make animation loop
         auto& currentRow = animator.animations.rows[animator.currentAnimRow];

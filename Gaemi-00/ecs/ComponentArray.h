@@ -59,7 +59,7 @@ namespace engine { namespace ecs {
         /// \param entity The entity we want its component data
         /// \return Component of given entity
         T& getData(Entity entity) {
-            return componentArray[entityToIndex[entity]];
+            return componentArray.at(entityToIndex.at(entity));
         }
 
         /// Remove component data about an entity if it exists

@@ -158,12 +158,21 @@ namespace engine { namespace ecs {
         }
 
         /// Get a specific component from an entity
+        /// BEWARE: prefer not to use. It is better to get the component array then loop through components in it.
         /// \tparam T Component class
         /// \param entity Targeted entity
         /// \return Reference to the given component
         template<typename T>
         T& getComponent(Entity entity) {
             return componentManager->getComponent<T>(entity);
+        }
+
+        /// Get all components of a given type
+        /// \tparam T Component class
+        /// \return Shared pointer to the components array
+        template<typename T>
+        std::shared_ptr<ComponentArray<T>> getComponentArray() {
+            return componentManager->getComponentArray<T>();
         }
 
         /// Get a component ID from its class
