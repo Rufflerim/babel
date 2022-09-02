@@ -74,10 +74,10 @@ namespace engine {
 	};
 
 	// Log only if we pass a certain LogLevel
-#ifdef GDEBUG
-	constexpr i32 MAX_LOG_LEVEL = static_cast<i32>(LogLevel::Trace);
-#elif GRELEASE
+#ifdef GRELEASE
 	constexpr i32 MAX_LOG_LEVEL = static_cast<i32>(LogLevel::Error);
+#else
+	constexpr i32 MAX_LOG_LEVEL = static_cast<i32>(LogLevel::Trace);
 #endif
 
 }
@@ -87,5 +87,4 @@ namespace engine {
 	;														\
 	else													\
 		engine::Log().get(level)
-
 #endif

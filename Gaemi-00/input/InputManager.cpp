@@ -1,8 +1,5 @@
 #include <Functions.h>
 #include "InputManager.h"
-#include "../Log.h"
-#include "../ILocator.h"
-#include "../Events.h"
 
 using engine::input::InputManager;
 
@@ -141,7 +138,7 @@ Vec2 InputManager::filter2D(i32 inputX, i32 inputY) {
     Vec2 dir;
     dir.x = static_cast<f32>(inputX);
     dir.y = static_cast<f32>(inputY);
-    float length = static_cast<f32>(dir.length());
+    auto length = static_cast<f32>(dir.length());
 
     // If length < deadZone, should be no input
     if (length < deadZone) {
