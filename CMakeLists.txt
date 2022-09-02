@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(DumbKnights)
+project(Babel)
 
 ## Executable
-add_executable(DumbKnights DumbKnights/Main.cpp)
-set_property(TARGET DumbKnights PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Gaemi>")
-target_link_libraries(DumbKnights DumbKnights-Game Gaemi-00)
+add_executable(Babel Babel/Main.cpp)
+set_property(TARGET Babel PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Babel>")
+target_link_libraries(Babel Babel-Game Gaemi-00)
 
 ## Setup compilation
 set(CMAKE_CXX_STANDARD 17)
@@ -19,5 +19,5 @@ endif()
 ## Build
 add_subdirectory( Externals )
 add_subdirectory( Gaemi-00 )
-add_subdirectory( DumbKnights )
+add_subdirectory(Babel)
 

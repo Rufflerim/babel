@@ -58,7 +58,7 @@ using str = std::string;
 // ECS
 // -- Constants
 constexpr u8 MAX_COMPONENTS = 32;
-constexpr u32 MAX_ENTITIES = 5000;
+constexpr u32 MAX_ENTITIES = 10000;
 // -- Types
 using Entity = u32;
 using ComponentType = u8;
@@ -112,3 +112,9 @@ constexpr std::uint32_t operator "" _hash(char const* s, std::size_t count)
 #endif
 
 #endif
+
+// Error codes
+enum class ErrorCode {
+    None = 0,
+};
+

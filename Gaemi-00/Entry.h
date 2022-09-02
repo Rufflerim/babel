@@ -11,7 +11,7 @@ namespace engine {
 	class Entry
 	{
 	public:
-		GAPI static int start(engine::IGame& game, engine::ILocator& locator);
+		GAPI static i32 start(engine::IGame* game, engine::ILocator& locator);
 	};
 
 }

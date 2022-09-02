@@ -24,8 +24,9 @@ namespace engine {
 		bool isInitialized { false };
 		bool isRunning { false };
 		bool isPaused { false };
-		IGame* game;
-        ILocator* locator;
+        ErrorCode errorCode { ErrorCode::None };
+		IGame* game { nullptr };
+        ILocator* locator { nullptr };
 	};
 
 	class Engine
@@ -37,12 +38,12 @@ namespace engine {
 		/// <summary>
 		/// Init everything in the engine
 		/// </summary>
-		void init(IGame& game, ILocator& locator);
+		void init(IGame* game, ILocator& locator);
 
 		/// <summary>
 		/// Run the engine. Game loop.
 		/// </summary>
-		void run();
+		ErrorCode run();
 
 		/// <summary>
 		/// Shut down the engine
@@ -59,7 +60,8 @@ namespace engine {
 		/// Update logic 
 		/// </summary>
 		/// <param name="time">Game time</param>
-		void update(const GameTime& time, const input::InputState& inputState);
+        /// <returns>Error code</returns>
+        void update(const GameTime& time, const input::InputState& inputState);
 
 		/// <summary>
 		/// Draw everything
@@ -77,7 +79,7 @@ namespace engine {
         EventManager eventManager {};
 
         /// Game window
-		Window window{ "Dumb Knights " };
+		Window window{ "Babel" };
 
         /// Engine renderer
         RendererSDL renderer {};

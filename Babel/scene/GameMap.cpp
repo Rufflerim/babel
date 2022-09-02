@@ -11,8 +11,8 @@ using gmath::Vec2;
 
 scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordinator) {
     coordinator.init();
-    entities.reserve(1000);
-    for (int i = 0; i < 1000; ++i) {
+    entities.reserve(10000);
+    for (int i = 0; i < 10000; ++i) {
         entities.push_back(0);
     }
 }
@@ -47,7 +47,6 @@ void scene::GameMap::onInit() {
     Signature animatedSpriteSignature;
     animatedSpriteSignature.set(coordinator.getComponentType<Animator>());
     animatedSpriteSignature.set(coordinator.getComponentType<Sprite>());
-    //animatedSpriteSignature.set(coordinator.getComponentType<Move2D>());
     coordinator.setSystemSignature<AnimationSystem>(animatedSpriteSignature);
 
     Signature moveSignature;
@@ -67,7 +66,7 @@ void scene::GameMap::onInit() {
     //std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
     //std::uniform_int_distribution randColor(0, 255);
 
-    for(int i = 0; i < 5000; ++i) {
+    for(int i = 0; i < 10000; ++i) {
 
         Entity furior = coordinator.createEntity();
         coordinator.addComponent(furior, Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},

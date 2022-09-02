@@ -4,16 +4,17 @@
 
 using engine::Engine;
 
-GAPI int engine::Entry::start(engine::IGame& game, engine::ILocator& locator)
+GAPI i32 engine::Entry::start(engine::IGame* game, engine::ILocator& locator)
 {
     // Log initialization
     Log::restart();
 
     // Engine
+    u32 errorCode { 0 };
     Engine engine;
     engine.init(game, locator);
-    engine.run();
+    errorCode = static_cast<i32>(engine.run());
     engine.close();
 
-    return 0;
+    return errorCode;
 }

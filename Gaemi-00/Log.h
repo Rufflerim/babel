@@ -78,7 +78,7 @@ namespace engine {
 	constexpr i32 MAX_LOG_LEVEL = static_cast<i32>(LogLevel::Trace);
 #elif GRELEASE
 	constexpr i32 MAX_LOG_LEVEL = static_cast<i32>(LogLevel::Error);
-#endif // GDEBUG
+#endif
 
 }
 

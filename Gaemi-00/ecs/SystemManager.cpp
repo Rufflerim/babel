@@ -14,20 +14,17 @@ void engine::ecs::SystemManager::onEntityDestroyed(Entity entity) {
 }
 
 void engine::ecs::SystemManager::onEntitySignatureChanged(Entity entity, Signature entitySignature) {
-    for (auto const& pair : systems)
-    {
+    for (auto const& pair : systems) {
         auto const& type = pair.first;
         auto const& system = pair.second;
         auto const& systemSignature = signatures[type];
 
         // Entity signature matches system signature - insert into set
-        if ((entitySignature & systemSignature) == systemSignature)
-        {
+        if ((entitySignature & systemSignature) == systemSignature) {
             system->entities.insert(entity);
         }
-            // Entity signature does not match system signature - erase from set
-        else
-        {
+        // Entity signature does not match system signature - erase from set
+        else {
             system->entities.erase(entity);
         }
     }

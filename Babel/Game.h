@@ -8,12 +8,9 @@
 class Game : public engine::IGame
 {
 public:
-	static Game& instance() {
-		static Game gameInstance;
-		return gameInstance;
-	}
+    Game() = default;
 
-	/// <summary>
+    /// <summary>
 	/// Game load
 	/// </summary>
 	void load() override;
@@ -40,9 +37,7 @@ public:
 	void close() override;
 
 private:
-	Game() = default;
     engine::ecs::Coordinator coordinator {};
     scene::SceneManager sceneManager { coordinator };
-
 };
 

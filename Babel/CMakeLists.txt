@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(DumbKnights-Game)
+project(Babel-Game)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -21,7 +21,7 @@ add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_BINARY_DIR}/../../Assets
-        $<TARGET_FILE_DIR:DumbKnights>/Assets
+        $<TARGET_FILE_DIR:Babel>/Assets
         COMMENT "---- Copy Assets"
 )
 

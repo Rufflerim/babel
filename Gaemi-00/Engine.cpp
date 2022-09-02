@@ -1,14 +1,14 @@
 #include "Engine.h"
 #include "Log.h"
 #include "Timer.h"
-#include "../DumbKnights/Locator.h"
+#include "../Babel/Locator.h"
 #include <SDL_events.h>
 
 
 using engine::input::InputState;
 
-void engine::Engine::init(IGame& game, ILocator& locator) {
-	state.game = &game;
+void engine::Engine::init(IGame* game, ILocator& locator) {
+	state.game = game;
     state.locator = &locator;
 
 	// Init everything
@@ -36,7 +36,7 @@ void engine::Engine::init(IGame& game, ILocator& locator) {
 
 }
 
-void engine::Engine::run() {
+ErrorCode engine::Engine::run() {
 	// Timer for delta time
 	Timer timer;
 	GameTime time;
@@ -51,7 +51,7 @@ void engine::Engine::run() {
 
 		// Update
 		window.updateFPSCounter(time);
-		update(time, inputState);
+        update(time, inputState);
 
 		// Draw
         renderer.clearScreen();
@@ -62,6 +62,8 @@ void engine::Engine::run() {
 		// Time delay if game loop is faster than target FPS
 		timer.delayTime();
 	}
+
+    return state.errorCode;
 }
 
 void engine::Engine::close() {

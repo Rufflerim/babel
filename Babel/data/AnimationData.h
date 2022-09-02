@@ -6,6 +6,8 @@
 #define DATA_ANIMATIONDATA_H
 
 #include "IData.h"
+#include "Defines.h"
+#include <vector>
 
 namespace data {
     struct AnimationRow {
