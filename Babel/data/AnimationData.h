@@ -7,6 +7,7 @@
 
 #include "IData.h"
 #include "Defines.h"
+#include <utility>
 #include <vector>
 
 namespace data {
@@ -21,15 +22,15 @@ namespace data {
         u16 frameWidth { 0 };
         u16 frameHeight { 0 };
         f32 frameTime { 0 };
-        str textureName { "" };
+        str textureName;
         std::vector<AnimationRow> rows;
 
         AnimationData() = default;
 
-        AnimationData(u16 frameWidthP, u16 frameHeightP, f32 frameTimeP, const str& textureNameP,
-                      const std::vector<AnimationRow>& rowsP) :
+        AnimationData(u16 frameWidthP, u16 frameHeightP, f32 frameTimeP, str textureNameP,
+                      std::vector<AnimationRow> rowsP) :
                 frameWidth { frameWidthP }, frameHeight { frameHeightP }, frameTime { frameTimeP },
-                textureName { textureNameP }, rows { rowsP } {}
+                textureName {std::move( textureNameP )}, rows {std::move( rowsP )} {}
     };
 }
 

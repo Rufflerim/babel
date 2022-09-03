@@ -10,10 +10,10 @@ target_link_libraries(Babel Babel-Game Gaemi-00)
 set(CMAKE_CXX_STANDARD 17)
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=1)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=0)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 endif()
 
 ## Build

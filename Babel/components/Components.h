@@ -31,6 +31,7 @@ struct ColorRectangle {
     Rectangle rectangle;
 };
 
+/// Rendering an image or a part of it
 struct Sprite {
     Vec2 origin { Vec2::zero() };
     gmath::RectangleInt srcRect { gmath::RectangleInt::nullRectangle };
@@ -56,6 +57,7 @@ enum class AnimatorState {
     Play, Stop, Pause
 };
 
+/// Flipbook animation manager
 struct Animator {
     Vec2 origin;
     u16 frameIndex { 0 };
@@ -79,6 +81,7 @@ struct Animator {
     }
 };
 
+/// 2D movement
 struct Move2D {
     f32 maxSpeed { 0 };
     f32 decelerationFactor { 0 };
@@ -91,6 +94,7 @@ struct Move2D {
                                                      decelerationFactor { decelerationFactorP } {}
 };
 
+/// Control an entity orders
 struct Controller {
     Vec2 inputAxis { Vec2::zero() };
     bool isPlayer { false };
