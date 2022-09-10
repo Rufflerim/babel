@@ -2,7 +2,7 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
-#include <SDL_events.h>
+#include <SDL.h>
 #include "../Defines.h"
 #include "KeyboardState.h"
 #include "MouseState.h"
@@ -57,8 +57,10 @@ namespace engine { namespace input {
         u32 windowHeight { 720 };
         InputState inputState {};
         bool isCursorDisplayed { false };
-        SDL_GameController* controllerPtr { nullptr };
 
+#ifndef GPLATFORM_WEB
+        SDL_GameController* controllerPtr { nullptr };
+#endif
         f32 filter1D(int input);
         Vec2 filter2D(int inputX, int inputY);
     };

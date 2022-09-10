@@ -26,7 +26,7 @@ std::shared_ptr<engine::render::sdl::Texture> engine::asset::AssetManager::getTe
 
 bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) {
     bool result = true;
-
+    LOG(LogLevel::Trace) << "Load texture " << path;
     // Load a pixel surface that fits the texture
     SDL_RWops *file = SDL_RWFromFile(path.c_str(), "rb");
     SDL_Surface *surf = STBIMG_Load_RW(file, 1);
@@ -39,9 +39,16 @@ bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) 
     }
 
     // Create a texture from the surface and store it as a shared pointer
+#ifndef GPLATFORM_WEB
     SDL_Texture* t = STBIMG_CreateTexture(
             reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(),
             static_cast<const unsigned char*>(surf->pixels), surf->w, surf->h, 4);
+#else
+    SDL_Texture* t = SDL_CreateTexture(
+            reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(),
+            SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, surf->w, surf->h);
+#endif
+
     if(t == nullptr) {
         LOG(LogLevel::Error) <<  "Could not create SDL texture: " << path << ". SDL Error:" << SDL_GetError();
         result = false;

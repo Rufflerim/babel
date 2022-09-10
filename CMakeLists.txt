@@ -8,12 +8,29 @@ add_executable(Babel Babel/Main.cpp)
 set_property(TARGET Babel PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Babel>")
 target_link_libraries(Babel Babel-Game Gaemi-00)
 
+## Env variables
+if(WIN32)
+    add_custom_command(TARGET Babel PRE_BUILD
+            COMMAND cmd /C "${CMAKE_SOURCE_DIR}/Externals/emsdk-3.1.21/emsdk_env.bat")
+
+endif()
+
+if(EMSCRIPTEN)
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC __EMSCRIPTEN__=1)
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "--preload-file Assets")
+endif()
+
+
 ## Debug status and optimisation flag
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=1)
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=0)
 endif()
+
+target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_SDL=2)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_SDL_MIXER=2)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_WEBGL2=1)
 
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
@@ -26,12 +43,11 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
         -Wno-c11-extensions
 
         # Optimization
-        $<$<CONFIG:DEBUG>:-Og>
-        $<$<CONFIG:RELEASE>:-Os>
+        #$<$<CONFIG:DEBUG>:-Og>
+        #$<$<CONFIG:RELEASE>:-Os>
 )
 
 ## Build
 add_subdirectory( Externals )
 add_subdirectory( Gaemi-00 )
-add_subdirectory(Babel)
-
+add_subdirectory( Babel )

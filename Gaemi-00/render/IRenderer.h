@@ -20,10 +20,10 @@ namespace engine {
     namespace render {
 
     enum class Flip {
-        None,
-        Horizontal,
-        Vertical,
-        HorizontalAndVertical
+        None = 0,
+        Horizontal = 1,
+        Vertical = 2,
+        HorizontalAndVertical = 3
     };
 
     class IRenderer {

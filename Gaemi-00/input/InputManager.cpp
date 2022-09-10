@@ -21,6 +21,7 @@ bool InputManager::init(engine::ILocator* locatorP) {
     inputState.mouse.currentButtons = 0;
     inputState.mouse.previousButtons = 0;
 
+#ifndef GPLATFORM_WEB
     // Get the connected controllerPtr, if it exists
     controllerPtr = SDL_GameControllerOpen(0);
     // Initialize controllerPtr state
@@ -28,15 +29,18 @@ bool InputManager::init(engine::ILocator* locatorP) {
     i16 maxControllerButton = static_cast<i16>(ControllerButton::Max);
     memset(inputState.controller.currentButtons, 0, maxControllerButton);
     memset(inputState.controller.previousButtons, 0, maxControllerButton);
+#endif
 
     LOG(LogLevel::Trace) << "Inputs initialized";
     return true;
 }
 
 void InputManager::close() {
+#ifndef GPLATFORM_WEB
     if (controllerPtr != nullptr) {
         SDL_GameControllerClose(controllerPtr);
     }
+#endif
 }
 
 void InputManager::processSDLEvent(SDL_Event& event) {
@@ -62,9 +66,11 @@ void InputManager::preUpdate() {
     // Mouse
     inputState.mouse.previousButtons = inputState.mouse.currentButtons;
     inputState.mouse.scrollWheel = Vec2(0, 0);
+#ifndef GPLATFORM_WEB
     // Controller
     i16 maxControllerButton = static_cast<i16>(ControllerButton::Max);
     memcpy(inputState.controller.previousButtons, inputState.controller.currentButtons, maxControllerButton);
+#endif
 }
 
 void InputManager::update() {
@@ -80,6 +86,7 @@ void InputManager::update() {
         inputState.mouse.position.y = static_cast<float>(windowHeight) * 0.5f - inputState.mouse.position.y;
     }
 
+#ifndef GPLATFORM_WEB
     // Controller
     // Buttons
     i16 controllerMaxButton = static_cast<i16>(ControllerButton::Max);
@@ -101,6 +108,7 @@ void InputManager::update() {
     i32 rightStickX = SDL_GameControllerGetAxis(controllerPtr, static_cast<SDL_GameControllerAxis>(ControllerAxis::RightX));
     i32 rightStickY = -SDL_GameControllerGetAxis(controllerPtr, static_cast<SDL_GameControllerAxis>(ControllerAxis::RightY));
     inputState.controller.rightStick = filter2D(rightStickX, rightStickY);
+#endif
 }
 
 void InputManager::setMouseCursor(bool isCursorDisplayedP) {

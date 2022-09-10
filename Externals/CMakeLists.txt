@@ -34,41 +34,42 @@ endif ()
 
 target_link_libraries(SDL2 INTERFACE ${SDL2_LIBRARIES})
 
-## SDL2 Mixer
-message("---- Linking SDL2 Mixer")
-add_library(SDL2_mixer INTERFACE)
+### SDL2 Mixer
+#message("---- Linking SDL2 Mixer")
+#add_library(SDL2_mixer INTERFACE)
+#
+#if (WIN32)
+#    set(SDL2_mixer_DIR "${CMAKE_SOURCE_DIR}/Externals/SDL2_mixer-2.0.4")
+#    set(SDL2_mixer_PATH "${SDL2_mixer_DIR}")
+#    find_package(SDL2_mixer REQUIRED)
+#    target_include_directories(SDL2_mixer INTERFACE ${SDL2_mixer_DIR}/include)
+#    target_link_directories(SDL2_mixer INTERFACE ${SDL2_mixer_LIB_PATH})
+#elseif (UNIX)
+#    find_package(SDL2_mixer REQUIRED)
+#    target_include_directories(SDL2_mixer INTERFACE ${SDL2_mixer_DIR}/include)
+#    target_link_directories(SDL2_mixer INTERFACE ${SDL2_mixer_DIR}/lib)
+#endif ()
+#
+#target_link_libraries(SDL2_mixer INTERFACE ${SDL2_mixer_LIBRARIES})
+#
+### SDL2 TTF
+#message("---- Linking SDL2 TTF")
+#add_library(SDL2_ttf INTERFACE)
+#
+#if (WIN32)
+#    set(SDL2_ttf_DIR "${CMAKE_SOURCE_DIR}/Externals/SDL2_ttf-2.0.15")
+#    set(SDL2_ttf_PATH "${SDL2_ttf_DIR}")
+#    find_package(SDL2_ttf REQUIRED)
+#    target_include_directories(SDL2_ttf INTERFACE ${SDL2_ttf_DIR}/include)
+#    target_link_directories(SDL2_ttf INTERFACE ${SDL2_ttf_LIB_PATH})
+#elseif (UNIX)
+#    find_package(SDL2_ttf REQUIRED)
+#    target_include_directories(SDL2_ttf INTERFACE ${SDL2_ttf_DIR}/include)
+#    target_link_directories(SDL2_ttf INTERFACE ${SDL2_ttf_DIR}/lib)
+#endif ()
+#
+#target_link_libraries(SDL2_ttf INTERFACE ${SDL2_ttf_LIBRARIES})
 
-if (WIN32)
-    set(SDL2_mixer_DIR "${CMAKE_SOURCE_DIR}/Externals/SDL2_mixer-2.0.4")
-    set(SDL_mixer_PATH "${SDL2_mixer_DIR}")
-    find_package(SDL2_mixer REQUIRED)
-    target_include_directories(SDL2_mixer INTERFACE ${SDL2_mixer_DIR}/include)
-    target_link_directories(SDL2_mixer INTERFACE ${SDL2_mixer_LIB_PATH})
-elseif (UNIX)
-    find_package(SDL2_mixer REQUIRED)
-    target_include_directories(SDL2_mixer INTERFACE ${SDL2_mixer_DIR}/include)
-    target_link_directories(SDL2_mixer INTERFACE ${SDL2_mixer_DIR}/lib)
-endif ()
-
-target_link_libraries(SDL2_mixer INTERFACE ${SDL2_mixer_LIBRARIES})
-
-## SDL2 TTF
-message("---- Linking SDL2 TTF")
-add_library(SDL2_ttf INTERFACE)
-
-if (WIN32)
-    set(SDL2_ttf_DIR "${CMAKE_SOURCE_DIR}/Externals/SDL2_ttf-2.0.15")
-    set(SDL2_ttf_PATH "${SDL2_ttf_DIR}")
-    find_package(SDL2_ttf REQUIRED)
-    target_include_directories(SDL2_ttf INTERFACE ${SDL2_ttf_DIR}/include)
-    target_link_directories(SDL2_ttf INTERFACE ${SDL2_ttf_LIB_PATH})
-elseif (UNIX)
-    find_package(SDL2_ttf REQUIRED)
-    target_include_directories(SDL2_ttf INTERFACE ${SDL2_ttf_DIR}/include)
-    target_link_directories(SDL2_ttf INTERFACE ${SDL2_ttf_DIR}/lib)
-endif ()
-
-target_link_libraries(SDL2_ttf INTERFACE ${SDL2_ttf_LIBRARIES})
 
 
 ## -----------------------------------------------------------------------------------------

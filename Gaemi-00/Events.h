@@ -77,15 +77,15 @@ namespace engine {
     class NullEvents : public Events {
     private:
         void placeholderMessage(EventCode code, void *listener, EventCallback* onEvent) {
-            listener = nullptr;
-            onEvent = nullptr;
-            LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: " << static_cast<i32>(code);
+            listener = 0;
+            onEvent = 0;
+            LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: " << static_cast<i32>(code) << " Trash:" << listener << onEvent;
         }
 
         void placeholderMessage(EventCode code, void *sender) {
-            sender = nullptr;
+            sender = 0;
             LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: "
-                << static_cast<i32>(code);
+                << static_cast<i32>(code) << " Trash:" << sender;
         }
 
     public:

@@ -79,6 +79,7 @@ str Log::getLabel(LogLevel level)
 
 void Log::consoleWrite(const str& message, LogLevel level)
 {
+#ifdef GPLATFORM_WINDOWS
 	// Colors for Fatal, Error, Warning, Info, Debug, Trace
 	array<u8, 6> levels { 64, 4, 6, 2, 1, 8 };
 
@@ -87,6 +88,7 @@ void Log::consoleWrite(const str& message, LogLevel level)
 	OutputDebugStringA(message.c_str());
 	LPDWORD numberWritten {};
 	WriteConsoleA(consoleHandle, message.c_str(), static_cast<DWORD>(message.length()), numberWritten, nullptr);
+#endif
 }
 
 array<char, 19> engine::Log::getDate()

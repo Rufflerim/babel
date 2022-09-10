@@ -91,7 +91,13 @@ GSTATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 	#define GPLATFORM_WINDOWS 1
 	#ifndef _WIN64
 		#error "64-bit is required on Windows!"
-	#endif
+    #endif
+#elif defined(__linux__) || defined(__gnu_linux__)
+    // Linux OS
+    #define GPLATFORM_LINUX 1
+#elif defined(__EMSCRIPTEN__)
+    // Web
+    #define GPLATFORM_WEB 1
 #endif
 
 // Debug

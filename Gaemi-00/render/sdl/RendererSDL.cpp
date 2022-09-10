@@ -53,19 +53,19 @@ void engine::render::sdl::RendererSDL::close() {
 
 void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, const RectangleInt& dstRect,
                              f64 angle, const Vec2& origin, engine::render::Flip flip) {
-    SDL_RendererFlip sdlFlip = SDL_FLIP_NONE;
+    i32 sdlFlip = 0;
     switch (flip) {
         case Flip::Horizontal:
-            sdlFlip = SDL_FLIP_HORIZONTAL;
+            sdlFlip = 1;
             break;
         case Flip::Vertical:
-            sdlFlip = SDL_FLIP_VERTICAL;
+            sdlFlip = 2;
             break;
         case Flip::HorizontalAndVertical:
-            sdlFlip = static_cast<SDL_RendererFlip>(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
+            sdlFlip = 3;
             break;
         default:
-            sdlFlip = SDL_FLIP_NONE;
+            sdlFlip = 0;
             break;
     }
     const SDL_Point center {static_cast<i32>(origin.x), static_cast<i32>(origin.y)};
@@ -76,6 +76,11 @@ void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, cons
     SDL_Rect dstSdlRect = dstRect.toSdlRect();
     SDL_Rect* dstFinalRect = dstRect == gmath::RectangleInt::nullRectangle ? nullptr : &dstSdlRect;
 
+#ifdef GPLATFORM_WEB
+    SDL_RenderCopy(renderer.get(), texture->sdlTexture.get(),
+                   srcFinalRect, dstFinalRect);
+#else
     SDL_RenderCopyEx(renderer.get(), texture->sdlTexture.get(),
                      srcFinalRect, dstFinalRect, angle, &center, sdlFlip);
+#endif
 }
