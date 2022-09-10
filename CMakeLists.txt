@@ -17,7 +17,7 @@ endif()
 
 target_compile_features(${CMAKE_PROJECT_NAME} PUBLIC cxx_std_17)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
-        -Wall -Werror -Werror=uninitialized
+        -Wall -Wextra -Wpedantic -Werror -Werror=uninitialized
 
         # SDL compatibility
         -Wno-c++98-compat
