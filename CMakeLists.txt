@@ -9,15 +9,15 @@ set_property(TARGET Babel PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_
 target_link_libraries(Babel Babel-Game Gaemi-00)
 
 ## Env variables
-if(WIN32)
-    add_custom_command(TARGET Babel PRE_BUILD
-            COMMAND cmd /C "${CMAKE_SOURCE_DIR}/Externals/emsdk-3.1.21/emsdk_env.bat")
 
-endif()
 
 if(EMSCRIPTEN)
+    if(WIN32)
+        add_custom_command(TARGET Babel PRE_BUILD
+                COMMAND cmd /C "${CMAKE_SOURCE_DIR}/Externals/emsdk-3.1.21/emsdk_env.bat")
+    endif()
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC __EMSCRIPTEN__=1)
-    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "--preload-file Assets")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind -s USE_SDL=2 -s USE_WEBGL2=1 --preload-file Assets")
 endif()
 
 

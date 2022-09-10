@@ -18,6 +18,7 @@ scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordina
 }
 
 void scene::GameMap::onInit() {
+    /*
     engine::asset::Assets& assets = Locator::instance().assets();
     assets.loadTexture("Assets/mathieu.png", "mathieu");
     assets.loadTexture("Assets/furior_spritesheet.png", "furior_spritesheet");
@@ -84,6 +85,7 @@ void scene::GameMap::onInit() {
                                                 engine::render::Flip::None});
         entities.push_back(furior);
     }
+    */
 }
 
 void scene::GameMap::onClose() {

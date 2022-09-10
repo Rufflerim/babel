@@ -1,11 +1,16 @@
 #include "Engine.h"
-#include "Log.h"
-#include "Timer.h"
 #include "../Babel/Locator.h"
 #include <SDL_events.h>
-
+#include <emscripten.h>
 
 using engine::input::InputState;
+
+engine::EngineState engine::Engine::state {};
+engine::input::InputManager engine::Engine::inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
+engine::Window engine::Engine::window{ "Babel" };
+RendererSDL engine::Engine::renderer {};
+engine::Timer engine::Engine::timer {};
+GameTime engine::Engine::time {};
 
 void engine::Engine::init(IGame* game, ILocator& locator) {
 	state.game = game;
@@ -37,32 +42,8 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
 }
 
 ErrorCode engine::Engine::run() {
-	// Timer for delta time
-	Timer timer;
-	GameTime time;
-
 	state.game->load();
-	// Loop
-	while (state.isRunning) {
-		time = timer.computeTime(time);
-
-		// Inputs
-		InputState inputState = inputs();
-
-		// Update
-		window.updateFPSCounter(time);
-        update(time, inputState);
-
-		// Draw
-        renderer.clearScreen();
-        renderer.beginDraw();
-        draw(renderer);
-        renderer.endDraw();
-
-		// Time delay if game loop is faster than target FPS
-		timer.delayTime();
-	}
-
+    loop();
     return state.errorCode;
 }
 
@@ -106,4 +87,40 @@ bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* liste
             break;
     }
     return false;
+}
+
+void engine::Engine::frame() {
+#ifndef GPLATFORM_WEB
+    time = timer.computeTime(time);
+#endif
+
+    // Inputs
+    InputState inputState = inputs();
+
+    // Update
+    window.updateFPSCounter(time);
+    update(time, inputState);
+
+    // Draw
+    renderer.clearScreen();
+    renderer.beginDraw();
+    draw(renderer);
+    renderer.endDraw();
+
+#ifdef GPLATFORM_WEB
+    emscripten_cancel_main_loop();
+#else
+    // Time delay if game loop is faster than target FPS
+    timer.delayTime();
+#endif
+}
+
+void engine::Engine::loop() {
+#ifdef GPLATFORM_WEB
+    emscripten_set_main_loop(frame, 60, 1);
+#else
+    while (state.isRunning) {
+        frame();
+	}
+#endif
 }

@@ -10,6 +10,7 @@
 #include "render/sdl/RendererSDL.h"
 #include "asset/AssetManager.h"
 #include "ILocator.h"
+#include "Timer.h"
 
 using engine::render::sdl::RendererSDL;
 
@@ -54,35 +55,37 @@ namespace engine {
 		/// Process inputs with InputhManager
 		/// </summary>
 		/// <returns>Global inputs state</returns>
-		input::InputState inputs();
+        static input::InputState inputs();
 
 		/// <summary>
 		/// Update logic 
 		/// </summary>
 		/// <param name="time">Game time</param>
-        /// <returns>Error code</returns>
-        void update(const GameTime& time, const input::InputState& inputState);
+        static void update(const GameTime& time, const input::InputState& inputState);
 
 		/// <summary>
 		/// Draw everything
 		/// </summary>
-        void draw(render::IRenderer& rendererBackend);
+        static void draw(render::IRenderer& rendererBackend);
 
 	private:
+        static Timer timer;
+        static GameTime time;
+
         /// Game engine state
-		EngineState state {};
+		static EngineState state;
 
         /// Management of inputs
-		input::InputManager inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
+		static input::InputManager inputManager;
 
         /// Global event management
         EventManager eventManager {};
 
         /// Game window
-		Window window{ "Babel" };
+		static Window window;
 
         /// Engine renderer
-        RendererSDL renderer {};
+        static RendererSDL renderer;
 
         /// Asset manager
         asset::AssetManager assetManager {};
@@ -98,7 +101,10 @@ namespace engine {
         /// \param listenerInstance Event listener if specific
         /// \return True if an event occured
         bool handleEngineEvent(EventCode code, void* sender, void* listenerInstance);
-	};
+
+        static void frame();
+        void loop();
+    };
 
 }
 

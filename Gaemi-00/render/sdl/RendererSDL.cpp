@@ -53,21 +53,23 @@ void engine::render::sdl::RendererSDL::close() {
 
 void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, const RectangleInt& dstRect,
                              f64 angle, const Vec2& origin, engine::render::Flip flip) {
-    i32 sdlFlip = 0;
+#ifndef GPLATFORM_WEB
+    SDL_RendererFlip sdlFlip { SDL_FLIP_NONE };
     switch (flip) {
         case Flip::Horizontal:
-            sdlFlip = 1;
+            sdlFlip = SDL_FLIP_HORIZONTAL;
             break;
         case Flip::Vertical:
-            sdlFlip = 2;
+            sdlFlip = SDL_FLIP_VERTICAL;
             break;
         case Flip::HorizontalAndVertical:
-            sdlFlip = 3;
+            sdlFlip = static_cast<SDL_RendererFlip>(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
             break;
         default:
-            sdlFlip = 0;
+            sdlFlip = SDL_FLIP_NONE;
             break;
     }
+#endif
     const SDL_Point center {static_cast<i32>(origin.x), static_cast<i32>(origin.y)};
 
     SDL_Rect srcSdlRect = srcRect.toSdlRect();
