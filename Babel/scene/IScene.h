@@ -14,7 +14,7 @@ using engine::input::InputState;
 namespace scene {
     class IScene {
     public:
-        explicit IScene(engine::ecs::Coordinator& coordinator) : coordinator { coordinator } {}
+        explicit IScene(engine::ecs::Coordinator& coordinatorP) : coordinator { coordinatorP } {}
 
         virtual ~IScene() = default;
 

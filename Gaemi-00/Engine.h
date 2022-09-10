@@ -88,17 +88,16 @@ namespace engine {
         asset::AssetManager assetManager {};
 
         /// Callback for engine events
-        EventCallback onEngineEvent = [this](EventCode code, void* sender, void* listInst, EventContext context) {
-            return this->handleEngineEvent(code, sender, listInst, context);
+        EventCallback onEngineEvent = [this](EventCode code, void* sender, void* listInst) {
+            return this->handleEngineEvent(code, sender, listInst);
         };
 
         /// Apply engine events management
         /// \param code Event type
         /// \param sender Event sender
         /// \param listenerInstance Event listener if specific
-        /// \param context Event additional data
         /// \return True if an event occured
-        bool handleEngineEvent(EventCode code, void* sender, void* listenerInstance, EventContext context);
+        bool handleEngineEvent(EventCode code, void* sender, void* listenerInstance);
 	};
 
 }

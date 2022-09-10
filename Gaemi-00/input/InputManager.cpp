@@ -42,7 +42,7 @@ void InputManager::close() {
 void InputManager::processSDLEvent(SDL_Event& event) {
     switch (event.type) {
         case SDL_QUIT:
-            locator->events().fire(EventCode::ApplicationQuit, nullptr, {});
+            locator->events().fire(EventCode::ApplicationQuit, nullptr);
             break;
         case SDL_MOUSEWHEEL:
             inputState.mouse.scrollWheel = Vec2 {

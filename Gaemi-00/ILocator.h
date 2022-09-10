@@ -15,6 +15,8 @@ namespace engine {
 
     class ILocator {
     public:
+        virtual ~ILocator() = default;
+
         /// Locator init
         virtual void init(Events* events, Assets* assets) = 0;
 

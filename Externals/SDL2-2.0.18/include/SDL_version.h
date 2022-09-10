@@ -174,6 +174,7 @@ extern DECLSPEC const char *SDLCALL SDL_GetRevision(void);
  *
  * \sa SDL_GetRevision
  */
+[[deprecated]]
 extern SDL_DEPRECATED DECLSPEC int SDLCALL SDL_GetRevisionNumber(void);
 
 

@@ -14,11 +14,11 @@ namespace gmath {
         Color() = default;
 
         /// Color by-component construction
-        /// \param r Red, between 0 and 255
-        /// \param g Green, between 0 and 255
-        /// \param b Blue, between 0 and 255
-        /// \param a Alpha, between 0 and 255
-        Color(u8 r, u8 g, u8 b, u8 a) : r{r}, g{g}, b{b}, a{a} {}
+        /// \param rP Red, between 0 and 255
+        /// \param gP Green, between 0 and 255
+        /// \param bP Blue, between 0 and 255
+        /// \param aP Alpha, between 0 and 255
+        Color(u8 rP, u8 gP, u8 bP, u8 aP) : r{rP}, g{gP}, b{bP}, a{aP} {}
 
         /// Converts a 0-255 color component to a 0-1 float
         /// \param component Color component between 0 and 255

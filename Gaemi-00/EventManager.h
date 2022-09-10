@@ -45,10 +45,9 @@ namespace engine {
          * the event is considered handled and is not passed on to any more listeners.
          * @param code Code of the event to fire.
          * @param sender Reference to the sender.
-         * @param context Event data
          * @return True if handled, otherwise false.
          */
-        GAPI bool fire(EventCode code, void *sender, EventContext context);
+        GAPI bool fire(EventCode code, void *sender);
 
         static array<EventCodeEntry, MAX_EVENT_CODE> state;
     private:

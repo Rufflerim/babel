@@ -67,12 +67,12 @@ bool engine::EventManager::unsubscribe(engine::EventCode code, void *listener, e
     return isRemoved;
 }
 
-bool engine::EventManager::fire(engine::EventCode code, void *sender, engine::EventContext context) {
+bool engine::EventManager::fire(engine::EventCode code, void *sender) {
     u16 eventCode = static_cast<u16>(code);
     auto& subs = state[eventCode].subscriptions;
     if (subs.empty()) return false;
 
-    return std::any_of(subs.begin(), subs.end(), [=, &context](const auto& sub) {
-        return (*(sub.callback))(code, sender, sub.listener, context);
+    return std::any_of(subs.begin(), subs.end(), [=](const auto& sub) {
+        return (*(sub.callback))(code, sender, sub.listener);
     });
 }

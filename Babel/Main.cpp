@@ -5,6 +5,9 @@
 using std::make_unique;
 
 int main(int argc, char** argv) {
+    for (int i = 0; i < argc; ++i) {
+        LOG(LogLevel::Info) << argv[i];
+    }
 
 	// Game instance
     auto game = make_unique<Game>();

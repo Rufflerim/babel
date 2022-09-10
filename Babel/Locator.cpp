@@ -4,6 +4,11 @@
 
 #include "Locator.h"
 
+Locator& Locator::instance() {
+    static Locator locatorInstance;
+    return locatorInstance;
+}
+
 engine::NullEvents Locator::nullEventsService {};
 NullAssets Locator::nullAssetsService {};
 

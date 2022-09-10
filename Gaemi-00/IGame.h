@@ -12,6 +12,8 @@ namespace engine {
 
 	class IGame {
 	public:
+        virtual ~IGame() {}
+
 		/// <summary>
 		/// Game load
 		/// </summary>

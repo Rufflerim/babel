@@ -9,6 +9,7 @@ class Game : public engine::IGame
 {
 public:
     Game() = default;
+    ~Game() override = default;
 
     /// <summary>
 	/// Game load

@@ -27,15 +27,14 @@ class Locator : public engine::ILocator {
 public:
     /// Create and returns a Locator instance
     /// \return Locator instance reference
-    static Locator& instance() {
-        static Locator locatorInstance;
-        return locatorInstance;
-    }
+    static Locator& instance();
+
+    ~Locator() override = default;
 
     void init(Events* events, Assets* assets) override;
 
-    engine::Events& events() override { return *eventsService; };
-    Assets& assets() override { return *assetsService; };
+    engine::Events& events() override { return *eventsService; }
+    Assets& assets() override { return *assetsService; }
 
 protected:
     Events* eventsService {nullptr};

@@ -24,27 +24,7 @@ namespace engine {
 
     constexpr u16 MAX_EVENT_CODE = 16384;
 
-    struct EventContext {
-        union {
-            array<i64, 2> i64;
-            array<u64, 2> u64;
-            array<f64, 2> f64;
-
-            array<i32, 4> i32;
-            array<u32, 4> u32;
-            array<f32, 4> f32;
-
-            array<i16, 8> i16;
-            array<u16, 8> u16;
-
-            array<i8, 16> i8;
-            array<u8, 16> u8;
-            array<char, 16> c;
-        } data;
-    };
-
-    using EventCallback = std::function<bool(engine::EventCode code, void *sender, void *listenerInstance,
-                                             engine::EventContext data)>;
+    using EventCallback = std::function<bool(engine::EventCode code, void *sender, void *listenerInstance)>;
 
     struct Subscription {
         void* listener { nullptr };
@@ -87,22 +67,31 @@ namespace engine {
          * the event is considered handled and is not passed on to any more listeners.
          * @param code Code of the event to fire.
          * @param sender Reference to the sender.
-         * @param context Event data
          * @return True if handled, otherwise false.
          */
-        GAPI virtual bool fire(EventCode code, void *sender, EventContext context) = 0;
+        GAPI virtual bool fire(EventCode code, void *sender) = 0;
+
+        virtual ~Events() = default;
     };
 
     class NullEvents : public Events {
     private:
-        void placeholderMessage() {
-            LOG(LogLevel::Warning) << "Usage of placeholder memory service.";
+        void placeholderMessage(EventCode code, void *listener, EventCallback* onEvent) {
+            listener = nullptr;
+            onEvent = nullptr;
+            LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: " << static_cast<i32>(code);
+        }
+
+        void placeholderMessage(EventCode code, void *sender) {
+            sender = nullptr;
+            LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: "
+                << static_cast<i32>(code);
         }
 
     public:
-        GAPI bool subscribe(EventCode code, void *listener, EventCallback* onEvent) override { placeholderMessage(); return false; }
-        GAPI bool unsubscribe(EventCode code, void *listener, EventCallback* onEvent) override { placeholderMessage(); return false; }
-        GAPI bool fire(EventCode code, void *sender, EventContext context) override { placeholderMessage(); return false; }
+        GAPI bool subscribe(EventCode code, void *listener, EventCallback* onEvent) override { placeholderMessage(code, listener, onEvent); return false; }
+        GAPI bool unsubscribe(EventCode code, void *listener, EventCallback* onEvent) override { placeholderMessage(code, listener, onEvent); return false; }
+        GAPI bool fire(EventCode code, void *sender) override { placeholderMessage(code, sender); return false; }
     };
 }
 

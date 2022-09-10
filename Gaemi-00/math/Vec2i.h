@@ -95,8 +95,8 @@ namespace gmath {
         /// \param factor Factor of multiplication
         /// \return Same vector, multiplied
         Vec2i& operator*=(i64 factor) {
-            x *= static_cast<float>(factor);
-            y *= static_cast<float>(factor);
+            x *= static_cast<i32>(factor);
+            y *= static_cast<i32>(factor);
             return *this;
         }
 
@@ -116,13 +116,13 @@ namespace gmath {
         i32 y{0};
 
         /// Zero vector
-        static Vec2i zero() { return {}; };
+        static Vec2i zero() { return {}; }
 
         /// Right vector
-        static Vec2i right() { return {1, 0}; };
+        static Vec2i right() { return {1, 0}; }
 
         /// Up vector
-        static Vec2i up() { return {0, 1}; };
+        static Vec2i up() { return {0, 1}; }
 
         /// Convert this vector of ints to a vector of float
         /// \return Corresponding Vec2

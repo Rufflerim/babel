@@ -71,7 +71,7 @@ namespace engine { namespace ecs {
 
         /// Notify each component array that an entity has been destroyed
         /// If it has a component for that entity, it will remove it
-        /// \param entity
+        /// \param entity Entity to destroy
         void onEntityDestroyed(Entity entity);
 
         /// Convenience function to get the statically casted pointer to the ComponentArray of type T.

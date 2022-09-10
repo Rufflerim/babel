@@ -96,7 +96,7 @@ void engine::Engine::draw(render::IRenderer& rendererBackend) {
     state.game->draw(rendererBackend);
 }
 
-bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* listenerInstance, EventContext context) {
+bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* listenerInstance) {
     switch (code) {
         case EventCode::ApplicationQuit:
             LOG(LogLevel::Trace) << "EventCode::ApplicationQuit received, closing application.";

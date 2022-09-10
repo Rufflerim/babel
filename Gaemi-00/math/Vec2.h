@@ -126,13 +126,13 @@ namespace gmath {
         f32 y{0.0f};
 
         /// Zero vector
-        static Vec2 zero() { return {}; };
+        static Vec2 zero() { return {}; }
 
         /// Right vector
-        static Vec2 right() { return {1, 0}; };
+        static Vec2 right() { return {1, 0}; }
 
         /// Up vector
-        static Vec2 up() { return {0, 1}; };
+        static Vec2 up() { return {0, 1}; }
     };
 }
 

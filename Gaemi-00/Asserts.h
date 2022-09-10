@@ -56,5 +56,4 @@
 	#define GASSERT_DEBUG(expr, message)
 
 #endif
-
 #endif
