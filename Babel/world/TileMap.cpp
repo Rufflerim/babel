@@ -3,28 +3,27 @@
 //
 
 #include "TileMap.h"
-#include <stdio.h>
+#include <asset/Files.h>
+
+#include <utility>
 
 using world::TileMap;
 using world::Tile;
+using engine::asset::Files;
+using engine::asset::AssetType;
+using std::vector;
 
-TileMap::TileMap(const str& nameP) : name(nameP) {
+TileMap::TileMap(str nameP) : name { std::move(nameP) } {
 }
 
-void TileMap::loadMap(const str& name) {
-    // Load map
-    str mapPath { "Assets/data/" + name + ".map" };
+void TileMap::loadMap() {
     str tilesetName;
-    FILE* mapFile = fopen(mapPath.c_str(), "r");
-    if (!mapFile) {
-        LOG(LogLevel::Error) << "Could not load map " << mapPath;
-        return;
-    }
-    char* charLine { nullptr };
-    size_t len { 0 };
-    while (getline(&charLine, &len, mapFile) != -1) {
-        str line { charLine };
-        if(line[0] == '|') continue;
+
+    // Load map
+    str mapPath { Files::getFilePath(AssetType::Map, name) };
+    vector<str> mapLines { Files::readFileLines(mapPath) };
+    for (const auto& line: mapLines) {
+        if (line[0] == '|') continue;
         std::stringstream stream { line };
         str type;
         stream >> type;
@@ -47,34 +46,27 @@ void TileMap::loadMap(const str& name) {
             stream >> startY;
             playerStart = { startX, startY };
         } else if (type == "TILES") {
-            for(i32 i = 0; i < tileCount; ++i) {
+            for (i32 i = 0; i < tileCount; ++i) {
                 Tile tileId;
                 stream >> tileId;
-                tileMap.push_back(tileId);
+                tileMap.emplace_back(tileId);
             }
         }
     }
-    fclose(mapFile);
 
     // Load tileset
-    str tilesetPath { "Assets/data/" + tilesetName + ".cfg"};
-    FILE* tilesetFile = fopen(tilesetPath.c_str(), "r");
-    if (!tilesetFile) {
-        LOG(LogLevel::Error) << "Could not load tileset " << tilesetPath;
-        return;
-    }
-    while (getline(&charLine, &len, tilesetFile) != -1) {
-        str line { charLine };
-        if(line[0] == '|') continue;
+    str tilesetPath { Files::getFilePath(AssetType::Tileset, tilesetName) };
+    vector<str> tilesetLines { Files::readFileLines(tilesetPath) };
+    for (const auto& line: tilesetLines) {
+        if (line[0] == '|') continue;
         std::stringstream stream { line };
         i32 id;
         stream >> id;
         bool isBlocking;
         stream >> isBlocking;
         TileInfo info { id, isBlocking, tilesetName };
-        tileSet.push_back(info);
+        tileSet.emplace_back(info);
     }
-    fclose(tilesetFile);
 }
 
 void TileMap::update(const GameTime& time) {
@@ -95,16 +87,16 @@ void world::TileMap::draw(engine::render::IRenderer& rendererBackend) {
     // All tiles have same texture
     auto texture = Locator::instance().assets().getTexture(tileSet[0].sprite.textureName).get();
     // Draw tiles in order
-    for(auto tile : tileMap) {
+    for (auto tile: tileMap) {
         gmath::Vec2i worldCoords = gmath::convert1Dto2DCoords(index, mapSize.x) * TILE_SIZE;
-        gmath::RectangleInt worldRect { worldCoords, { TILE_SIZE, TILE_SIZE } };
+        gmath::RectangleInt worldRect { worldCoords, { TILE_SIZE, TILE_SIZE }};
         rendererBackend.drawSprite(texture, tileSet[tile].sprite.srcRect, worldRect, 0, gmath::Vec2::zero());
         ++index;
     }
 }
 
 void world::TileMap::load() {
-    loadMap(name);
+    loadMap();
 }
 
 

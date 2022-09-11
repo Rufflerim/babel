@@ -32,7 +32,7 @@ namespace engine {
         virtual void provide(Events* service) = 0;
 
         /// Provides the assets services to the locator
-        /// \param service Asset maager as a service
+        /// \param service Asset manager as a service
         virtual void provide(Assets* service) = 0;
     };
 

@@ -3,8 +3,6 @@
 //
 
 #include "GameMap.h"
-#include "../components/Components.h"
-#include <Log.h>
 #include <random>
 
 using gmath::Vec2;
@@ -19,9 +17,9 @@ scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordina
 
 void scene::GameMap::onInit() {
     engine::asset::Assets& assets = Locator::instance().assets();
-    assets.loadTexture("Assets/mathieu.png", "mathieu");
-    assets.loadTexture("Assets/furior_spritesheet.png", "furior_spritesheet");
-    assets.loadTexture("Assets/tileset1.png", "tileset1");
+    assets.loadTexture("mathieu");
+    assets.loadTexture("furior_spritesheet");
+    assets.loadTexture("tileset1");
 
     // Load map
     tileMap.load();
@@ -66,22 +64,23 @@ void scene::GameMap::onInit() {
     //std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
     //std::uniform_int_distribution randColor(0, 255);
 
-    for(int i = 0; i < 500; ++i) {
+    for (int i = 0; i < 500; ++i) {
 
         Entity furior = coordinator.createEntity();
-        coordinator.addComponent(furior, Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
-                                                     0, Vec2{1.0f, 1.0f}});
-        coordinator.addComponent(furior, Move2D{100, 0.99});
-        coordinator.addComponent(furior, Controller{true});
+        coordinator.addComponent(furior, Transform2D { Vec2 { randPositionX(generator), randPositionY(generator) },
+                                                       0, Vec2 { 1.0f, 1.0f }});
+        coordinator.addComponent(furior, Move2D { 100, 0.99 });
+        coordinator.addComponent(furior, Controller { true });
         // Animation and sprite setup
-        std::vector<data::AnimationRow> furiorAnimsRows{{0, 8, "idle"},
-                                                        {1, 5, "walk"}};
-        data::AnimationData furiorAnims{32, 32, 0.1f, "furior_spritesheet", furiorAnimsRows};
-        coordinator.addComponent(furior, Animator{furiorAnims, Vec2::zero(), engine::render::Flip::None});
-        coordinator.addComponent(furior, Sprite{"furior_spritesheet", Vec2::zero(), gmath::RectangleInt::nullRectangle,
-                                                Vec2{static_cast<float>(furiorAnims.frameWidth),
-                                                     static_cast<float>(furiorAnims.frameHeight)},
-                                                engine::render::Flip::None});
+        std::vector<data::AnimationRow> furiorAnimsRows {{ 0, 8, "idle" },
+                                                         { 1, 5, "walk" }};
+        data::AnimationData furiorAnims { 32, 32, 0.1f, "furior_spritesheet", furiorAnimsRows };
+        coordinator.addComponent(furior, Animator { furiorAnims, Vec2::zero(), engine::render::Flip::None });
+        coordinator.addComponent(furior,
+                                 Sprite { "furior_spritesheet", Vec2::zero(), gmath::RectangleInt::nullRectangle,
+                                          Vec2 { static_cast<float>(furiorAnims.frameWidth),
+                                                 static_cast<float>(furiorAnims.frameHeight) },
+                                          engine::render::Flip::None });
         entities.push_back(furior);
     }
 }

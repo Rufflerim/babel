@@ -2,8 +2,8 @@
 // Created by gaetz on 02/01/2022.
 //
 
-#ifndef DUMBKNIGHTS_TILEMAP_H
-#define DUMBKNIGHTS_TILEMAP_H
+#ifndef WORLD_TILEMAP_H
+#define WORLD_TILEMAP_H
 
 #include <vector>
 #include "TileInfo.h"
@@ -15,7 +15,7 @@ using gmath::Vec2i;
 namespace world {
     class TileMap {
     public:
-        explicit TileMap(const str& name);
+        explicit TileMap(str name);
         void load();
         void update(const GameTime& time);
         void draw(engine::render::IRenderer& rendererBackend);
@@ -25,7 +25,7 @@ namespace world {
         const Vec2i& getPlayerStart() const { return playerStart; };
 
     private:
-        void loadMap(const str& name);
+        void loadMap();
         vector<Tile> tileMap;
         vector<TileInfo> tileSet;
         Sprite background;
@@ -37,4 +37,4 @@ namespace world {
 }
 
 
-#endif //DUMBKNIGHTS_TILEMAP_H
+#endif //WORLD_TILEMAP_H

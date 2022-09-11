@@ -25,9 +25,8 @@ namespace engine::asset {
         // Retrieves a stored texture
         std::shared_ptr<render::sdl::Texture> getTexture(const str& name) override;
 
-        // Loads (and generates) a texture from file
-        bool loadTexture(const str& file, const str& name) override;
-
+        // Loads (and generates) a texture
+        bool loadTexture(const str& name) override;
 
 
     private:

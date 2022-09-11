@@ -4,8 +4,8 @@
 
 #include "AssetManager.h"
 #include "../render/sdl/RendererSDL.h"
-//#include <sdl_stb_image.h>
 #include <SDL_image.h>
+#include "Files.h"
 
 using engine::render::sdl::SDLTextureDestroyer;
 
@@ -24,11 +24,12 @@ std::shared_ptr<engine::render::sdl::Texture> engine::asset::AssetManager::getTe
     return textures[name];
 }
 
-bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) {
+bool engine::asset::AssetManager::loadTexture(const str& name) {
     bool result = true;
+    const str path { Files::getFilePath(AssetType::Texture, name) };
 
     // Load a pixel surface that fits the texture
-    SDL_Surface* surf = IMG_Load( path.c_str() );
+    SDL_Surface* surf = IMG_Load(path.c_str());
 
     // In cas of error, creates a 256 * 256 magenta surface
     if (surf == nullptr) {
@@ -52,8 +53,8 @@ bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) 
     */
 #endif
 
-    if(t == nullptr) {
-        LOG(LogLevel::Error) <<  "Could not create SDL texture: " << path << ". SDL Error:" << SDL_GetError();
+    if (t == nullptr) {
+        LOG(LogLevel::Error) << "Could not create SDL texture: " << path << ". SDL Error:" << SDL_GetError();
         result = false;
     }
 

@@ -8,7 +8,7 @@
 #include "../Defines.h"
 #include "../render/sdl/Texture.h"
 
-namespace engine { namespace asset {
+namespace engine::asset {
     class Assets {
     public:
         virtual ~Assets() = default;
@@ -17,7 +17,7 @@ namespace engine { namespace asset {
         GAPI virtual std::shared_ptr<engine::render::sdl::Texture> getTexture(const str& name) = 0;
 
         // Loads (and generates) a SDL texture from file
-        GAPI virtual bool loadTexture(const str& file, const str& name) = 0;
+        GAPI virtual bool loadTexture(const str& name) = 0;
     };
 
 
@@ -25,11 +25,11 @@ namespace engine { namespace asset {
     public:
         std::shared_ptr<engine::render::sdl::Texture> getTexture(const str& name) override;
 
-        bool loadTexture(const str& file, const str& name) override;
+        bool loadTexture(const str& name) override;
 
     private:
-        static void placeholderMessage() ;
+        static void placeholderMessage();
     };
-} }
+}
 
 #endif //ASSET_ASSETS_H

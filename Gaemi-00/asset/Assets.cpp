@@ -12,7 +12,7 @@ std::shared_ptr<engine::render::sdl::Texture> NullAssets::getTexture(const str& 
     return nullptr;
 }
 
-bool engine::asset::NullAssets::loadTexture(const str& file, const str& name) {
+bool engine::asset::NullAssets::loadTexture(const str& name) {
     placeholderMessage();
     return true;
 }
