@@ -36,32 +36,28 @@ namespace engine {
 		explicit Engine() = default;
 		~Engine() = default;
 
-		/// <summary>
 		/// Init everything in the engine
-		/// </summary>
 		void init(IGame* game, ILocator& locator);
 
-		/// <summary>
 		/// Run the engine. Game loop.
-		/// </summary>
 		ErrorCode run();
 
-		/// <summary>
+        /// Contain a single frame logic
+        static void frame();
+
+        /// Launch game loop
+        void loop();
+
 		/// Shut down the engine
-		/// </summary>
 		void close();
 
-		/// <summary>
 		/// Process inputs with InputhManager
-		/// </summary>
-		/// <returns>Global inputs state</returns>
+		/// \return Global inputs state
         static input::InputState inputs();
 
-		/// <summary>
-		/// Update logic 
-		/// </summary>
-		/// <param name="time">Game time</param>
-        static void update(const GameTime& time, const input::InputState& inputState);
+		/// Update logic
+		/// \param inputState State of game's inputs
+        static void update(const input::InputState& inputState);
 
 		/// <summary>
 		/// Draw everything
@@ -101,9 +97,6 @@ namespace engine {
         /// \param listenerInstance Event listener if specific
         /// \return True if an event occured
         bool handleEngineEvent(EventCode code, void* sender, void* listenerInstance);
-
-        static void frame();
-        void loop();
     };
 
 }

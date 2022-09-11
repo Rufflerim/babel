@@ -1,7 +1,10 @@
 #include "Engine.h"
 #include "../Babel/Locator.h"
 #include <SDL_events.h>
+
+#ifdef GPLATFORM_WEB
 #include <emscripten.h>
+#endif
 
 using engine::input::InputState;
 
@@ -17,6 +20,7 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
     state.locator = &locator;
 
 	// Init everything
+    SDL_Init(SDL_INIT_EVERYTHING);
 	bool inputsIgnited = inputManager.init(&locator);
 	bool windowIgnited = window.init(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, false);
     bool eventsIgnited = eventManager.init();
@@ -44,6 +48,7 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
 ErrorCode engine::Engine::run() {
 	state.game->load();
     loop();
+    state.game->close();
     return state.errorCode;
 }
 
@@ -56,6 +61,7 @@ void engine::Engine::close() {
 	inputManager.close();
 	LOG(LogLevel::Info) << "Engine closed.";
 	LOG(LogLevel::Trace) << "Bye :)";
+    SDL_Quit();
 }
 
 InputState engine::Engine::inputs() {
@@ -69,7 +75,7 @@ InputState engine::Engine::inputs() {
 	return inputManager.getInputState();
 }
 
-void engine::Engine::update(const GameTime& time, const input::InputState& inputState) {
+void engine::Engine::update(const input::InputState& inputState) {
 	state.game->update(time, inputState);
 }
 
@@ -99,7 +105,7 @@ void engine::Engine::frame() {
 
     // Update
     window.updateFPSCounter(time);
-    update(time, inputState);
+    update(inputState);
 
     // Draw
     renderer.clearScreen();
@@ -117,7 +123,7 @@ void engine::Engine::frame() {
 
 void engine::Engine::loop() {
 #ifdef GPLATFORM_WEB
-    emscripten_set_main_loop(frame, 60, 1);
+    emscripten_set_main_loop(frame, 0, 1);
 #else
     while (state.isRunning) {
         frame();

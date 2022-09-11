@@ -3,13 +3,14 @@
 //
 
 #include "AssetManager.h"
-#include "../Log.h"
 #include "../render/sdl/RendererSDL.h"
-#include <sdl_stb_image.h>
+//#include <sdl_stb_image.h>
+#include <SDL_image.h>
 
 using engine::render::sdl::SDLTextureDestroyer;
 
 bool engine::asset::AssetManager::init(engine::render::IRenderer& renderer) {
+    IMG_Init( IMG_INIT_PNG | IMG_INIT_JPG );
     rendererRef = &renderer;
     LOG(LogLevel::Trace) << "Asset Manager initialized";
     return true;
@@ -26,13 +27,13 @@ std::shared_ptr<engine::render::sdl::Texture> engine::asset::AssetManager::getTe
 
 bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) {
     bool result = true;
-    LOG(LogLevel::Trace) << "Load texture " << path;
+
     // Load a pixel surface that fits the texture
-    SDL_RWops *file = SDL_RWFromFile(path.c_str(), "rb");
-    SDL_Surface *surf = STBIMG_Load_RW(file, 1);
+    SDL_Surface* surf = IMG_Load( path.c_str() );
+
     // In cas of error, creates a 256 * 256 magenta surface
     if (surf == nullptr) {
-        LOG(LogLevel::Error) << "Could not load SDL surface: " << path << ". SDL Error:" << SDL_GetError();
+        LOG(LogLevel::Error) << "Could not load SDL surface: " << path << ". SDL Error: " << SDL_GetError();
         surf = SDL_CreateRGBSurface(0, 256, 256, 32, 0, 0, 0, 0);
         SDL_FillRect(surf, nullptr, SDL_MapRGB(surf->format, 255, 0, 255));
         result = false;
@@ -40,13 +41,16 @@ bool engine::asset::AssetManager::loadTexture(const str& path, const str& name) 
 
     // Create a texture from the surface and store it as a shared pointer
 #ifndef GPLATFORM_WEB
+    SDL_Texture* t = SDL_CreateTextureFromSurface(
+            reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(), surf);
+#else
+    SDL_Texture* t = SDL_CreateTextureFromSurface(
+            reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(), surf);
+    /*
     SDL_Texture* t = STBIMG_CreateTexture(
             reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(),
             static_cast<const unsigned char*>(surf->pixels), surf->w, surf->h, 4);
-#else
-    SDL_Texture* t = SDL_CreateTexture(
-            reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(),
-            SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, surf->w, surf->h);
+    */
 #endif
 
     if(t == nullptr) {

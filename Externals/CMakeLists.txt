@@ -34,6 +34,44 @@ endif ()
 
 target_link_libraries(SDL2 INTERFACE ${SDL2_LIBRARIES})
 
+## SDL2 Image
+message("---- Linking SDL2 Image")
+add_library(SDL2_image INTERFACE)
+
+set(SDL2_image_DIR "${CMAKE_SOURCE_DIR}/Externals/SDL2_image-2.6.2/cmake")
+set(SDL2_image_PATH "${CMAKE_SOURCE_DIR}/Externals/SDL2_image-2.6.2")
+find_package(SDL2_image REQUIRED)
+target_include_directories(SDL2_image INTERFACE ${SDL2_image_PATH}/include)
+get_target_property(sdl2_image_libs SDL2_image IMPORTED_IMPLIB)
+target_link_directories(SDL2_image INTERFACE ${SDL2_image_PATH}/lib/x64)
+
+# Support both 32 and 64 bit builds
+if (${CMAKE_SIZEOF_VOID_P} MATCHES 8)
+    set(SDL2_image_LIB_PATH "${SDL2_image_PATH}/lib/x64")
+else ()
+    set(SDL2_image_LIB_PATH "${SDL2_image_PATH}/lib/x86")
+endif ()
+
+set(SDL2_image_LIBRARIES "${SDL2_image_LIB_PATH}/SDL2_image.lib")
+target_link_libraries(SDL2_image INTERFACE ${SDL2_image_LIBRARIES})
+
+
+#[[
+if (WIN32)
+    set(SDL2_image_DIR "${CMAKE_SOURCE_DIR}/Externals/SDL2_image-2.6.2/cmake")
+    set(SDL2_image_PATH "${CMAKE_SOURCE_DIR}/Externals/SDL2_image-2.6.2")
+    find_package(SDL2_image REQUIRED)
+    target_include_directories(SDL2_image INTERFACE ${SDL2_image_PATH}/include)
+    target_link_directories(SDL2_image INTERFACE ${SDL2_image_LIB_PATH})
+elseif (UNIX)
+    find_package(SDL2_image REQUIRED)
+    target_include_directories(SDL2_image INTERFACE ${SDL2_image_DIR}/include)
+    target_link_directories(SDL2_image INTERFACE ${SDL2_image_DIR}/lib)
+endif ()
+]]
+
+
+
 ### SDL2 Mixer
 #message("---- Linking SDL2 Mixer")
 #add_library(SDL2_mixer INTERFACE)
@@ -84,6 +122,13 @@ if(WIN32)
         message("---- Copy SDL2 DLL")
         file(COPY ${PROJECT_SOURCE_DIR}/Externals/SDL2-2.0.18/lib/x64/SDL2.dll DESTINATION ./..)
     endif()
+
+    #### SDL2 image dll copy
+    if(EXISTS ${PROJECT_SOURCE_DIR}/Externals/SDL2_image-2.6.2/lib/x64/SDL2_image.dll)
+        message("---- Copy SDL2 image DLL")
+        file(COPY ${PROJECT_SOURCE_DIR}/Externals/SDL2_image-2.6.2/lib/x64/SDL2_image.dll DESTINATION ./..)
+    endif()
+
     #### SDL2 mixer dll copy
     if(EXISTS ${PROJECT_SOURCE_DIR}/Externals/SDL2_mixer-2.0.4/lib/x64/SDL2_mixer.dll)
         message("---- Copy SDL2 Mixer DLL")

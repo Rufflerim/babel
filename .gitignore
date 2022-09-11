@@ -361,4 +361,4 @@ cmake-build-*
 !Externals/SDL2-2.0.18/lib/*
 !Externals/SDL2_ttf-2.0.15/lib/*
 !Externals/SDL2_mixer-2.0.4/lib/*
-
+!Externals/SDL2_image-2.6.2/lib/*

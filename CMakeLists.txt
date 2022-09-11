@@ -17,7 +17,7 @@ if(EMSCRIPTEN)
                 COMMAND cmd /C "${CMAKE_SOURCE_DIR}/Externals/emsdk-3.1.21/emsdk_env.bat")
     endif()
     target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC __EMSCRIPTEN__=1)
-    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind -s USE_SDL=2 -s USE_WEBGL2=1 --preload-file Assets")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "--bind -s WASM=1 -s TOTAL_MEMORY=512MB -s NO_DISABLE_EXCEPTION_CATCHING -s USE_SDL=2 -s USE_WEBGL2=1 -s STB_IMAGE=1 --preload-file Assets")
 endif()
 
 
