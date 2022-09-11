@@ -3,6 +3,7 @@
 //
 
 #include "TileMap.h"
+#include <stdio.h>
 
 using world::TileMap;
 using world::Tile;
@@ -12,16 +13,17 @@ TileMap::TileMap(const str& nameP) : name(nameP) {
 
 void TileMap::loadMap(const str& name) {
     // Load map
-    str mapPath { "Assets/data/" + name + ".map " };
+    str mapPath { "Assets/data/" + name + ".map" };
     str tilesetName;
-    std::ifstream mapFile;
-    mapFile.open(mapPath);
-    if (!mapFile.is_open()) {
+    FILE* mapFile = fopen(mapPath.c_str(), "r");
+    if (!mapFile) {
         LOG(LogLevel::Error) << "Could not load map " << mapPath;
         return;
     }
-    str line;
-    while (std::getline(mapFile, line)) {
+    char* charLine { nullptr };
+    size_t len { 0 };
+    while (getline(&charLine, &len, mapFile) != -1) {
+        str line { charLine };
         if(line[0] == '|') continue;
         std::stringstream stream { line };
         str type;
@@ -52,17 +54,17 @@ void TileMap::loadMap(const str& name) {
             }
         }
     }
-    mapFile.close();
+    fclose(mapFile);
 
     // Load tileset
     str tilesetPath { "Assets/data/" + tilesetName + ".cfg"};
-    std::ifstream tilesetFile;
-    tilesetFile.open(tilesetPath);
-    if (!tilesetFile.is_open()) {
+    FILE* tilesetFile = fopen(tilesetPath.c_str(), "r");
+    if (!tilesetFile) {
         LOG(LogLevel::Error) << "Could not load tileset " << tilesetPath;
         return;
     }
-    while (std::getline(tilesetFile, line)) {
+    while (getline(&charLine, &len, tilesetFile) != -1) {
+        str line { charLine };
         if(line[0] == '|') continue;
         std::stringstream stream { line };
         i32 id;
@@ -72,7 +74,7 @@ void TileMap::loadMap(const str& name) {
         TileInfo info { id, isBlocking, tilesetName };
         tileSet.push_back(info);
     }
-    tilesetFile.close();
+    fclose(tilesetFile);
 }
 
 void TileMap::update(const GameTime& time) {

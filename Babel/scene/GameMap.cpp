@@ -24,7 +24,7 @@ void scene::GameMap::onInit() {
     assets.loadTexture("Assets/tileset1.png", "tileset1");
 
     // Load map
-    //tileMap.load();
+    tileMap.load();
 
     // Load entities
     coordinator.registerComponent<Transform2D>();
@@ -105,7 +105,7 @@ void scene::GameMap::update(const GameTime& time, const InputState& inputState) 
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {
-    //tileMap.draw(renderer);
+    tileMap.draw(renderer);
     renderingSystem->draw(coordinator, renderer);
 }
 
