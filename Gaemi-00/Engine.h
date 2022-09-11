@@ -44,6 +44,13 @@ namespace engine {
 		/// Init everything in the engine
 		void init(IGame* game, ILocator& locator);
 
+#ifdef GPLATFORM_WEB
+        /// Emscripten requiere to set up the renderer, and hence
+        /// the asset manager, in the main loop. This function
+        /// handle this initialization.
+        static void emscriptenPostInit();
+#endif
+
 		/// Run the engine. Game loop.
 		ErrorCode run();
 

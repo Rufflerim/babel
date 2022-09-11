@@ -31,12 +31,12 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
     bool assetsIgnited = assetManager.init(renderer);
 #else
     bool rendererIgnited { true };
-    //bool rendererIgnited = renderer.init(&locator, window);
     bool assetsIgnited { true };
 #endif
-
 	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited && rendererIgnited && assetsIgnited;
-	if (!state.isInitialized) {
+
+    // Finalize init
+    if (!state.isInitialized) {
 		LOG(LogLevel::Fatal) << "Engine subsystems failed at init. Shutting down.";
 		// Shut down all systems
         close();
@@ -49,16 +49,29 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
         // Announce proudly
         LOG(LogLevel::Info) << "Engine started.";
 	}
-
 }
 
+#ifdef GPLATFORM_WEB
+void engine::Engine::emscriptenPostInit() {
+    if (!state.game->isLoaded) {
+        bool rendererIgnited = renderer.init(state.locator, window);
+        bool assetsIgnited = assetManager.init(renderer);
+        state.game->load();
+    }
+}
+#endif
+
 ErrorCode engine::Engine::run() {
+#ifndef GPLATFORM_WEB
+    state.game->load();
+#endif
     loop();
     state.game->close();
     return state.errorCode;
 }
 
 void engine::Engine::close() {
+    if (state.game->isLoaded) state.game->close();
     renderer.close();
     eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
     eventManager.close();
@@ -104,11 +117,9 @@ bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* liste
 void engine::Engine::frame() {
     time = timer.computeTime(time);
 
-    if (!state.game->isLoaded) {
-        bool rendererIgnited = renderer.init(state.locator, window);
-        bool assetsIgnited = assetManager.init(renderer);
-        state.game->load();
-    }
+#ifdef GPLATFORM_WEB
+    emscriptenPostInit();
+#endif
 
     // Inputs
     InputState inputState = inputs();
@@ -131,7 +142,6 @@ void engine::Engine::frame() {
 
 void engine::Engine::loop() {
 #ifdef GPLATFORM_WEB
-    //emscripten_set_main_loop_arg((em_arg_callback_func)frame, this, 0, 1);
     emscripten_set_main_loop(frame, 0, 1);
 #else
     while (state.isRunning) {

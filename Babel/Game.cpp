@@ -3,8 +3,9 @@
 #include "SceneType.h"
 
 void Game::load() {
-    isLoaded = true;
     sceneManager.switchTo(scene::SceneType::GameMap);
+    isLoaded = true;
+    LOG(LogLevel::Info) << "Game started.";
 }
 
 void Game::update(const GameTime& time, const InputState& inputState) {
@@ -18,8 +19,9 @@ void Game::draw(engine::render::IRenderer& rendererBackend) {
 }
 
 void Game::close() {
-    isLoaded = false;
     sceneManager.close();
+    isLoaded = false;
+    LOG(LogLevel::Info) << "Game closed.";
 }
 
 void Game::lateUpdate() {
