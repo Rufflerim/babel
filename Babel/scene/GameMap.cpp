@@ -11,8 +11,8 @@ using gmath::Vec2;
 
 scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordinator) {
     coordinator.init();
-    entities.reserve(10000);
-    for (int i = 0; i < 10000; ++i) {
+    entities.reserve(500);
+    for (int i = 0; i < 500; ++i) {
         entities.push_back(0);
     }
 }
@@ -24,7 +24,7 @@ void scene::GameMap::onInit() {
     assets.loadTexture("Assets/tileset1.png", "tileset1");
 
     // Load map
-    tileMap.load();
+    //tileMap.load();
 
     // Load entities
     coordinator.registerComponent<Transform2D>();
@@ -66,7 +66,7 @@ void scene::GameMap::onInit() {
     //std::uniform_real_distribution<float> randScale(0.06f, 0.25f);
     //std::uniform_int_distribution randColor(0, 255);
 
-    for(int i = 0; i < 10000; ++i) {
+    for(int i = 0; i < 500; ++i) {
 
         Entity furior = coordinator.createEntity();
         coordinator.addComponent(furior, Transform2D{Vec2{randPositionX(generator), randPositionY(generator)},
@@ -105,7 +105,7 @@ void scene::GameMap::update(const GameTime& time, const InputState& inputState) 
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {
-    tileMap.draw(renderer);
+    //tileMap.draw(renderer);
     renderingSystem->draw(coordinator, renderer);
 }
 

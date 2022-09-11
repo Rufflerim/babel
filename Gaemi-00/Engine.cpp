@@ -1,10 +1,7 @@
 #include "Engine.h"
 #include "../Babel/Locator.h"
 #include <SDL_events.h>
-
-#ifdef GPLATFORM_WEB
-#include <emscripten.h>
-#endif
+#include <SDL_image.h>
 
 using engine::input::InputState;
 
@@ -12,6 +9,7 @@ engine::EngineState engine::Engine::state {};
 engine::input::InputManager engine::Engine::inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
 engine::Window engine::Engine::window{ "Babel" };
 RendererSDL engine::Engine::renderer {};
+engine::asset::AssetManager engine::Engine::assetManager {};
 engine::Timer engine::Engine::timer {};
 GameTime engine::Engine::time {};
 
@@ -19,14 +17,23 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
 	state.game = game;
     state.locator = &locator;
 
-	// Init everything
+    // Init SDL
     SDL_Init(SDL_INIT_EVERYTHING);
-	bool inputsIgnited = inputManager.init(&locator);
+    IMG_Init( IMG_INIT_PNG | IMG_INIT_JPG );
+
+	// Init everything
+    bool inputsIgnited = inputManager.init(&locator);
 	bool windowIgnited = window.init(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, false);
     bool eventsIgnited = eventManager.init();
     eventManager.subscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
+#ifndef GPLATFORM_WEB
     bool rendererIgnited = renderer.init(&locator, window);
     bool assetsIgnited = assetManager.init(renderer);
+#else
+    bool rendererIgnited { true };
+    //bool rendererIgnited = renderer.init(&locator, window);
+    bool assetsIgnited { true };
+#endif
 
 	state.isInitialized = inputsIgnited && windowIgnited && eventsIgnited && rendererIgnited && assetsIgnited;
 	if (!state.isInitialized) {
@@ -46,7 +53,6 @@ void engine::Engine::init(IGame* game, ILocator& locator) {
 }
 
 ErrorCode engine::Engine::run() {
-	state.game->load();
     loop();
     state.game->close();
     return state.errorCode;
@@ -96,9 +102,13 @@ bool engine::Engine::handleEngineEvent(EventCode code, void* sender, void* liste
 }
 
 void engine::Engine::frame() {
-#ifndef GPLATFORM_WEB
     time = timer.computeTime(time);
-#endif
+
+    if (!state.game->isLoaded) {
+        bool rendererIgnited = renderer.init(state.locator, window);
+        bool assetsIgnited = assetManager.init(renderer);
+        state.game->load();
+    }
 
     // Inputs
     InputState inputState = inputs();
@@ -113,9 +123,7 @@ void engine::Engine::frame() {
     draw(renderer);
     renderer.endDraw();
 
-#ifdef GPLATFORM_WEB
-    emscripten_cancel_main_loop();
-#else
+#ifndef GPLATFORM_WEB
     // Time delay if game loop is faster than target FPS
     timer.delayTime();
 #endif
@@ -123,6 +131,7 @@ void engine::Engine::frame() {
 
 void engine::Engine::loop() {
 #ifdef GPLATFORM_WEB
+    //emscripten_set_main_loop_arg((em_arg_callback_func)frame, this, 0, 1);
     emscripten_set_main_loop(frame, 0, 1);
 #else
     while (state.isRunning) {

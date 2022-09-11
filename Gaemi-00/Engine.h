@@ -12,6 +12,11 @@
 #include "ILocator.h"
 #include "Timer.h"
 
+#ifdef GPLATFORM_WEB
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 using engine::render::sdl::RendererSDL;
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
@@ -84,7 +89,7 @@ namespace engine {
         static RendererSDL renderer;
 
         /// Asset manager
-        asset::AssetManager assetManager {};
+        static asset::AssetManager assetManager;
 
         /// Callback for engine events
         EventCallback onEngineEvent = [this](EventCode code, void* sender, void* listInst) {

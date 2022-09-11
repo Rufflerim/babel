@@ -10,7 +10,6 @@
 using engine::render::sdl::SDLTextureDestroyer;
 
 bool engine::asset::AssetManager::init(engine::render::IRenderer& renderer) {
-    IMG_Init( IMG_INIT_PNG | IMG_INIT_JPG );
     rendererRef = &renderer;
     LOG(LogLevel::Trace) << "Asset Manager initialized";
     return true;

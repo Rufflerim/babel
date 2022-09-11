@@ -39,6 +39,8 @@ namespace engine {
 		/// End game
 		/// </summary>
 		virtual void close() = 0;
+
+        bool isLoaded {false};
 	};
 
 }
