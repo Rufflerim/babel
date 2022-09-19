@@ -3,51 +3,49 @@
 //
 
 #include "RendererSDL.h"
-#include "../../Log.h"
-#include "../../ILocator.h"
 #include "../math/Vec2.h"
 #include "../math/Rectangle.h"
-#include "../math/RectangleInt.h"
 
 using engine::render::sdl::RendererSDL;
+using engine::render::sdl::WindowSdl;
 using gmath::Rectangle;
 using gmath::RectangleInt;
 using gmath::Vec2;
 using gmath::Color;
 
-bool engine::render::sdl::RendererSDL::init(engine::ILocator* locatorP, engine::Window& window) {
+bool RendererSDL::init(engine::ILocator* locatorP, IWindow& window) {
     locator = locatorP;
     auto windowBounds = window.getBounds();
     width = windowBounds.size.x;
     height = windowBounds.size.y;
     renderer = std::unique_ptr<SDL_Renderer, SDLRendererDestroyer>(
-            SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED)
+            SDL_CreateRenderer((dynamic_cast<WindowSdl&>(window)).get(), -1, SDL_RENDERER_ACCELERATED)
     );
 
     LOG(LogLevel::Trace) << "Renderer:SDL initialized";
     return true;
 }
 
-void engine::render::sdl::RendererSDL::drawRectangle(const Rectangle& rectangle, const Color& color) {
+void RendererSDL::drawRectangle(const Rectangle& rectangle, const Color& color) {
     SDL_Rect fillRect = rectangle.toSdlRect();
     SDL_SetRenderDrawColor(renderer.get(), color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(renderer.get(), &fillRect);
 }
 
-void engine::render::sdl::RendererSDL::clearScreen() {
+void RendererSDL::clearScreen() {
     SDL_SetRenderDrawColor(renderer.get(), clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     SDL_RenderClear(renderer.get());
 }
 
-void engine::render::sdl::RendererSDL::beginDraw() {
+void RendererSDL::beginDraw() {
 
 }
 
-void engine::render::sdl::RendererSDL::endDraw() {
+void RendererSDL::endDraw() {
     SDL_RenderPresent(renderer.get());
 }
 
-void engine::render::sdl::RendererSDL::close() {
+void RendererSDL::close() {
 
 }
 

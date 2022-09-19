@@ -2,11 +2,11 @@
 // Created by gaetz on 26/12/2021.
 //
 
-#ifndef RENDER_IRENDERERBACKEND_H
-#define RENDER_IRENDERERBACKEND_H
+#ifndef RENDER_IRENDERER_H
+#define RENDER_IRENDERER_H
 
 #include "../ILocator.h"
-#include "../Window.h"
+#include "IWindow.h"
 #include "../math/Color.h"
 
 namespace gmath {
@@ -33,7 +33,7 @@ namespace engine {
         /// Initialize renderer and set it to render in given window
         /// \param window Window in which renders happen
         /// \return True if the renderer is correctly initiliazed
-        virtual bool init(ILocator* locator, Window& window) = 0;
+        virtual bool init(ILocator* locator, IWindow& window) = 0;
 
         /// Clear the screen before drawing
         virtual void clearScreen() = 0;
@@ -61,4 +61,4 @@ namespace engine {
     };
 } }
 
-#endif //RENDER_IRENDERERBACKEND_H
+#endif //RENDER_IRENDERER_H

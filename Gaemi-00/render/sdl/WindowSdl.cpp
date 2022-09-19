@@ -1,13 +1,13 @@
-#include "Window.h"
-#include "Defines.h"
-#include "Log.h"
-#include "GameTime.h"
+#include "WindowSdl.h"
+#include "../../Log.h"
 
-engine::Window::Window(str titleP) : title { titleP }
+using engine::render::sdl::WindowSdl;
+
+WindowSdl::WindowSdl(str titleP) : title { titleP }
 {
 }
 
-bool engine::Window::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) {
+bool WindowSdl::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) {
 	// Create SDL window pointer
 	SDL_WindowFlags flags = SDL_WINDOW_SHOWN;
 	window = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(
@@ -24,10 +24,10 @@ bool engine::Window::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen
 	return true;
 }
 
-void engine::Window::close() {
+void WindowSdl::close() {
 }
 
-void engine::Window::updateFPSCounter(const GameTime& time) {
+void WindowSdl::updateFPSCounter(const GameTime& time) {
 	f64 elapsed = time.totalTime - lastElapsed;
 	if (elapsed > DURATION_BETWEEN_FPS_DISPLAY) {
 		// Compute fps number

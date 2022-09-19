@@ -7,7 +7,7 @@ using engine::input::InputState;
 
 engine::EngineState engine::Engine::state {};
 engine::input::InputManager engine::Engine::inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
-engine::Window engine::Engine::window{ "Babel" };
+engine::render::sdl::WindowSdl engine::Engine::window{ "Babel" };
 RendererSDL engine::Engine::renderer {};
 engine::asset::AssetManager engine::Engine::assetManager {};
 engine::Timer engine::Engine::timer {};

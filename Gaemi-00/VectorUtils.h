@@ -27,7 +27,7 @@ u32 VectorUtils::getIndex(T element, std::vector<T>& vector) {
 }
 
 template<typename T>
-void VectorUtils::moveToBack(u32 index, std::vector<T> &vector) {
+void VectorUtils::moveToBack(u32 index, std::vector<T>& vector) {
     auto it = begin(vector) + index;
     std::rotate(it, it + 1, end(vector));
 }

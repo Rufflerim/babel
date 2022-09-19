@@ -7,9 +7,8 @@
 
 #include <SDL_render.h>
 #include "../IRenderer.h"
-#include "../../Window.h"
+#include "WindowSdl.h"
 #include <memory>
-
 
 namespace engine::render::sdl {
     struct SDLRendererDestroyer {
@@ -22,7 +21,7 @@ namespace engine::render::sdl {
     public:
         RendererSDL() = default;
 
-        bool init(engine::ILocator* locator, Window& window) override;
+        bool init(engine::ILocator* locator, IWindow& window) override;
 
         void clearScreen() override;
 

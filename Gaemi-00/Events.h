@@ -78,6 +78,7 @@ namespace engine {
     private:
         void placeholderMessage(EventCode code, void *listener, EventCallback* onEvent) {
 #ifdef GPLATFORM_WEB
+            // Usage of all arguments to avoid warnings
             listener = 0;
             onEvent = 0;
             LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: " << static_cast<i32>(code) << " Trash:" << listener << onEvent;
@@ -90,6 +91,7 @@ namespace engine {
 
         void placeholderMessage(EventCode code, void *sender) {
 #ifdef GPLATFORM_WEB
+            // Usage of all arguments to avoid warnings
             sender = 0;
             LOG(LogLevel::Warning) << "Usage of placeholder event service. Code: "
                 << static_cast<i32>(code) << " Trash:" << sender;

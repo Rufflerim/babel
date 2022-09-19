@@ -5,7 +5,7 @@
 #include "Defines.h"
 #include "IGame.h"
 #include "input/InputManager.h"
-#include "Window.h"
+#include "render/sdl/WindowSdl.h"
 #include "EventManager.h"
 #include "render/sdl/RendererSDL.h"
 #include "asset/AssetManager.h"
@@ -18,6 +18,7 @@
 #endif
 
 using engine::render::sdl::RendererSDL;
+using engine::render::sdl::WindowSdl;
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
 constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
@@ -45,7 +46,7 @@ namespace engine {
 		void init(IGame* game, ILocator& locator);
 
 #ifdef GPLATFORM_WEB
-        /// Emscripten requiere to set up the renderer, and hence
+        /// Emscripten require to set up the renderer, and hence
         /// the asset manager, in the main loop. This function
         /// handle this initialization.
         static void emscriptenPostInit();
@@ -90,7 +91,7 @@ namespace engine {
         EventManager eventManager {};
 
         /// Game window
-		static Window window;
+		static WindowSdl window;
 
         /// Engine renderer
         static RendererSDL renderer;
