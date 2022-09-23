@@ -25,6 +25,7 @@ bool WindowSdl::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) {
 }
 
 void WindowSdl::close() {
+    SDL_Quit();
 }
 
 void WindowSdl::updateFPSCounter(const GameTime& time) {

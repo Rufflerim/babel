@@ -5,10 +5,11 @@
 
 using engine::input::InputState;
 
-engine::EngineState engine::Engine::state {};
-engine::input::InputManager engine::Engine::inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
 engine::render::sdl::WindowSdl engine::Engine::window{ "Babel" };
 RendererSDL engine::Engine::renderer {};
+
+engine::EngineState engine::Engine::state {};
+engine::input::InputManager engine::Engine::inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };
 engine::asset::AssetManager engine::Engine::assetManager {};
 engine::Timer engine::Engine::timer {};
 GameTime engine::Engine::time {};
@@ -76,11 +77,10 @@ void engine::Engine::close() {
     eventManager.unsubscribe(EventCode::ApplicationQuit, nullptr, &onEngineEvent);
     eventManager.close();
     assetManager.close();
-    window.close();
 	inputManager.close();
-	LOG(LogLevel::Info) << "Engine closed.";
+    window.close();
+    LOG(LogLevel::Info) << "Engine closed.";
 	LOG(LogLevel::Trace) << "Bye :)";
-    SDL_Quit();
 }
 
 InputState engine::Engine::inputs() {
