@@ -33,7 +33,7 @@ void WindowSdl::updateFPSCounter(const GameTime& time) {
 	if (elapsed > DURATION_BETWEEN_FPS_DISPLAY) {
 		// Compute fps number
 		f64 fps = static_cast<f64>(frameCount) / elapsed;
-		
+
 		// Compute text
 		char text[128];
 #ifdef GPLATFORM_WINDOWS

@@ -7,6 +7,7 @@ add_subdirectory( math )
 add_subdirectory( ecs )
 add_subdirectory( input )
 add_subdirectory( render/sdl )
+add_subdirectory( render/vulkan )
 add_subdirectory( asset )
 
 file( GLOB Gaemi_SOURCES *.cpp )
@@ -16,7 +17,7 @@ else()
     add_library( ${PROJECT_NAME} STATIC ${Gaemi_SOURCES} render/RenderRequest.h)
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-target_link_libraries(${PROJECT_NAME} SDL2 sdl_stb_image ecs input render_sdl asset)
+target_link_libraries(${PROJECT_NAME} SDL2 sdl_stb_image ecs input render_sdl render_vulkan asset)
 
 ## Define a symbol for dll export
 target_compile_definitions(${PROJECT_NAME} PUBLIC GEXPORT=1)

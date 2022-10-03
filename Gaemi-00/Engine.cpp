@@ -5,8 +5,13 @@
 
 using engine::input::InputState;
 
+#ifdef GPLATFORM_WEB
 engine::render::sdl::WindowSdl engine::Engine::window{ "Babel" };
 RendererSDL engine::Engine::renderer {};
+#else
+WindowVulkan engine::Engine::window{ "Babel" };
+RendererVulkan engine::Engine::renderer {};
+#endif
 
 engine::EngineState engine::Engine::state {};
 engine::input::InputManager engine::Engine::inputManager { WINDOW_WIDTH, WINDOW_HEIGHT };

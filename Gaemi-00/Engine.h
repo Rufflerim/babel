@@ -5,9 +5,7 @@
 #include "Defines.h"
 #include "IGame.h"
 #include "input/InputManager.h"
-#include "render/sdl/WindowSdl.h"
 #include "EventManager.h"
-#include "render/sdl/RendererSDL.h"
 #include "asset/AssetManager.h"
 #include "ILocator.h"
 #include "Timer.h"
@@ -15,10 +13,17 @@
 #ifdef GPLATFORM_WEB
 #include <emscripten.h>
 #include <emscripten/html5.h>
-#endif
 
+#include "render/sdl/RendererSDL.h"
+#include "render/sdl/WindowSdl.h"
 using engine::render::sdl::RendererSDL;
 using engine::render::sdl::WindowSdl;
+#else
+#include "render/vulkan/RendererVulkan.h"
+#include "render/vulkan/WindowVulkan.h"
+using engine::render::vulkan::RendererVulkan;
+using engine::render::vulkan::WindowVulkan;
+#endif
 
 constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
 constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
