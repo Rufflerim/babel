@@ -28,11 +28,11 @@ namespace engine::render::vulkan {
 
         const gmath::RectangleInt& getBounds() const override { return bounds; }
 
-        /// <summary>
-        /// Return SDL_Window raw pointer when needed
-        /// </summary>
-        /// <returns>Raw SDL_Window pointer</returns>
         SDL_Window* get() { return window.get(); }
+
+        void close() override;
+
+        void updateFPSCounter(const GameTime& time) override;
 
     private:
         /// Pointer to SDL window

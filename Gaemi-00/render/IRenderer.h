@@ -52,7 +52,7 @@ namespace engine {
         /// \param color Fill color of the rectangle
         GAPI virtual void drawRectangle(const gmath::Rectangle &rectangle, const gmath::Color &color) = 0;
 
-        GAPI virtual void drawSprite(sdl::Texture* texture,
+        GAPI virtual void drawSprite(Texture* texture,
                                      const gmath::RectangleInt& srcRect,
                                      const gmath::RectangleInt& dstRect,
                                      f64 angle,

@@ -7,7 +7,7 @@
 #include <SDL_image.h>
 #include "Files.h"
 
-using engine::render::sdl::SDLTextureDestroyer;
+using engine::render::SDLTextureDestroyer;
 
 bool engine::asset::AssetManager::init(engine::render::IRenderer& renderer) {
     rendererRef = &renderer;
@@ -20,7 +20,7 @@ void engine::asset::AssetManager::close() {
 }
 
 
-std::shared_ptr<engine::render::sdl::Texture> engine::asset::AssetManager::getTexture(const str& name) {
+std::shared_ptr<engine::render::Texture> engine::asset::AssetManager::getTexture(const str& name) {
     return textures[name];
 }
 
@@ -59,7 +59,7 @@ bool engine::asset::AssetManager::loadTexture(const str& name) {
     }
 
     // Push texture into asset manager
-    textures[name] = std::make_shared<render::sdl::Texture>(
+    textures[name] = std::make_shared<render::Texture>(
             name, surf->w, surf->h,
             std::unique_ptr<SDL_Texture, SDLTextureDestroyer>(t)
     );

@@ -5,11 +5,11 @@
 #ifndef RENDER_SDL_TEXTURE2D_H
 #define RENDER_SDL_TEXTURE2D_H
 
-#include "../../Defines.h"
+#include "../Defines.h"
 #include <memory>
 #include <SDL_render.h>
 
-namespace engine { namespace render { namespace sdl {
+namespace engine { namespace render {
 
     struct SDLTextureDestroyer {
         void operator()(SDL_Texture* texture) const {
@@ -25,7 +25,7 @@ namespace engine { namespace render { namespace sdl {
         i32 height;
         std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture;
     };
-} } }
+} }
 
 
 #endif //RENDER_SDL_TEXTURE2D_H

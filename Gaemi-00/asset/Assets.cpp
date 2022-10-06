@@ -6,8 +6,9 @@
 #include "../Log.h"
 
 using engine::asset::NullAssets;
+using engine::render::Texture;
 
-std::shared_ptr<engine::render::sdl::Texture> NullAssets::getTexture(const str& name) {
+std::shared_ptr<Texture> NullAssets::getTexture(const str& name) {
     placeholderMessage();
     return nullptr;
 }

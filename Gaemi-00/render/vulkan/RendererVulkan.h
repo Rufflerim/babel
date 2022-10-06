@@ -7,10 +7,33 @@
 
 
 #include "../IRenderer.h"
+#include "../Texture.h"
 
 namespace engine::render::vulkan {
     class RendererVulkan : public IRenderer {
+    public:
+        RendererVulkan() = default;
 
+        bool init(engine::ILocator* locator, IWindow& window) override;
+
+        void clearScreen() override;
+
+        void beginDraw() override;
+
+        void drawRectangle(const gmath::Rectangle& rectangle, const gmath::Color& color) override;
+
+        void endDraw() override;
+
+        void close() override;
+
+        void drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
+                        f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) override;
+
+    private:
+        ILocator* locator{nullptr};
+        gmath::Color clearColor{gmath::Color::BLACK};
+        i32 width{-1};
+        i32 height{-1};
     };
 };
 

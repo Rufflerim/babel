@@ -3,10 +3,9 @@
 //
 
 #include "Texture.h"
-
 #include <utility>
 
-engine::render::sdl::Texture::Texture(str name, i32 width, i32 height,
+engine::render::Texture::Texture(str name, i32 width, i32 height,
                                       std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture) :
         name{std::move(name)}, width{width}, height{height},
         sdlTexture{std::move(sdlTexture)} {

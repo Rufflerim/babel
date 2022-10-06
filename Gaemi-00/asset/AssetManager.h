@@ -23,7 +23,7 @@ namespace engine::asset {
         void close();
 
         // Retrieves a stored texture
-        std::shared_ptr<render::sdl::Texture> getTexture(const str& name) override;
+        std::shared_ptr<render::Texture> getTexture(const str& name) override;
 
         // Loads (and generates) a texture
         bool loadTexture(const str& name) override;
@@ -34,7 +34,7 @@ namespace engine::asset {
         engine::render::IRenderer* rendererRef { nullptr };
 
         /// Stores pointers to textures
-        unordered_map<str, std::shared_ptr<render::sdl::Texture>> textures;
+        unordered_map<str, std::shared_ptr<render::Texture>> textures;
 
     };
 }

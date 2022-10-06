@@ -95,12 +95,19 @@ namespace engine {
         /// Global event management
         EventManager eventManager {};
 
+#ifdef GPLATFORM_WEB
         /// Game window
 		static WindowSdl window;
 
         /// Engine renderer
         static RendererSDL renderer;
+#else
+        /// Game window
+        static WindowVulkan window;
 
+        /// Engine renderer
+        static RendererVulkan renderer;
+#endif
         /// Asset manager
         static asset::AssetManager assetManager;
 

@@ -9,6 +9,7 @@
 #include "../IRenderer.h"
 #include "WindowSdl.h"
 #include <memory>
+#include "../Texture.h"
 
 namespace engine::render::sdl {
     struct SDLRendererDestroyer {
