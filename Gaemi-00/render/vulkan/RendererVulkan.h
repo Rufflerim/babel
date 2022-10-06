@@ -2,12 +2,13 @@
 // Created by gaetz on 03/10/2022.
 //
 
-#ifndef BABEL_RENDERERVULKAN_H
-#define BABEL_RENDERERVULKAN_H
+#ifndef RENDER_VULKAN_RENDERERVULKAN_H
+#define RENDER_VULKAN_RENDERERVULKAN_H
 
 
 #include "../IRenderer.h"
 #include "../Texture.h"
+#include <vulkan/vulkan.hpp>
 
 namespace engine::render::vulkan {
     class RendererVulkan : public IRenderer {
@@ -34,6 +35,8 @@ namespace engine::render::vulkan {
         gmath::Color clearColor{gmath::Color::BLACK};
         i32 width{-1};
         i32 height{-1};
+
+        vk::Instance instance;
     };
 };
 

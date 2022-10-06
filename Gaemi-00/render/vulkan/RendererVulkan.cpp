@@ -3,6 +3,7 @@
 //
 
 #include "RendererVulkan.h"
+#include "Instance.h"
 
 using engine::render::vulkan::RendererVulkan;
 
@@ -12,6 +13,13 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     auto windowBounds = window.getBounds();
     width = windowBounds.size.x;
     height = windowBounds.size.y;
+
+#ifdef DEBUG
+    bool debugMode { true };
+#else
+    bool debugMode { false };
+#endif
+    instance = vkInit::makeInstance(debugMode, "Babel");
 
     LOG(LogLevel::Trace) << "Renderer:SDL initialized";
     return true;

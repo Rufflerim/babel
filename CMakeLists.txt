@@ -3,14 +3,17 @@ project(Babel)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+## Vulkan
+set(Vulkan_LIBRARY $ENV{VULKAN_SDK}\\Lib\\vulkan-1.lib)
+set(Vulkan_INCLUDE_DIR $ENV{VULKAN_SDK}\\Include)
+find_package(Vulkan REQUIRED)
+
 ## Executable
 add_executable(Babel Babel/Main.cpp)
 set_property(TARGET Babel PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:Babel>")
 target_link_libraries(Babel Babel-Game Gaemi-00)
 
 ## Env variables
-
-
 if(EMSCRIPTEN)
     if(WIN32)
         add_custom_command(TARGET Babel PRE_BUILD
@@ -54,3 +57,6 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
 add_subdirectory( Externals )
 add_subdirectory( Gaemi-00 )
 add_subdirectory( Babel )
+
+## Vulkan validator
+find_program(GLSL_VALIDATOR glslc HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)
