@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## Vulkan
-set(Vulkan_LIBRARY $ENV{VULKAN_SDK}\\Lib\\vulkan-1.lib)
-set(Vulkan_INCLUDE_DIR $ENV{VULKAN_SDK}\\Include)
+set(Vulkan_LIBRARY $ENV{VULKAN_SDK}/Lib/vulkan-1.lib)
+set(Vulkan_INCLUDE_DIR $ENV{VULKAN_SDK}/Include)
 find_package(Vulkan REQUIRED)
 
 ## Executable
@@ -47,6 +47,8 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
         -Wno-c++98-compat-pedantic
         -Wno-reserved-id-macro
         -Wno-c11-extensions
+        -Wno-reserved-identifier
+        -Wno-reserved-macro-identifier
 
         # Optimization
         #$<$<CONFIG:DEBUG>:-Og>
