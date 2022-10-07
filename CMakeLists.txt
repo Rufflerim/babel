@@ -26,14 +26,6 @@ if(EMSCRIPTEN)
         --preload-file Assets --preload-file Assets/data")
 endif()
 
-
-## Debug status and optimisation flag
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=1)
-elseif(CMAKE_BUILD_TYPE MATCHES Release)
-    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=0)
-endif()
-
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_SDL=2)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_SDL_MIXER=2)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC USE_WEBGL2=1)
@@ -59,6 +51,16 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
 add_subdirectory( Externals )
 add_subdirectory( Gaemi-00 )
 add_subdirectory( Babel )
+
+## Debug status and optimisation flag
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=1)
+    target_compile_definitions(Gaemi-00 PUBLIC DEBUG=1)
+    target_compile_definitions(Babel PUBLIC DEBUG=1)
+    target_compile_definitions(render_vulkan PUBLIC DEBUG=1)
+elseif(CMAKE_BUILD_TYPE MATCHES Release)
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC DEBUG=0)
+endif()
 
 ## Vulkan validator
 find_program(GLSL_VALIDATOR glslc HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)

@@ -37,6 +37,10 @@ namespace engine::render::vulkan {
         i32 height{-1};
 
         vk::Instance instance;
+        vk::DebugUtilsMessengerEXT debugMessenger { nullptr };
+        vk::DispatchLoaderDynamic dynamicInstanceLoader;
+
+        void makeDebugMessenger();
     };
 };
 

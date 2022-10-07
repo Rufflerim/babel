@@ -21,6 +21,9 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     bool debugMode { false };
 #endif
     instance = vkInit::makeInstance(debugMode, "Babel", dynamic_cast<WindowVulkan&>(window));
+    dynamicInstanceLoader = { instance, vkGetInstanceProcAddr };
+    makeDebugMessenger();
+
 
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
@@ -43,10 +46,15 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
+    instance.destroyDebugUtilsMessengerEXT(debugMessenger, nullptr, dynamicInstanceLoader);
     instance.destroy();
 }
 
 void RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
                            f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) {
     LOG(LogLevel::Trace) << "Draw sprite request";
+}
+
+void engine::render::vulkan::RendererVulkan::makeDebugMessenger() {
+    debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
 }

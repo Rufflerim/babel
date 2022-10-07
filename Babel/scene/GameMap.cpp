@@ -104,7 +104,7 @@ void scene::GameMap::update(const GameTime& time, const InputState& inputState) 
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {
-    tileMap.draw(renderer);
+    //tileMap.draw(renderer);
     renderingSystem->draw(coordinator, renderer);
 }
 
