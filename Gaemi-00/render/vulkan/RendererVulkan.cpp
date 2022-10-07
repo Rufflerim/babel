@@ -4,6 +4,7 @@
 
 #include "RendererVulkan.h"
 #include "Instance.h"
+#include "WindowVulkan.h"
 
 using engine::render::vulkan::RendererVulkan;
 
@@ -19,9 +20,9 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
 #else
     bool debugMode { false };
 #endif
-    instance = vkInit::makeInstance(debugMode, "Babel");
+    instance = vkInit::makeInstance(debugMode, "Babel", dynamic_cast<WindowVulkan&>(window));
 
-    LOG(LogLevel::Trace) << "Renderer:SDL initialized";
+    LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
 
@@ -42,7 +43,7 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
-
+    instance.destroy();
 }
 
 void RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,

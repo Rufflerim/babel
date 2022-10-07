@@ -17,12 +17,12 @@ scene::GameMap::GameMap(engine::ecs::Coordinator& coordinator) : IScene(coordina
 
 void scene::GameMap::onInit() {
     engine::asset::Assets& assets = Locator::instance().assets();
-    assets.loadTexture("mathieu");
-    assets.loadTexture("furior_spritesheet");
-    assets.loadTexture("tileset1");
+    //assets.loadTexture("mathieu");
+    //assets.loadTexture("furior_spritesheet");
+    //assets.loadTexture("tileset1");
 
     // Load map
-    tileMap.load();
+    //tileMap.load();
 
     // Load entities
     coordinator.registerComponent<Transform2D>();

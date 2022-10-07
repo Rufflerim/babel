@@ -23,15 +23,10 @@ namespace engine::render::vulkan {
     {
     public:
         explicit WindowVulkan(str titleP);
-
         bool init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) override;
-
         const gmath::RectangleInt& getBounds() const override { return bounds; }
-
         SDL_Window* get() { return window.get(); }
-
         void close() override;
-
         void updateFPSCounter(const GameTime& time) override;
 
     private:
