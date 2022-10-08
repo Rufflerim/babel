@@ -14,18 +14,25 @@
 using std::set;
 using std::optional;
 
-namespace engine::render::vulkan {
-    namespace vkInit {
+namespace engine::render::vulkan::vkInit {
 
+        /**
+         * Hold queue indices for the queue families we want
+         */
         struct QueueFamilyIndices {
             optional<u32> graphicsFamily;
             optional<u32> presentFamily;
 
-            bool haveAll() {
+            [[nodiscard]] bool haveAll() const {
                 return graphicsFamily.has_value() && presentFamily.has_value();
             }
         };
 
+        /**
+         * Log properties of a specific physical device
+         * @param physicalDevice The physical device we want to log
+         * @param logLevel Level of logging
+         */
         void logDeviceProperties(vk::PhysicalDevice physicalDevice, LogLevel logLevel) {
             vk::PhysicalDeviceProperties properties = physicalDevice.getProperties();
             str type;
@@ -49,7 +56,13 @@ namespace engine::render::vulkan {
             LOG(logLevel) << "    Type: " << type;
         }
 
-        bool checkDeviceExtensionsSupported(const vk::PhysicalDevice physicalDevice, const vector<const char*> requestedExtensions) {
+        /**
+         * Check extensions are supported by the physical device
+         * @param physicalDevice The physical device we want to check
+         * @param requestedExtensions Extensions we request
+         * @return true if all extensions are supported
+         */
+        bool checkDeviceExtensionsSupported(const vk::PhysicalDevice physicalDevice, const vector<const char*>& requestedExtensions) {
             set<str> uniqueExtensions { begin(requestedExtensions), end(requestedExtensions) };
             for (auto& extension : physicalDevice.enumerateDeviceExtensionProperties()) {
                 uniqueExtensions.erase(extension.extensionName);
@@ -57,6 +70,12 @@ namespace engine::render::vulkan {
             return uniqueExtensions.empty();
         }
 
+        /**
+         * Checks if a physical device supports requested extensions and is of a specific type (discrete, integrated, etc.). Requested extensions must be defined in this function.
+         * @param physicalDevice The physical device we want to check
+         * @param type The type of physical physical device we want
+         * @return true when extensions are supported and physical device is of the requested type
+         */
         bool isSuitable(const vk::PhysicalDevice physicalDevice, vk::PhysicalDeviceType type) {
             const vector<const char*> requestedExtensions {
                 VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -73,6 +92,11 @@ namespace engine::render::vulkan {
             return false;
         }
 
+        /**
+         * Find a physical device. First look for discrete GPU, then for integrated GPU.
+         * @param instance Vulkan instance
+         * @return A chosen physical device. nullptr if no physical device is found.
+         */
         VkPhysicalDevice choosePhysicalDevice(vk::Instance& instance) {
             vector<vk::PhysicalDevice> availableDevices = instance.enumeratePhysicalDevices();
             // Look for a discrete GPU first
@@ -95,6 +119,11 @@ namespace engine::render::vulkan {
             return nullptr;
         }
 
+        /**
+         * Populate the queue families indices for a specific physical device.
+         * @param physicalDevice The physical device we want to check
+         * @return Queue families indices
+         */
         QueueFamilyIndices findQueueFamilies(vk::PhysicalDevice physicalDevice) {
             QueueFamilyIndices indices;
             vector<vk::QueueFamilyProperties> queueFamilies = physicalDevice.getQueueFamilyProperties();
@@ -111,6 +140,5 @@ namespace engine::render::vulkan {
         }
 
     }
-}
 
 #endif //RENDER_VULKAN_DEVICE_H
