@@ -6,6 +6,7 @@
 #include "WindowVulkan.h"
 #include "Instance.h"
 #include "Device.h"
+#include "Swapchain.h"
 #include "../../Asserts.h"
 
 using engine::render::vulkan::RendererVulkan;
@@ -42,7 +43,7 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
                                                              windowVulkan.getBounds().size.x,
                                                              windowVulkan.getBounds().size.y);
     swapchain = bundle.swapchain;
-    swapchainImages = bundle.images;
+    swapchainFrames = bundle.frames;
     swapchainFormat = bundle.format;
     swapchainExtent = bundle.extent;
 
@@ -67,6 +68,9 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
+    for (auto frame : swapchainFrames) {
+        device.destroyImageView(frame.imageView);
+    }
     device.destroySwapchainKHR(swapchain);
     device.destroy();
     instance.destroySurfaceKHR(surface);

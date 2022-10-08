@@ -7,7 +7,7 @@
 
 #include "../IRenderer.h"
 #include "../Texture.h"
-#include <vulkan/vulkan.hpp>
+#include "Frame.h"
 
 namespace engine::render::vulkan {
     class RendererVulkan : public IRenderer {
@@ -30,10 +30,10 @@ namespace engine::render::vulkan {
                         f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) override;
 
     private:
-        ILocator* locator{nullptr};
-        gmath::Color clearColor{gmath::Color::BLACK};
-        i32 width{-1};
-        i32 height{-1};
+        ILocator* locator { nullptr };
+        gmath::Color clearColor { gmath::Color::BLACK };
+        i32 width { -1 };
+        i32 height { -1 };
 
         vk::Instance instance;
         vk::DebugUtilsMessengerEXT debugMessenger { nullptr };
@@ -45,7 +45,7 @@ namespace engine::render::vulkan {
         vk::SurfaceKHR surface;
 
         vk::SwapchainKHR swapchain;
-        vector<vk::Image> swapchainImages;
+        vector<vkUtils::SwapchainFrame> swapchainFrames;
         vk::Format swapchainFormat;
         vk::Extent2D swapchainExtent;
     };

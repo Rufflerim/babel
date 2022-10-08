@@ -10,9 +10,7 @@
 #include "WindowVulkan.h"
 #include "SDL_vulkan.h"
 
-namespace engine::render::vulkan {
-
-    namespace vkInit {
+namespace engine::render::vulkan::vkInit {
 
         bool supported(vector<const char*>& extensions, vector<const char*>& layers, bool debugMode) {
             vector<vk::ExtensionProperties> supportedExtensions = vk::enumerateInstanceExtensionProperties();
@@ -187,7 +185,4 @@ namespace engine::render::vulkan {
             return instance.createDebugUtilsMessengerEXT(debugCreateInfo, nullptr, aDynamic);
         }
     }
-
-
-}
 #endif //RENDER_VULKAN_INSTANCE_H
