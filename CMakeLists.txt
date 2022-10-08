@@ -62,3 +62,28 @@ endif()
 
 ## Vulkan validator
 find_program(GLSL_VALIDATOR glslc HINTS /usr/bin /usr/local/bin $ENV{VULKAN_SDK}/Bin/ $ENV{VULKAN_SDK}/Bin32/)
+
+## Find all the shader files under the shaders folder
+file(GLOB_RECURSE GLSL_SOURCE_FILES
+        "${PROJECT_SOURCE_DIR}/Assets/shaders/*.frag"
+        "${PROJECT_SOURCE_DIR}/Assets/shaders/*.vert"
+        "${PROJECT_SOURCE_DIR}/Assets/shaders/*.comp")
+
+## Iterate each shader
+message(STATUS "BUILDING SHADER")
+foreach(GLSL ${GLSL_SOURCE_FILES})
+    get_filename_component(FILE_NAME ${GLSL} NAME)
+    set(SPIRV "${PROJECT_SOURCE_DIR}/Assets/shaders/${FILE_NAME}.spv")
+    message("---- ${GLSL}")
+    ##execute glslang command to compile that specific shader
+    add_custom_command(
+            OUTPUT ${SPIRV}
+            COMMAND ${GLSL_VALIDATOR} ${GLSL} -o ${SPIRV}
+            DEPENDS ${GLSL})
+    list(APPEND SPIRV_BINARY_FILES ${SPIRV})
+endforeach(GLSL)
+
+add_custom_target(
+        Shaders
+        DEPENDS ${SPIRV_BINARY_FILES}
+)

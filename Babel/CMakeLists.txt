@@ -25,3 +25,5 @@ add_custom_command(
         COMMENT "---- Copy Assets"
 )
 
+add_dependencies(${CMAKE_PROJECT_NAME} Shaders)
+
