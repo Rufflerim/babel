@@ -27,7 +27,9 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
 
     physicalDevice = vkInit::choosePhysicalDevice(instance);
     GASSERT_MSG(nullptr != physicalDevice, "No suitable physical device found. Exiting.");
-    vkInit::QueueFamilyIndices queueFamilyIndices = vkInit::findQueueFamilies(physicalDevice);
+    device = vkInit::createLogicalDevice(physicalDevice, debugMode);
+    GASSERT_MSG(nullptr != device, "Vulkan logical device could not be created. Exiting.");
+    graphicsQueue = vkInit::getQueue(physicalDevice, device);
 
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
@@ -50,6 +52,7 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
+    device.destroy();
     instance.destroyDebugUtilsMessengerEXT(debugMessenger, nullptr, dynamicInstanceLoader);
     instance.destroy();
 }

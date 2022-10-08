@@ -17,6 +17,7 @@ namespace engine::render::vulkan {
         bool supported(vector<const char*>& extensions, vector<const char*>& layers, bool debugMode) {
             vector<vk::ExtensionProperties> supportedExtensions = vk::enumerateInstanceExtensionProperties();
             bool found;
+            LOG(LogLevel::Trace) << "Vulkan extensions and layers support status:";
             for (auto extension: extensions) {
                 found = false;
                 for (auto supportedExtension: supportedExtensions) {
@@ -103,6 +104,10 @@ namespace engine::render::vulkan {
             if (debug) {
                 layers.push_back("VK_LAYER_KHRONOS_validation");
             }
+            LOG(LogLevel::Trace) << "Vulkan Layers:";
+            for (auto name: layers) {
+                LOG(LogLevel::Trace) << "    " << name;
+            }
 
             if (!supported(extensions, layers, debug)) {
                 LOG(LogLevel::Fatal) << "Requested Vulkan extensions and layer not supported.";
@@ -170,7 +175,7 @@ namespace engine::render::vulkan {
             vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo {
                     vk::DebugUtilsMessengerCreateFlagsEXT(),
                     //vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-                    vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
+                    //vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
                     vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
                     vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
                     vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |

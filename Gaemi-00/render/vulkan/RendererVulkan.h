@@ -38,7 +38,9 @@ namespace engine::render::vulkan {
         vk::Instance instance;
         vk::DebugUtilsMessengerEXT debugMessenger { nullptr };
         vk::DispatchLoaderDynamic dynamicInstanceLoader;
-        vk::PhysicalDevice physicalDevice;
+        vk::PhysicalDevice physicalDevice { nullptr };
+        vk::Device device { nullptr };
+        vk::Queue graphicsQueue { nullptr };
     };
 };
 
