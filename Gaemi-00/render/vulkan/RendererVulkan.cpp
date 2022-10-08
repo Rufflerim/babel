@@ -3,11 +3,11 @@
 //
 
 #include "RendererVulkan.h"
-#include "Instance.h"
 #include "WindowVulkan.h"
+#include "Instance.h"
+#include "Device.h"
 
 using engine::render::vulkan::RendererVulkan;
-
 
 bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     locator = locatorP;
@@ -15,15 +15,16 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     width = windowBounds.size.x;
     height = windowBounds.size.y;
 
-#ifdef DEBUG
+#ifdef GDEBUG
     bool debugMode { true };
 #else
     bool debugMode { false };
 #endif
     instance = vkInit::makeInstance(debugMode, "Babel", dynamic_cast<WindowVulkan&>(window));
     dynamicInstanceLoader = { instance, vkGetInstanceProcAddr };
-    makeDebugMessenger();
+    if (debugMode) debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
 
+    physicalDevice = vkInit::choosePhysicalDevice(instance);
 
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
@@ -53,8 +54,4 @@ void RendererVulkan::close() {
 void RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
                            f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) {
     LOG(LogLevel::Trace) << "Draw sprite request";
-}
-
-void engine::render::vulkan::RendererVulkan::makeDebugMessenger() {
-    debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
 }

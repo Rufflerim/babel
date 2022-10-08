@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 17)
 project(Gaemi-00)
 add_definitions(-DGEXPORT)
 
+
 add_subdirectory( math )
 add_subdirectory( ecs )
 add_subdirectory( input )
@@ -22,6 +23,17 @@ target_link_libraries(${PROJECT_NAME} SDL2 sdl_stb_image ecs input render_sdl re
 
 ## Define a symbol for dll export
 target_compile_definitions(${PROJECT_NAME} PUBLIC GEXPORT=1)
+
+## Debug status
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_definitions(Gaemi-00 PUBLIC GDEBUG=1)
+    target_compile_definitions(render_vulkan PUBLIC GDEBUG=1)
+    target_compile_definitions(render_sdl PUBLIC GDEBUG=1)
+    target_compile_definitions(math PUBLIC GDEBUG=1)
+    target_compile_definitions(ecs PUBLIC GDEBUG=1)
+    target_compile_definitions(input PUBLIC GDEBUG=1)
+    target_compile_definitions(asset PUBLIC GDEBUG=1)
+endif()
 
 ## Post build DLL copy
 if(EMSCRIPTEN)

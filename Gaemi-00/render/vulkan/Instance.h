@@ -17,9 +17,9 @@ namespace engine::render::vulkan {
         bool supported(vector<const char*>& extensions, vector<const char*>& layers, bool debugMode) {
             vector<vk::ExtensionProperties> supportedExtensions = vk::enumerateInstanceExtensionProperties();
             bool found;
-            for(auto extension : extensions) {
+            for (auto extension: extensions) {
                 found = false;
-                for (auto supportedExtension : supportedExtensions) {
+                for (auto supportedExtension: supportedExtensions) {
                     if (strcmp(extension, supportedExtension.extensionName) == 0) {
                         found = true;
                         if (debugMode) {
@@ -36,9 +36,9 @@ namespace engine::render::vulkan {
             }
 
             vector<vk::LayerProperties> supportedLayers = vk::enumerateInstanceLayerProperties();
-            for(auto layer : layers) {
+            for (auto layer: layers) {
                 found = false;
-                for (auto supportedLayer : supportedLayers) {
+                for (auto supportedLayer: supportedLayers) {
                     if (strcmp(layer, supportedLayer.layerName) == 0) {
                         found = true;
                         if (debugMode) {
@@ -61,10 +61,16 @@ namespace engine::render::vulkan {
             // Vulkan version we have
             u32 vkVersion { 0 };
             vkEnumerateInstanceVersion(&vkVersion);
-            LOG(LogLevel::Info) << "Making Vulkan instance, with vkVersion " << VK_API_VERSION_MAJOR(vkVersion) << "."
-                                << VK_API_VERSION_MINOR(vkVersion) << "." << VK_API_VERSION_PATCH(vkVersion);
             // Vulkan version we want
-            vkVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
+            u32 vkTargetVersion = VK_MAKE_API_VERSION(0, 1, 1, 0);
+            LOG(LogLevel::Info) << "Making Vulkan instance, with Vulkan system version "
+                                << VK_API_VERSION_MAJOR(vkVersion) << "."
+                                << VK_API_VERSION_MINOR(vkVersion) << "."
+                                << VK_API_VERSION_PATCH(vkVersion)
+                                << ". Target version: "
+                                << VK_API_VERSION_MAJOR(vkTargetVersion) << "."
+                                << VK_API_VERSION_MINOR(vkTargetVersion) << "."
+                                << VK_API_VERSION_PATCH(vkTargetVersion);
 
             // Application info
             u32 appVersion = VK_MAKE_API_VERSION(0, 0, 1, 0);
@@ -72,7 +78,7 @@ namespace engine::render::vulkan {
 
             vk::ApplicationInfo applicationInfo { appName.c_str(), appVersion,
                                                   "Gaemi-00", engineVersion,
-                                                  vkVersion };
+                                                  vkTargetVersion };
 
             // Extensions
             u32 extensionCount;
@@ -85,10 +91,11 @@ namespace engine::render::vulkan {
             }
             auto additionalExtensionCount { extensions.size() };
             extensions.resize(additionalExtensionCount + extensionCount);
-            SDL_Vulkan_GetInstanceExtensions(window.get(), &extensionCount, extensions.data() + additionalExtensionCount);
-            LOG(LogLevel::Info) << "Vulkan extensions:";
-            for (auto name : extensions) {
-                LOG(LogLevel::Info) << "    " << name;
+            SDL_Vulkan_GetInstanceExtensions(window.get(), &extensionCount,
+                                             extensions.data() + additionalExtensionCount);
+            LOG(LogLevel::Trace) << "Vulkan extensions:";
+            for (auto name: extensions) {
+                LOG(LogLevel::Trace) << "    " << name;
             }
 
             // Layers
@@ -97,25 +104,25 @@ namespace engine::render::vulkan {
                 layers.push_back("VK_LAYER_KHRONOS_validation");
             }
 
-            if(!supported(extensions, layers, debug)) {
+            if (!supported(extensions, layers, debug)) {
                 LOG(LogLevel::Fatal) << "Requested Vulkan extensions and layer not supported.";
                 return nullptr;
             }
 
             // Instance creation
             vk::InstanceCreateInfo createInfo {
-                vk::InstanceCreateFlags(),
-                &applicationInfo,
-                // Layers
-                static_cast<u32>(layers.size()), layers.data(),
-                // Extensions
-                static_cast<u32>(extensions.size()), extensions.data()
+                    vk::InstanceCreateFlags(),
+                    &applicationInfo,
+                    // Layers
+                    static_cast<u32>(layers.size()), layers.data(),
+                    // Extensions
+                    static_cast<u32>(extensions.size()), extensions.data()
             };
 
             return vk::createInstance(createInfo, nullptr);
         }
 
-        VKAPI_ATTR VkBool32  VKAPI_CALL debugCallback(
+        VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
                 VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                 VkDebugUtilsMessageTypeFlagsEXT messageType,
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -162,7 +169,7 @@ namespace engine::render::vulkan {
         vk::DebugUtilsMessengerEXT makeDebugMessenger(vk::Instance instance, vk::DispatchLoaderDynamic aDynamic) {
             vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo {
                     vk::DebugUtilsMessengerCreateFlagsEXT(),
-                    vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+                    //vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
                     vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
                     vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
                     vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,

@@ -5,7 +5,6 @@
 #ifndef RENDER_VULKAN_RENDERERVULKAN_H
 #define RENDER_VULKAN_RENDERERVULKAN_H
 
-
 #include "../IRenderer.h"
 #include "../Texture.h"
 #include <vulkan/vulkan.hpp>
@@ -39,10 +38,9 @@ namespace engine::render::vulkan {
         vk::Instance instance;
         vk::DebugUtilsMessengerEXT debugMessenger { nullptr };
         vk::DispatchLoaderDynamic dynamicInstanceLoader;
-
-        void makeDebugMessenger();
+        vk::PhysicalDevice physicalDevice;
     };
 };
 
 
-#endif //BABEL_RENDERERVULKAN_H
+#endif //RENDER_VULKAN_RENDERERVULKAN_H

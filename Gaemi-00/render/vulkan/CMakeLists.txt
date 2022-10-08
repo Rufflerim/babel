@@ -1,5 +1,5 @@
 file( GLOB render_vulkan_SOURCES *.cpp )
-add_library( render_vulkan ${render_vulkan_SOURCES})
+add_library( render_vulkan ${render_vulkan_SOURCES} Device.h)
 target_include_directories(render_vulkan PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 ## Needed to avoid warning LNK4217
