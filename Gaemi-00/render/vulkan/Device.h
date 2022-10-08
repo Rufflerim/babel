@@ -9,18 +9,24 @@
 #include "../Defines.h"
 #include "../Log.h"
 #include <set>
+#include <optional>
 
 using std::set;
+using std::optional;
 
 namespace engine::render::vulkan {
     namespace vkInit {
 
         struct QueueFamilyIndices {
-            u32 graphicsFamily;
-            u32 presentFamily;
+            optional<u32> graphicsFamily;
+            optional<u32> presentFamily;
+
+            bool haveAll() {
+                return graphicsFamily.has_value() && presentFamily.has_value();
+            }
         };
 
-        void logDeviceProperties(vk::PhysicalDevice& physicalDevice, LogLevel logLevel) {
+        void logDeviceProperties(vk::PhysicalDevice physicalDevice, LogLevel logLevel) {
             vk::PhysicalDeviceProperties properties = physicalDevice.getProperties();
             str type;
             switch (properties.deviceType) {
@@ -43,7 +49,7 @@ namespace engine::render::vulkan {
             LOG(logLevel) << "    Type: " << type;
         }
 
-        bool checkDeviceExtensionsSupported(const vk::PhysicalDevice& physicalDevice, const vector<const char*> requestedExtensions) {
+        bool checkDeviceExtensionsSupported(const vk::PhysicalDevice physicalDevice, const vector<const char*> requestedExtensions) {
             set<str> uniqueExtensions { begin(requestedExtensions), end(requestedExtensions) };
             for (auto& extension : physicalDevice.enumerateDeviceExtensionProperties()) {
                 uniqueExtensions.erase(extension.extensionName);
@@ -51,7 +57,7 @@ namespace engine::render::vulkan {
             return uniqueExtensions.empty();
         }
 
-        bool isSuitable(const vk::PhysicalDevice& physicalDevice, vk::PhysicalDeviceType type) {
+        bool isSuitable(const vk::PhysicalDevice physicalDevice, vk::PhysicalDeviceType type) {
             const vector<const char*> requestedExtensions {
                 VK_KHR_SWAPCHAIN_EXTENSION_NAME
             };
@@ -70,15 +76,15 @@ namespace engine::render::vulkan {
         VkPhysicalDevice choosePhysicalDevice(vk::Instance& instance) {
             vector<vk::PhysicalDevice> availableDevices = instance.enumeratePhysicalDevices();
             // Look for a discrete GPU first
-            for (auto& physicalDevice : availableDevices) {
+            for (auto physicalDevice : availableDevices) {
                 if (isSuitable(physicalDevice, vk::PhysicalDeviceType::eDiscreteGpu)) {
                     LOG(LogLevel::Info) << "Chosen graphics device:";
                     logDeviceProperties(physicalDevice, LogLevel::Info);
                     return physicalDevice;
                 }
             }
-            // Look for a integrated GPU then
-            for (auto& physicalDevice : availableDevices) {
+            // Look for integrated GPU then
+            for (auto physicalDevice : availableDevices) {
                 if (isSuitable(physicalDevice, vk::PhysicalDeviceType::eIntegratedGpu)) {
                     LOG(LogLevel::Info) << "Chosen graphics device:";
                     logDeviceProperties(physicalDevice, LogLevel::Info);
@@ -87,6 +93,21 @@ namespace engine::render::vulkan {
             }
             LOG(LogLevel::Error) << "No device support requested extensions OR is discrete or integrated GPU.";
             return nullptr;
+        }
+
+        QueueFamilyIndices findQueueFamilies(vk::PhysicalDevice physicalDevice) {
+            QueueFamilyIndices indices;
+            vector<vk::QueueFamilyProperties> queueFamilies = physicalDevice.getQueueFamilyProperties();
+            i32 i { 0 };
+            for (auto queueFamily : queueFamilies) {
+                if (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
+                    indices.graphicsFamily = i;
+                    indices.presentFamily = i;
+                }
+                if(indices.haveAll()) break;
+                ++i;
+            }
+            return indices;
         }
 
     }

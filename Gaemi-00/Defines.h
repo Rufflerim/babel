@@ -23,7 +23,7 @@
 #endif
 
 // General macro
-#define GASSERTIONS_ENABLED
+#define GASSERTIONS_ENABLED = 1
 
 
 // SDL_STB_image

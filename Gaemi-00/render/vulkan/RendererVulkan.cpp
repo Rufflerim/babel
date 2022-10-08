@@ -6,6 +6,7 @@
 #include "WindowVulkan.h"
 #include "Instance.h"
 #include "Device.h"
+#include "../../Asserts.h"
 
 using engine::render::vulkan::RendererVulkan;
 
@@ -25,6 +26,8 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     if (debugMode) debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
 
     physicalDevice = vkInit::choosePhysicalDevice(instance);
+    GASSERT_MSG(nullptr != physicalDevice, "No suitable physical device found. Exiting.");
+    vkInit::QueueFamilyIndices queueFamilyIndices = vkInit::findQueueFamilies(physicalDevice);
 
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
