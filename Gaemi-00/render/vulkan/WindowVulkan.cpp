@@ -13,7 +13,7 @@ WindowVulkan::WindowVulkan(str titleP) : title { titleP }
 
 bool WindowVulkan::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) {
     // Create SDL window pointer
-    auto flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
+    auto flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
     window = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(
             SDL_CreateWindow(title.c_str(), x, y, width, height, flags)
     );

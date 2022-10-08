@@ -21,15 +21,30 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
 #else
     bool debugMode { false };
 #endif
-    instance = vkInit::makeInstance(debugMode, "Babel", dynamic_cast<WindowVulkan&>(window));
+    WindowVulkan& windowVulkan = dynamic_cast<WindowVulkan&>(window);
+    instance = vkInit::makeInstance(debugMode, "Babel", windowVulkan);
     dynamicInstanceLoader = { instance, vkGetInstanceProcAddr };
     if (debugMode) debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
 
+    VkSurfaceKHR tmpSurface;
+    SDL_Vulkan_CreateSurface(windowVulkan.get(), instance, &tmpSurface);
+    surface = tmpSurface; // Cast through copy constructor
+
     physicalDevice = vkInit::choosePhysicalDevice(instance);
-    GASSERT_MSG(nullptr != physicalDevice, "No suitable physical device found. Exiting.");
-    device = vkInit::createLogicalDevice(physicalDevice, debugMode);
+    GASSERT_MSG(nullptr != physicalDevice, "No suitable Vulkan physical device found. Exiting.");
+    device = vkInit::createLogicalDevice(physicalDevice, surface, debugMode);
     GASSERT_MSG(nullptr != device, "Vulkan logical device could not be created. Exiting.");
-    graphicsQueue = vkInit::getQueue(physicalDevice, device);
+    array<vk::Queue, 2> queues = vkInit::getQueues(physicalDevice, device, surface);
+    graphicsQueue = queues.at(0);
+    presentQueue = queues.at(1);
+
+    vkInit::SwapchainBundle bundle = vkInit::createSwapchain(device, physicalDevice, surface,
+                                                             windowVulkan.getBounds().size.x,
+                                                             windowVulkan.getBounds().size.y);
+    swapchain = bundle.swapchain;
+    swapchainImages = bundle.images;
+    swapchainFormat = bundle.format;
+    swapchainExtent = bundle.extent;
 
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
@@ -52,12 +67,16 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
+    device.destroySwapchainKHR(swapchain);
     device.destroy();
+    instance.destroySurfaceKHR(surface);
     instance.destroyDebugUtilsMessengerEXT(debugMessenger, nullptr, dynamicInstanceLoader);
     instance.destroy();
 }
 
-void RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
+void
+RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
                            f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) {
     LOG(LogLevel::Trace) << "Draw sprite request";
 }
+

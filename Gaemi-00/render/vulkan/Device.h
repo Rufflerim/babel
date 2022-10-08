@@ -20,12 +20,31 @@ namespace engine::render::vulkan::vkInit {
      * Hold queue indices for the queue families we want
      */
     struct QueueFamilyIndices {
-        optional<u32> graphicsFamily;
-        optional<u32> presentFamily;
+        optional <u32> graphicsFamily;
+        optional <u32> presentFamily;
 
         [[nodiscard]] bool haveAll() const {
             return graphicsFamily.has_value() && presentFamily.has_value();
         }
+    };
+
+    /**
+     * Bundle possibilities of q swapchain
+     */
+    struct SwapchainSupportDetails {
+        vk::SurfaceCapabilitiesKHR capabilities;
+        vector<vk::SurfaceFormatKHR> formats;
+        vector<vk::PresentModeKHR> presentModes;
+    };
+
+    /**
+     * Bundle swapchain related data
+     */
+    struct SwapchainBundle {
+        vk::SwapchainKHR swapchain;
+        vector<vk::Image> images;
+        vk::Format format;
+        vk::Extent2D extent;
     };
 
     /**
@@ -62,9 +81,10 @@ namespace engine::render::vulkan::vkInit {
      * @param requestedExtensions Extensions we request
      * @return true if all extensions are supported
      */
-    bool checkDeviceExtensionsSupported(const vk::PhysicalDevice physicalDevice, const vector<const char*>& requestedExtensions) {
+    bool checkDeviceExtensionsSupported(const vk::PhysicalDevice physicalDevice,
+                                        const vector<const char*>& requestedExtensions) {
         set<str> uniqueExtensions { begin(requestedExtensions), end(requestedExtensions) };
-        for (auto& extension : physicalDevice.enumerateDeviceExtensionProperties()) {
+        for (auto& extension: physicalDevice.enumerateDeviceExtensionProperties()) {
             uniqueExtensions.erase(extension.extensionName);
         }
         return uniqueExtensions.empty();
@@ -78,15 +98,16 @@ namespace engine::render::vulkan::vkInit {
      */
     bool isSuitable(const vk::PhysicalDevice physicalDevice, vk::PhysicalDeviceType type) {
         const vector<const char*> requestedExtensions {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+                VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
         LOG(LogLevel::Trace) << "Requested Vulkan extensions:";
-        for (auto extension : requestedExtensions) {
+        for (auto extension: requestedExtensions) {
             LOG(LogLevel::Trace) << "    " << extension;
         }
         bool areExtensionsSupported = checkDeviceExtensionsSupported(physicalDevice, requestedExtensions);
         if (areExtensionsSupported && physicalDevice.getProperties().deviceType == type) {
-            LOG(LogLevel::Trace) << "Device " << physicalDevice.getProperties().deviceName << " supports requested extensions.";
+            LOG(LogLevel::Trace) << "Device " << physicalDevice.getProperties().deviceName
+                                 << " supports requested extensions.";
             return true;
         }
         return false;
@@ -100,7 +121,7 @@ namespace engine::render::vulkan::vkInit {
     VkPhysicalDevice choosePhysicalDevice(vk::Instance& instance) {
         vector<vk::PhysicalDevice> availableDevices = instance.enumeratePhysicalDevices();
         // Look for a discrete GPU first
-        for (auto physicalDevice : availableDevices) {
+        for (auto physicalDevice: availableDevices) {
             if (isSuitable(physicalDevice, vk::PhysicalDeviceType::eDiscreteGpu)) {
                 LOG(LogLevel::Info) << "Chosen graphics device:";
                 logDeviceProperties(physicalDevice, LogLevel::Info);
@@ -108,7 +129,7 @@ namespace engine::render::vulkan::vkInit {
             }
         }
         // Look for integrated GPU then
-        for (auto physicalDevice : availableDevices) {
+        for (auto physicalDevice: availableDevices) {
             if (isSuitable(physicalDevice, vk::PhysicalDeviceType::eIntegratedGpu)) {
                 LOG(LogLevel::Info) << "Chosen graphics device:";
                 logDeviceProperties(physicalDevice, LogLevel::Info);
@@ -124,50 +145,192 @@ namespace engine::render::vulkan::vkInit {
      * @param physicalDevice The physical device we want to check
      * @return Queue families indices
      */
-    QueueFamilyIndices findQueueFamilies(vk::PhysicalDevice physicalDevice) {
+    QueueFamilyIndices findQueueFamilies(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface) {
         QueueFamilyIndices indices;
         vector<vk::QueueFamilyProperties> queueFamilies = physicalDevice.getQueueFamilyProperties();
         i32 i { 0 };
-        for (auto queueFamily : queueFamilies) {
+        for (auto queueFamily: queueFamilies) {
             if (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
                 indices.graphicsFamily = i;
+            }
+            if (physicalDevice.getSurfaceSupportKHR(i, surface)) {
                 indices.presentFamily = i;
             }
-            if(indices.haveAll()) break;
+            if (indices.haveAll()) break;
             ++i;
         }
         return indices;
     }
 
-    vk::Device createLogicalDevice(vk::PhysicalDevice physicalDevice, bool debugMode) {
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+    /**
+     * Create a Vulkan logical device for future rendering
+     * @param physicalDevice Physical device the logical device is based on
+     * @param surface Surface on which we will render
+     * @param debugMode True if we want debug info
+     * @return Vulkan logical device
+     */
+    vk::Device createLogicalDevice(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface, bool debugMode) {
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+        vector<u32> uniqueIndices;
+        uniqueIndices.push_back(indices.graphicsFamily.value());
+        if (indices.graphicsFamily.value() != indices.presentFamily.value()) {
+            uniqueIndices.push_back(indices.presentFamily.value());
+        }
+
         float queuePriority { 1.0f };
-        vk::DeviceQueueCreateInfo queueCreateInfo {
-            vk::DeviceQueueCreateFlags(), indices.graphicsFamily.value(), 1, &queuePriority
+        vector<vk::DeviceQueueCreateInfo> queueCreateInfoList;
+        for (auto queueFamilyIndex: uniqueIndices) {
+            queueCreateInfoList.emplace_back(
+                    vk::DeviceQueueCreateFlags(), queueFamilyIndex,
+                    1, &queuePriority
+            );
+        }
+
+        vector<const char*> deviceExtensions {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
 
         vk::PhysicalDeviceFeatures deviceFeatures {};
+
         vector<const char*> enabledLayers;
         if (debugMode) {
             enabledLayers.push_back("VK_LAYER_KHRONOS_validation");
         }
+
         vk::DeviceCreateInfo createInfo {
-            vk::DeviceCreateFlags(),
-            1, &queueCreateInfo,
-            static_cast<u32>(enabledLayers.size()), enabledLayers.data(),
-            0, nullptr,
-            &deviceFeatures
+                vk::DeviceCreateFlags(),
+                static_cast<u32>(queueCreateInfoList.size()), queueCreateInfoList.data(),
+                static_cast<u32>(enabledLayers.size()), enabledLayers.data(),
+                static_cast<u32>(deviceExtensions.size()), deviceExtensions.data(),
+                &deviceFeatures
         };
 
-        LOG(LogLevel::Trace) << "Logical device creation.";
+        LOG(LogLevel::Trace) << "Vulkan logical device creation.";
         vk::Device device = physicalDevice.createDevice(createInfo);
         return device;
     }
 
-    vk::Queue getQueue(vk::PhysicalDevice physicalDevice, vk::Device device) {
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-        return device.getQueue(indices.graphicsFamily.value(), 0)
-;    }
+    /**
+     * Get family queues we need
+     * @param physicalDevice Queried physical device
+     * @param device Current logical device
+     * @param surface Surface we use for queues lookup
+     * @return Array of queues
+     */
+    array<vk::Queue, 2> getQueues(vk::PhysicalDevice physicalDevice, vk::Device device, vk::SurfaceKHR surface) {
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+        return {{
+            device.getQueue(indices.graphicsFamily.value(), 0),
+            device.getQueue(indices.presentFamily.value(), 0)
+        }};
+    }
+
+    /**
+     * Get all swapchain possibilities info
+     * @param physicalDevice Queried physical device
+     * @param surface Queried surface
+     * @return A bundle of swapchain info
+     */
+    SwapchainSupportDetails querySwapchainSupport(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface) {
+        SwapchainSupportDetails supportDetails;
+        supportDetails.capabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
+        supportDetails.formats = physicalDevice.getSurfaceFormatsKHR(surface);
+        supportDetails.presentModes = physicalDevice.getSurfacePresentModesKHR(surface);
+        return supportDetails;
+    }
+
+    /**
+     * Choose a specific format for our swapchain if available
+     * @param formats Available formats
+     * @return The format we hardcoded details, or the first format available if looked up format cannot be found
+     */
+    vk::SurfaceFormatKHR chooseSwapchainSurfaceFormat(vector<vk::SurfaceFormatKHR> formats) {
+        for (auto format : formats) {
+            if (format.format == vk::Format::eB8G8R8A8Unorm && format.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
+                return format;
+            }
+        }
+        return formats[0];
+    }
+
+    /**
+     * Choose a specific present mode for our swapchain if available
+     * @param modes Available present modes
+     * @return Hardcoded present mode if available, else return FIFO
+     */
+    vk::PresentModeKHR chooseSwapchainPresentMode(vector<vk::PresentModeKHR> modes) {
+        for (auto presentMode : modes) {
+            if (presentMode == vk::PresentModeKHR::eMailbox) {
+                return presentMode;
+            }
+        }
+        return vk::PresentModeKHR::eFifo;
+    }
+
+    /**
+     * Choose swapchain extent, handling specific cases
+     * @param width Requested width
+     * @param height Requested height
+     * @param surfaceCapabilities Available surface capabilities
+     * @return Swapchain extent
+     */
+    vk::Extent2D chooseSwapchainExtent(u32 width, u32 height, vk::SurfaceCapabilitiesKHR surfaceCapabilities) {
+        if (surfaceCapabilities.currentExtent.width != UINT32_MAX) {
+            return surfaceCapabilities.currentExtent;
+        }
+        vk::Extent2D extent { width, height };
+        extent.width = std::min(surfaceCapabilities.maxImageExtent.width,
+                                std::max(surfaceCapabilities.minImageExtent.width, width));
+        extent.height = std::min(surfaceCapabilities.maxImageExtent.height,
+                                std::max(surfaceCapabilities.minImageExtent.height, height));
+        return extent;
+    }
+
+    /**
+     * Create a swapchain bundle that contains : swapchain, swapchain images, format and extent
+     * @param device Used logical device
+     * @param physicalDevice Used physical device
+     * @param surface Target surface
+     * @param width Targeted width
+     * @param height Targeted height
+     * @return A swapchain bundle
+     */
+    SwapchainBundle createSwapchain(vk::Device device, vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface, i32 width, i32 height) {
+        // Create info
+        SwapchainSupportDetails support = querySwapchainSupport(physicalDevice, surface);
+        vk::SurfaceFormatKHR format = chooseSwapchainSurfaceFormat(support.formats);
+        vk::PresentModeKHR presentMode = chooseSwapchainPresentMode(support.presentModes);
+        vk::Extent2D extent = chooseSwapchainExtent(width, height, support.capabilities);
+        u32 imageCount = std::min(support.capabilities.maxImageCount, support.capabilities.minImageCount + 1);
+        vk::SwapchainCreateInfoKHR swapchainCreateInfo {
+            vk::SwapchainCreateFlagsKHR(), surface, imageCount, format.format,
+            format.colorSpace, extent, 1, vk::ImageUsageFlagBits::eColorAttachment
+        };
+
+        // In case graphics queue index is different from present queue index
+        QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+        array<u32, 2> queueFamilyIndices { indices.graphicsFamily.value(), indices.presentFamily.value() };
+        if (queueFamilyIndices.at(0) != queueFamilyIndices.at(1)) {
+            swapchainCreateInfo.imageSharingMode = vk::SharingMode::eConcurrent;
+            swapchainCreateInfo.queueFamilyIndexCount = 2;
+            swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices.data();
+        }
+
+        // Other info
+        swapchainCreateInfo.preTransform = support.capabilities.currentTransform;
+        swapchainCreateInfo.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
+        swapchainCreateInfo.presentMode = presentMode;
+        swapchainCreateInfo.clipped = VK_TRUE;
+
+        SwapchainBundle bundle {};
+        bundle.swapchain = device.createSwapchainKHR(swapchainCreateInfo);
+        bundle.images = device.getSwapchainImagesKHR(bundle.swapchain);
+        bundle.format = format.format;
+        bundle.extent = extent;
+
+        LOG(LogLevel::Trace) << "Vulkan swapchain creation";
+        return bundle;
+    }
 
 }
 

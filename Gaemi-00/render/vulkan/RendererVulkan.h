@@ -41,6 +41,13 @@ namespace engine::render::vulkan {
         vk::PhysicalDevice physicalDevice { nullptr };
         vk::Device device { nullptr };
         vk::Queue graphicsQueue { nullptr };
+        vk::Queue presentQueue { nullptr };
+        vk::SurfaceKHR surface;
+
+        vk::SwapchainKHR swapchain;
+        vector<vk::Image> swapchainImages;
+        vk::Format swapchainFormat;
+        vk::Extent2D swapchainExtent;
     };
 };
 
