@@ -68,6 +68,11 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     framebufferInput.extent = swapchainExtent;
     vkInit::makeFramebuffers(framebufferInput, swapchainFrames);
 
+    commandPool = vkInit::makeCommandPool(device, physicalDevice, surface);
+    vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
+    mainCommandBuffer = vkInit::makeCommandBuffer(commandBufferInput);
+
+
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
@@ -90,7 +95,7 @@ void RendererVulkan::endDraw() {
 
 void RendererVulkan::close() {
 
-
+    device.destroyCommandPool(commandPool);
     for (auto frame : swapchainFrames) {
         device.destroyFramebuffer(frame.framebuffer);
         device.destroyImageView(frame.imageView);

@@ -9,24 +9,11 @@
 #include "../Defines.h"
 #include "../Log.h"
 #include <set>
-#include <optional>
+#include "QueueFamilies.h"
 
 using std::set;
-using std::optional;
 
 namespace engine::render::vulkan::vkInit {
-
-    /**
-     * Hold queue indices for the queue families we want
-     */
-    struct QueueFamilyIndices {
-        optional <u32> graphicsFamily;
-        optional <u32> presentFamily;
-
-        [[nodiscard]] bool haveAll() const {
-            return graphicsFamily.has_value() && presentFamily.has_value();
-        }
-    };
 
     /**
      * Log properties of a specific physical device
@@ -122,28 +109,6 @@ namespace engine::render::vulkan::vkInit {
     }
 
     /**
-     * Populate the queue families indices for a specific physical device.
-     * @param physicalDevice The physical device we want to check
-     * @return Queue families indices
-     */
-    QueueFamilyIndices findQueueFamilies(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface) {
-        QueueFamilyIndices indices;
-        vector<vk::QueueFamilyProperties> queueFamilies = physicalDevice.getQueueFamilyProperties();
-        i32 i { 0 };
-        for (auto queueFamily: queueFamilies) {
-            if (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
-                indices.graphicsFamily = i;
-            }
-            if (physicalDevice.getSurfaceSupportKHR(i, surface)) {
-                indices.presentFamily = i;
-            }
-            if (indices.haveAll()) break;
-            ++i;
-        }
-        return indices;
-    }
-
-    /**
      * Create a Vulkan logical device for future rendering
      * @param physicalDevice Physical device the logical device is based on
      * @param surface Surface on which we will render
@@ -151,7 +116,7 @@ namespace engine::render::vulkan::vkInit {
      * @return Vulkan logical device
      */
     vk::Device createLogicalDevice(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface, bool debugMode) {
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+        vkUtils::QueueFamilyIndices indices = vkUtils::findQueueFamilies(physicalDevice, surface);
         vector<u32> uniqueIndices;
         uniqueIndices.push_back(indices.graphicsFamily.value());
         if (indices.graphicsFamily.value() != indices.presentFamily.value()) {

@@ -52,6 +52,9 @@ namespace engine::render::vulkan {
         vk::PipelineLayout layout;
         vk::RenderPass renderPass;
         vk::Pipeline pipeline;
+
+        vk::CommandPool commandPool;
+        vk::CommandBuffer mainCommandBuffer;
     };
 };
 

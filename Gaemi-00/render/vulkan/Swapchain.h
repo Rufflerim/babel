@@ -39,7 +39,7 @@ namespace engine::render::vulkan::vkInit {
      * @return Array of queues
      */
     array<vk::Queue, 2> getQueues(vk::PhysicalDevice physicalDevice, vk::Device device, vk::SurfaceKHR surface) {
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+        vkUtils::QueueFamilyIndices indices = vkUtils::findQueueFamilies(physicalDevice, surface);
         return {{
                         device.getQueue(indices.graphicsFamily.value(), 0),
                         device.getQueue(indices.presentFamily.value(), 0)
@@ -131,7 +131,7 @@ namespace engine::render::vulkan::vkInit {
         };
 
         // In case graphics queue index is different from present queue index
-        QueueFamilyIndices indices = findQueueFamilies(physicalDevice, surface);
+        vkUtils::QueueFamilyIndices indices = vkUtils::findQueueFamilies(physicalDevice, surface);
         array<u32, 2> queueFamilyIndices { indices.graphicsFamily.value(), indices.presentFamily.value() };
         if (queueFamilyIndices.at(0) != queueFamilyIndices.at(1)) {
             swapchainCreateInfo.imageSharingMode = vk::SharingMode::eConcurrent;
