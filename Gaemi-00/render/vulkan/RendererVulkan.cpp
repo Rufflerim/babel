@@ -9,6 +9,8 @@
 #include "Swapchain.h"
 #include "Pipeline.h"
 #include "../../Asserts.h"
+#include "FrameBuffer.h"
+#include "Commands.h"
 
 using engine::render::vulkan::RendererVulkan;
 
@@ -60,6 +62,12 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     renderPass = out.renderPass;
     pipeline = out.pipeline;
 
+    vkInit::FramebufferInput framebufferInput;
+    framebufferInput.device = device;
+    framebufferInput.renderPass = renderPass;
+    framebufferInput.extent = swapchainExtent;
+    vkInit::makeFramebuffers(framebufferInput, swapchainFrames);
+
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
@@ -81,7 +89,10 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
+
+
     for (auto frame : swapchainFrames) {
+        device.destroyFramebuffer(frame.framebuffer);
         device.destroyImageView(frame.imageView);
     }
     device.destroyPipeline(pipeline);

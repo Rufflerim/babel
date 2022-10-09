@@ -149,7 +149,7 @@ namespace engine::render::vulkan::vkInit {
         bundle.swapchain = device.createSwapchainKHR(swapchainCreateInfo);
         vector<vk::Image> images = device.getSwapchainImagesKHR(bundle.swapchain);
         bundle.frames.resize(images.size());
-        for(size_t i; i < images.size(); ++i) {
+        for(size_t i = 0; i < images.size(); ++i) {
             vk::ImageViewCreateInfo createInfo {};
             createInfo.image = images[i];
             createInfo.viewType = vk::ImageViewType::e2D;
