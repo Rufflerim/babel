@@ -6,6 +6,7 @@
 #define MATH_COLOR_H
 
 #include "../Defines.h"
+#include <array>
 
 namespace gmath {
     class Color {
@@ -25,6 +26,11 @@ namespace gmath {
         /// \return Color component between 0 and 1
         static float componentToFloat(u8 component) {
             return static_cast<float>(component) / 255.0f;
+        }
+
+        std::array<float, 4> toFloatArray() const {
+            return { componentToFloat(r), componentToFloat(g),
+                    componentToFloat(b), componentToFloat(a) };
         }
 
         u8 r{255}, g{255}, b{255}, a{255};

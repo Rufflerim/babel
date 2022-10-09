@@ -64,7 +64,7 @@ namespace engine::render::vulkan::vkInit {
         return device.createRenderPass(renderPassInfo);
     }
 
-    GraphicsPipelineOut makeGraphicsPipeline(GraphicsPipelineIn specifications) {
+    GraphicsPipelineOut makeGraphicsPipeline(const GraphicsPipelineIn& specifications) {
         vk::GraphicsPipelineCreateInfo pipelineCreateInfo {};
         pipelineCreateInfo.flags = vk::PipelineCreateFlags();
         vector<vk::PipelineShaderStageCreateInfo> shaderStages;

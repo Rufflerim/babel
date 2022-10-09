@@ -11,6 +11,19 @@ namespace gmath {
     /// Rectangle representation
     class RectangleInt {
     public:
+        // Default constructor
+        RectangleInt() = default;
+
+        // 2-parameters constructor
+        RectangleInt(Vec2i originP, Vec2i sizeP)
+        : origin {  originP }, size { sizeP }
+        {}
+
+        // 4-parameters constructor
+        RectangleInt(i32 x, i32 y, i32 width, i32 height)
+        : origin { x, y }, size { width, height }
+        {}
+
         /// Origin, offset or position of the rectangle
         Vec2i origin {0, 0 };
 

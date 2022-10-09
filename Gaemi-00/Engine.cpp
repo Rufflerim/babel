@@ -141,7 +141,7 @@ void engine::Engine::frame() {
 
 #ifndef GPLATFORM_WEB
     // Time delay if game loop is faster than target FPS
-    timer.delayTime();
+    //timer.delayTime();
 #endif
 }
 

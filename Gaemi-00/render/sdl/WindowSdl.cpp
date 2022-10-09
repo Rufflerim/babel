@@ -9,7 +9,8 @@ WindowSdl::WindowSdl(str titleP) : title { titleP }
 
 bool WindowSdl::init(i32 x, i32 y, i32 width, i32 height, bool isFullscreen) {
 	// Create SDL window pointer
-	SDL_WindowFlags flags = SDL_WINDOW_SHOWN;
+    bounds = { x, y, width, height };
+    SDL_WindowFlags flags = SDL_WINDOW_SHOWN;
 	window = std::unique_ptr<SDL_Window, SDLWindowDestroyer>(
 		SDL_CreateWindow(title.c_str(), x, y, width, height, flags)
 	);

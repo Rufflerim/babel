@@ -25,8 +25,8 @@ using engine::render::vulkan::RendererVulkan;
 using engine::render::vulkan::WindowVulkan;
 #endif
 
-constexpr i32 WINDOW_X = SDL_WINDOWPOS_CENTERED;
-constexpr i32 WINDOW_Y = SDL_WINDOWPOS_CENTERED;
+constexpr i32 WINDOW_X = 100;
+constexpr i32 WINDOW_Y = 100;
 constexpr i32 WINDOW_WIDTH = 1280;
 constexpr i32 WINDOW_HEIGHT = 720;
 

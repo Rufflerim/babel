@@ -20,11 +20,11 @@ namespace engine::render::vulkan {
 
         void beginDraw() override;
 
-        void drawRectangle(const gmath::Rectangle& rectangle, const gmath::Color& color) override;
-
         void endDraw() override;
 
         void close() override;
+
+        void drawRectangle(const gmath::Rectangle& rectangle, const gmath::Color& color) override;
 
         void drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
                         f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) override;
@@ -55,6 +55,12 @@ namespace engine::render::vulkan {
 
         vk::CommandPool commandPool;
         vk::CommandBuffer mainCommandBuffer;
+        vk::Fence inFlightFence;
+        vk::Semaphore imageAvailable;
+        vk::Semaphore renderFinished;
+
+        void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex);
+        void render();
     };
 };
 
