@@ -7,6 +7,7 @@
 #include "Instance.h"
 #include "Device.h"
 #include "Swapchain.h"
+#include "Pipeline.h"
 #include "../../Asserts.h"
 
 using engine::render::vulkan::RendererVulkan;
@@ -47,6 +48,18 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     swapchainFormat = bundle.format;
     swapchainExtent = bundle.extent;
 
+    vkInit::GraphicsPipelineIn specifications {};
+    specifications.device = device;
+    specifications.vertexShaderPath = "Assets/shaders/first.vert.spv";
+    specifications.fragmentShaderPath = "Assets/shaders/first.frag.spv";
+    specifications.swapchainExtent = swapchainExtent;
+    specifications.swapchainImageFormat = swapchainFormat;
+
+    vkInit::GraphicsPipelineOut out = vkInit::makeGraphicsPipeline(specifications);
+    layout = out.layout;
+    renderPass = out.renderPass;
+    pipeline = out.pipeline;
+
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
@@ -71,6 +84,9 @@ void RendererVulkan::close() {
     for (auto frame : swapchainFrames) {
         device.destroyImageView(frame.imageView);
     }
+    device.destroyPipeline(pipeline);
+    device.destroyRenderPass(renderPass);
+    device.destroyPipelineLayout(layout);
     device.destroySwapchainKHR(swapchain);
     device.destroy();
     instance.destroySurfaceKHR(surface);

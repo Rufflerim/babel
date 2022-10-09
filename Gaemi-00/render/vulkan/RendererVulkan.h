@@ -48,6 +48,10 @@ namespace engine::render::vulkan {
         vector<vkUtils::SwapchainFrame> swapchainFrames;
         vk::Format swapchainFormat;
         vk::Extent2D swapchainExtent;
+
+        vk::PipelineLayout layout;
+        vk::RenderPass renderPass;
+        vk::Pipeline pipeline;
     };
 };
 
