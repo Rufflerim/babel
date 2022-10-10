@@ -14,6 +14,8 @@ namespace engine::render::vulkan::vkUtils {
         vk::ImageView imageView;
         vk::Framebuffer framebuffer;
         vk::CommandBuffer commandBuffer;
+        vk::Fence inFlightFence;
+        vk::Semaphore imageAvailable, renderFinished;
     };
 
 }

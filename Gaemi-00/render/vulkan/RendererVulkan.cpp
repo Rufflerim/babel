@@ -51,6 +51,8 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     swapchainFrames = bundle.frames;
     swapchainFormat = bundle.format;
     swapchainExtent = bundle.extent;
+    maxFrameInFlight = static_cast<i32>(swapchainFrames.size());
+    currentFrameNumber = 0;
 
     vkInit::GraphicsPipelineIn specifications {};
     specifications.device = device;
@@ -73,10 +75,11 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     commandPool = vkInit::makeCommandPool(device, physicalDevice, surface);
     vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
     mainCommandBuffer = vkInit::makeCommandBuffer(commandBufferInput);
-    inFlightFence = vkInit::makeFence(device);
-    imageAvailable = vkInit::makeSemaphore(device);
-    renderFinished = vkInit::makeSemaphore(device);
-
+    for (auto& frame : swapchainFrames) {
+        frame.inFlightFence = vkInit::makeFence(device);
+        frame.imageAvailable = vkInit::makeSemaphore(device);
+        frame.renderFinished = vkInit::makeSemaphore(device);
+    }
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
@@ -100,13 +103,13 @@ void RendererVulkan::endDraw() {
 void RendererVulkan::close() {
     device.waitIdle();
 
-    device.destroySemaphore(renderFinished);
-    device.destroySemaphore(imageAvailable);
-    device.destroyFence(inFlightFence);
     device.destroyCommandPool(commandPool);
     for (auto frame: swapchainFrames) {
         device.destroyFramebuffer(frame.framebuffer);
         device.destroyImageView(frame.imageView);
+        device.destroySemaphore(frame.renderFinished);
+        device.destroySemaphore(frame.imageAvailable);
+        device.destroyFence(frame.inFlightFence);
     }
     device.destroyPipeline(pipeline);
     device.destroyRenderPass(renderPass);
@@ -147,19 +150,19 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
 
 void RendererVulkan::render() {
     // Wait for the images to sent in queue
-    auto waitForInFlightResult = device.waitForFences(1, &inFlightFence, VK_TRUE, UINT64_MAX);
-    auto resetInFlightResult = device.resetFences(1, &inFlightFence);
+    auto waitForInFlightResult = device.waitForFences(1, &swapchainFrames[currentFrameNumber].inFlightFence, VK_TRUE, UINT64_MAX);
+    auto resetInFlightResult = device.resetFences(1, &swapchainFrames[currentFrameNumber].inFlightFence);
 
     // When image is acquired, semaphore availableImage is signaled
-    u32 imageIndex { device.acquireNextImageKHR(swapchain, UINT64_MAX, imageAvailable, nullptr).value };
+    u32 imageIndex { device.acquireNextImageKHR(swapchain, UINT64_MAX, swapchainFrames[currentFrameNumber].imageAvailable, nullptr).value };
 
-    vk::CommandBuffer commandBuffer = swapchainFrames[imageIndex].commandBuffer;
+    vk::CommandBuffer commandBuffer = swapchainFrames[currentFrameNumber].commandBuffer;
     commandBuffer.reset();
     recordDrawCommands(commandBuffer, imageIndex);
 
     vk::SubmitInfo submitInfo {};
     // We wait for the image to be available...
-    vk::Semaphore waitSemaphores[] { imageAvailable };
+    vk::Semaphore waitSemaphores[] { swapchainFrames[currentFrameNumber].imageAvailable };
     // ...and we wait before the color is output
     vk::PipelineStageFlags waitStages[] { vk::PipelineStageFlagBits::eColorAttachmentOutput };
     submitInfo.waitSemaphoreCount = 1;
@@ -168,12 +171,12 @@ void RendererVulkan::render() {
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer;
     // This semaphore will be signaled after the command buffer is complete
-    vk::Semaphore signalSemaphores[] { renderFinished };
+    vk::Semaphore signalSemaphores[] { swapchainFrames[currentFrameNumber].renderFinished };
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
     // Submit to the graphics queue to execute rendering
-    graphicsQueue.submit(submitInfo, inFlightFence);
+    graphicsQueue.submit(submitInfo, swapchainFrames[currentFrameNumber].inFlightFence);
 
     // Send to present queue when rendering is finished
     vk::PresentInfoKHR presentInfo {};
@@ -184,4 +187,7 @@ void RendererVulkan::render() {
     presentInfo.pSwapchains = swapchains;
     presentInfo.pImageIndices = &imageIndex;
     auto presentResult = presentQueue.presentKHR(presentInfo);
+
+    // Switch to next frame
+    currentFrameNumber = (currentFrameNumber + 1) % maxFrameInFlight;
 }

@@ -55,9 +55,8 @@ namespace engine::render::vulkan {
 
         vk::CommandPool commandPool;
         vk::CommandBuffer mainCommandBuffer;
-        vk::Fence inFlightFence;
-        vk::Semaphore imageAvailable;
-        vk::Semaphore renderFinished;
+        i32 maxFrameInFlight;
+        i32 currentFrameNumber;
 
         void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex);
         void render();
