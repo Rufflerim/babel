@@ -1,5 +1,10 @@
 message("-- Integrating external libraries")
 
+## GLM
+message("---- Linking GLM")
+add_library(glm INTERFACE)
+target_include_directories(glm INTERFACE glm)
+
 ## SBT image
 message("---- Linking SBT Image")
 add_library(stb_image INTERFACE)

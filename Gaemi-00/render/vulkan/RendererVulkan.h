@@ -8,6 +8,7 @@
 #include "../IRenderer.h"
 #include "../Texture.h"
 #include "Frame.h"
+#include "TestScene.h"
 
 namespace engine::render::vulkan {
     class RendererVulkan : public IRenderer {
@@ -35,6 +36,8 @@ namespace engine::render::vulkan {
         i32 width { -1 };
         i32 height { -1 };
 
+        TestScene testScene {};
+
         vk::Instance instance;
         vk::DebugUtilsMessengerEXT debugMessenger { nullptr };
         vk::DispatchLoaderDynamic dynamicInstanceLoader;
@@ -58,8 +61,8 @@ namespace engine::render::vulkan {
         i32 maxFrameInFlight;
         i32 currentFrameNumber;
 
-        void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex);
-        void render();
+        void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& scene);
+        void render(TestScene& testScene);
     };
 };
 

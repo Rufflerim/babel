@@ -89,7 +89,7 @@ void RendererVulkan::clearScreen() {
 }
 
 void RendererVulkan::beginDraw() {
-    render();
+    render(testScene);
 }
 
 void RendererVulkan::drawRectangle(const gmath::Rectangle& rectangle, const gmath::Color& color) {
@@ -127,7 +127,7 @@ RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect,
     //LOG(LogLevel::Trace) << "Draw sprite request";
 }
 
-void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex) {
+void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& testScene) {
     vk::CommandBufferBeginInfo beginInfo {};
     commandBuffer.begin(beginInfo);
 
@@ -143,12 +143,20 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
 
     commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
-    commandBuffer.draw(3, 1, 0, 0);
+    for(auto& position : testScene.trianglePositions) {
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        vkUtils::ObjectData objectData;
+        objectData.model = model;
+        commandBuffer.pushConstants(layout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(vkUtils::ObjectData), &objectData);
+        commandBuffer.draw(3, 1, 0, 0);
+
+    }
+
     commandBuffer.endRenderPass();
     commandBuffer.end();
 }
 
-void RendererVulkan::render() {
+void RendererVulkan::render(TestScene& testScene) {
     // Wait for the images to sent in queue
     auto waitForInFlightResult = device.waitForFences(1, &swapchainFrames[currentFrameNumber].inFlightFence, VK_TRUE, UINT64_MAX);
     auto resetInFlightResult = device.resetFences(1, &swapchainFrames[currentFrameNumber].inFlightFence);
@@ -158,7 +166,7 @@ void RendererVulkan::render() {
 
     vk::CommandBuffer commandBuffer = swapchainFrames[currentFrameNumber].commandBuffer;
     commandBuffer.reset();
-    recordDrawCommands(commandBuffer, imageIndex);
+    recordDrawCommands(commandBuffer, imageIndex, testScene);
 
     vk::SubmitInfo submitInfo {};
     // We wait for the image to be available...

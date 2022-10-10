@@ -6,6 +6,7 @@
 #define RENDER_VULKAN_PIPELINE_H
 
 #include "Shader.h"
+#include "RenderData.h"
 
 namespace engine::render::vulkan::vkInit {
 
@@ -28,7 +29,14 @@ namespace engine::render::vulkan::vkInit {
         vk::PipelineLayoutCreateInfo layoutCreateInfo {};
         layoutCreateInfo.flags = vk::PipelineLayoutCreateFlags();
         layoutCreateInfo.setLayoutCount = 0;
-        layoutCreateInfo.pushConstantRangeCount = 0;
+
+        layoutCreateInfo.pushConstantRangeCount = 1;
+        vk::PushConstantRange pushConstantInfo;
+        pushConstantInfo.offset = 0;
+        pushConstantInfo.size = sizeof(vkUtils::ObjectData);
+        pushConstantInfo.stageFlags = vk::ShaderStageFlagBits::eVertex;
+        layoutCreateInfo.pPushConstantRanges = &pushConstantInfo;
+
         return device.createPipelineLayout(layoutCreateInfo);
     }
 
