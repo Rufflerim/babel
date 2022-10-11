@@ -37,7 +37,9 @@ namespace engine::render::vulkan::vkInit {
         pushConstantInfo.stageFlags = vk::ShaderStageFlagBits::eVertex;
         layoutCreateInfo.pPushConstantRanges = &pushConstantInfo;
 
-        return device.createPipelineLayout(layoutCreateInfo);
+        auto layoutRes = device.createPipelineLayout(layoutCreateInfo);
+        GASSERT_MSG(layoutRes.result == vk::Result::eSuccess, "Vulkan could not create pipeline layout");
+        return layoutRes.value;
     }
 
     vk::RenderPass makeRenderPass(vk::Device device, vk::Format swapchainImageFormat) {
@@ -69,7 +71,9 @@ namespace engine::render::vulkan::vkInit {
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
 
-        return device.createRenderPass(renderPassInfo);
+        auto renderPassRes = device.createRenderPass(renderPassInfo);
+        GASSERT_MSG(renderPassRes.result == vk::Result::eSuccess, "Vulkan could not create render pass");
+        return renderPassRes.value;
     }
 
     GraphicsPipelineOut makeGraphicsPipeline(const GraphicsPipelineIn& specifications) {

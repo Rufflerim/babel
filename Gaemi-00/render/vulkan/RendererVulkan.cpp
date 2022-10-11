@@ -44,14 +44,7 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     graphicsQueue = queues.at(0);
     presentQueue = queues.at(1);
 
-    vkInit::SwapchainBundle bundle = vkInit::createSwapchain(device, physicalDevice, surface,
-                                                             windowVulkan.getBounds().size.x,
-                                                             windowVulkan.getBounds().size.y);
-    swapchain = bundle.swapchain;
-    swapchainFrames = bundle.frames;
-    swapchainFormat = bundle.format;
-    swapchainExtent = bundle.extent;
-    maxFrameInFlight = static_cast<i32>(swapchainFrames.size());
+    makeSwapchain();
     currentFrameNumber = 0;
 
     vkInit::GraphicsPipelineIn specifications {};
@@ -66,20 +59,13 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     renderPass = out.renderPass;
     pipeline = out.pipeline;
 
-    vkInit::FramebufferInput framebufferInput;
-    framebufferInput.device = device;
-    framebufferInput.renderPass = renderPass;
-    framebufferInput.extent = swapchainExtent;
-    vkInit::makeFramebuffers(framebufferInput, swapchainFrames);
-
+    makeFramebuffers();
     commandPool = vkInit::makeCommandPool(device, physicalDevice, surface);
     vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
     mainCommandBuffer = vkInit::makeCommandBuffer(commandBufferInput);
-    for (auto& frame : swapchainFrames) {
-        frame.inFlightFence = vkInit::makeFence(device);
-        frame.imageAvailable = vkInit::makeSemaphore(device);
-        frame.renderFinished = vkInit::makeSemaphore(device);
-    }
+    vkInit::makeFrameCommandBuffers(commandBufferInput);
+    makeSyncObjects();
+
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
@@ -101,20 +87,13 @@ void RendererVulkan::endDraw() {
 }
 
 void RendererVulkan::close() {
-    device.waitIdle();
+    auto waitRes = device.waitIdle();
 
     device.destroyCommandPool(commandPool);
-    for (auto frame: swapchainFrames) {
-        device.destroyFramebuffer(frame.framebuffer);
-        device.destroyImageView(frame.imageView);
-        device.destroySemaphore(frame.renderFinished);
-        device.destroySemaphore(frame.imageAvailable);
-        device.destroyFence(frame.inFlightFence);
-    }
+    closeSwapchain();
     device.destroyPipeline(pipeline);
     device.destroyRenderPass(renderPass);
     device.destroyPipelineLayout(layout);
-    device.destroySwapchainKHR(swapchain);
     device.destroy();
     instance.destroySurfaceKHR(surface);
     instance.destroyDebugUtilsMessengerEXT(debugMessenger, nullptr, dynamicInstanceLoader);
@@ -129,7 +108,7 @@ RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect,
 
 void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& testScene) {
     vk::CommandBufferBeginInfo beginInfo {};
-    commandBuffer.begin(beginInfo);
+    auto commandBufferBeginRes = commandBuffer.begin(beginInfo);
 
     vk::RenderPassBeginInfo renderPassBeginInfo {};
     renderPassBeginInfo.renderPass = renderPass;
@@ -153,16 +132,20 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
     }
 
     commandBuffer.endRenderPass();
-    commandBuffer.end();
+    auto commandBufferBeginEnd = commandBuffer.end();
 }
 
 void RendererVulkan::render(TestScene& testScene) {
     // Wait for the images to sent in queue
     auto waitForInFlightResult = device.waitForFences(1, &swapchainFrames[currentFrameNumber].inFlightFence, VK_TRUE, UINT64_MAX);
-    auto resetInFlightResult = device.resetFences(1, &swapchainFrames[currentFrameNumber].inFlightFence);
 
     // When image is acquired, semaphore availableImage is signaled
-    u32 imageIndex { device.acquireNextImageKHR(swapchain, UINT64_MAX, swapchainFrames[currentFrameNumber].imageAvailable, nullptr).value };
+    vk::ResultValue acquireRes = device.acquireNextImageKHR(swapchain, UINT64_MAX, swapchainFrames[currentFrameNumber].imageAvailable, nullptr);
+    if (acquireRes.result == vk::Result::eErrorOutOfDateKHR) {
+        recreateSwapchain();
+        return;
+    }
+    u32 imageIndex = acquireRes.value;
 
     vk::CommandBuffer commandBuffer = swapchainFrames[currentFrameNumber].commandBuffer;
     commandBuffer.reset();
@@ -183,8 +166,10 @@ void RendererVulkan::render(TestScene& testScene) {
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
+    auto resetInFlightRes = device.resetFences(1, &swapchainFrames[currentFrameNumber].inFlightFence);
+
     // Submit to the graphics queue to execute rendering
-    graphicsQueue.submit(submitInfo, swapchainFrames[currentFrameNumber].inFlightFence);
+    auto graphicsQueueSubmitRes = graphicsQueue.submit(submitInfo, swapchainFrames[currentFrameNumber].inFlightFence);
 
     // Send to present queue when rendering is finished
     vk::PresentInfoKHR presentInfo {};
@@ -194,8 +179,60 @@ void RendererVulkan::render(TestScene& testScene) {
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapchains;
     presentInfo.pImageIndices = &imageIndex;
-    auto presentResult = presentQueue.presentKHR(presentInfo);
+
+    auto presentRes = presentQueue.presentKHR(presentInfo);
+    if (presentRes == vk::Result::eErrorOutOfDateKHR || presentRes == vk::Result::eSuboptimalKHR) {
+        recreateSwapchain();
+        return;
+    }
 
     // Switch to next frame
     currentFrameNumber = (currentFrameNumber + 1) % maxFrameInFlight;
+}
+
+void engine::render::vulkan::RendererVulkan::makeSwapchain() {
+    vkInit::SwapchainBundle bundle = vkInit::createSwapchain(device, physicalDevice, surface,
+                                                             width, height);
+    swapchain = bundle.swapchain;
+    swapchainFrames = bundle.frames;
+    swapchainFormat = bundle.format;
+    swapchainExtent = bundle.extent;
+    maxFrameInFlight = static_cast<i32>(swapchainFrames.size());
+}
+
+void engine::render::vulkan::RendererVulkan::closeSwapchain() {
+    for (auto frame: swapchainFrames) {
+        device.destroyFramebuffer(frame.framebuffer);
+        device.destroyImageView(frame.imageView);
+        device.destroySemaphore(frame.renderFinished);
+        device.destroySemaphore(frame.imageAvailable);
+        device.destroyFence(frame.inFlightFence);
+    }
+    device.destroySwapchainKHR(swapchain);
+}
+
+void engine::render::vulkan::RendererVulkan::recreateSwapchain() {
+    auto waitRes = device.waitIdle();
+    closeSwapchain();
+    makeSwapchain();
+    makeFramebuffers();
+    makeSyncObjects();
+    vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
+    vkInit::makeFrameCommandBuffers(commandBufferInput);
+}
+
+void engine::render::vulkan::RendererVulkan::makeFramebuffers() {
+    vkInit::FramebufferInput framebufferInput;
+    framebufferInput.device = device;
+    framebufferInput.renderPass = renderPass;
+    framebufferInput.extent = swapchainExtent;
+    vkInit::makeFramebuffers(framebufferInput, swapchainFrames);
+}
+
+void engine::render::vulkan::RendererVulkan::makeSyncObjects() {
+    for (auto& frame : swapchainFrames) {
+        frame.inFlightFence = vkInit::makeFence(device);
+        frame.imageAvailable = vkInit::makeSemaphore(device);
+        frame.renderFinished = vkInit::makeSemaphore(device);
+    }
 }

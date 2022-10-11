@@ -35,7 +35,7 @@ namespace engine::render::vulkan::vkUtils {
             if (queueFamily.queueFlags & vk::QueueFlagBits::eGraphics) {
                 indices.graphicsFamily = i;
             }
-            if (physicalDevice.getSurfaceSupportKHR(i, surface)) {
+            if (physicalDevice.getSurfaceSupportKHR(i, surface).value) {
                 indices.presentFamily = i;
             }
             if (indices.haveAll()) break;

@@ -9,11 +9,14 @@
 #include "../Log.h"
 #include "WindowVulkan.h"
 #include "SDL_vulkan.h"
+#include "../Asserts.h"
 
 namespace engine::render::vulkan::vkInit {
 
         bool supported(vector<const char*>& extensions, vector<const char*>& layers, bool debugMode) {
-            vector<vk::ExtensionProperties> supportedExtensions = vk::enumerateInstanceExtensionProperties();
+            auto extensionsRes = vk::enumerateInstanceExtensionProperties();
+            GASSERT_MSG(extensionsRes.result == vk::Result::eSuccess, "Could not get vulkan extension properties");
+            vector<vk::ExtensionProperties> supportedExtensions = extensionsRes.value;
             bool found;
             LOG(LogLevel::Trace) << "Vulkan extensions and layers support status:";
             for (auto extension: extensions) {
@@ -34,7 +37,9 @@ namespace engine::render::vulkan::vkInit {
                 }
             }
 
-            vector<vk::LayerProperties> supportedLayers = vk::enumerateInstanceLayerProperties();
+            auto layersRes = vk::enumerateInstanceLayerProperties();
+            GASSERT_MSG(layersRes.result == vk::Result::eSuccess, "Could not get vulkan layers properties");
+            vector<vk::LayerProperties> supportedLayers = layersRes.value;
             for (auto layer: layers) {
                 found = false;
                 for (auto supportedLayer: supportedLayers) {
@@ -61,7 +66,7 @@ namespace engine::render::vulkan::vkInit {
             u32 vkVersion { 0 };
             vkEnumerateInstanceVersion(&vkVersion);
             // Vulkan version we want
-            u32 vkTargetVersion = VK_MAKE_API_VERSION(0, 1, 1, 0);
+            u32 vkTargetVersion = VK_MAKE_API_VERSION(0, 1, 3, 0);
             LOG(LogLevel::Info) << "Making Vulkan instance, with Vulkan system version "
                                 << VK_API_VERSION_MAJOR(vkVersion) << "."
                                 << VK_API_VERSION_MINOR(vkVersion) << "."
@@ -122,7 +127,9 @@ namespace engine::render::vulkan::vkInit {
                     static_cast<u32>(extensions.size()), extensions.data()
             };
 
-            return vk::createInstance(createInfo, nullptr);
+            auto instanceRes = vk::createInstance(createInfo, nullptr);
+            GASSERT_MSG(instanceRes.result == vk::Result::eSuccess, "Could not create vulkan instance");
+            return vk::createInstance(createInfo, nullptr).value;
         }
 
         VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -182,7 +189,9 @@ namespace engine::render::vulkan::vkInit {
                     debugCallback,
                     nullptr
             };
-            return instance.createDebugUtilsMessengerEXT(debugCreateInfo, nullptr, aDynamic);
+            auto debugMessenger = instance.createDebugUtilsMessengerEXT(debugCreateInfo, nullptr, aDynamic);
+            GASSERT_DEBUG(debugMessenger.result == vk::Result::eSuccess, "Could not create vulkan debug messenger");
+            return debugMessenger.value;
         }
     }
 #endif //RENDER_VULKAN_INSTANCE_H

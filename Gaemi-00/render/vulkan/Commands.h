@@ -21,7 +21,10 @@ namespace engine::render::vulkan::vkInit {
         vk::CommandPoolCreateInfo poolCreateInfo {};
         poolCreateInfo.flags = vk::CommandPoolCreateFlags() | vk::CommandPoolCreateFlagBits::eResetCommandBuffer;
         poolCreateInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-        return device.createCommandPool(poolCreateInfo);
+
+        auto poolRes = device.createCommandPool(poolCreateInfo);
+        GASSERT_MSG(poolRes.result == vk::Result::eSuccess, "Vulkan could not create command pool");
+        return poolRes.value;
     }
 
     vk::CommandBuffer makeCommandBuffer(CommandBufferInput input) {
@@ -29,14 +32,25 @@ namespace engine::render::vulkan::vkInit {
         commandBufferAllocateInfo.commandPool = input.commandPool;
         commandBufferAllocateInfo.level = vk::CommandBufferLevel::ePrimary;
         commandBufferAllocateInfo.commandBufferCount = 1;
+        LOG(LogLevel::Trace) << "Allocate the main command buffer";
+        auto commandBufferRes = input.device.allocateCommandBuffers(commandBufferAllocateInfo);
+        GASSERT_MSG(commandBufferRes.result == vk::Result::eSuccess, "Vulkan could not allocate the main command buffer");
+        return commandBufferRes.value[0];
+    }
+
+    void makeFrameCommandBuffers(CommandBufferInput input) {
+        vk::CommandBufferAllocateInfo commandBufferAllocateInfo {};
+        commandBufferAllocateInfo.commandPool = input.commandPool;
+        commandBufferAllocateInfo.level = vk::CommandBufferLevel::ePrimary;
+        commandBufferAllocateInfo.commandBufferCount = 1;
         for(auto i = 0; i < input.frames.size(); ++i) {
-            input.frames[i].commandBuffer = input.device.allocateCommandBuffers(commandBufferAllocateInfo)[0];
+            auto commandBufferRes = input.device.allocateCommandBuffers(commandBufferAllocateInfo);
+            GASSERT_MSG(commandBufferRes.result == vk::Result::eSuccess, "Vulkan could not allocate command buffer for frame " + std::to_string(i));
+            input.frames[i].commandBuffer = commandBufferRes.value[0];
         }
-        vk::CommandBuffer commandBuffer = input.device.allocateCommandBuffers(commandBufferAllocateInfo)[0];
-        LOG(LogLevel::Trace) << "Allocate one command buffer by frame and the main command buffer.";
-        return commandBuffer;
+        LOG(LogLevel::Trace) << "Allocate one command buffer by frame";
     }
 
 }
 
-#endif //BABEL_COMMANDS_H
+#endif //RENDER_VULKAN_COMMANDS_H

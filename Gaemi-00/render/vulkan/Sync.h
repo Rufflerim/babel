@@ -12,13 +12,13 @@ namespace engine::render::vulkan::vkInit {
     vk::Semaphore makeSemaphore(vk::Device device) {
         vk::SemaphoreCreateInfo semaphoreInfo {};
         semaphoreInfo.flags = vk::SemaphoreCreateFlags();
-        return device.createSemaphore(semaphoreInfo);
+        return device.createSemaphore(semaphoreInfo).value;
     }
 
     vk::Fence makeFence(vk::Device device) {
         vk::FenceCreateInfo fenceInfo {};
         fenceInfo.flags = vk::FenceCreateFlags() | vk::FenceCreateFlagBits::eSignaled;
-        return device.createFence(fenceInfo);
+        return device.createFence(fenceInfo).value;
     }
 
 }

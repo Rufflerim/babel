@@ -34,7 +34,9 @@ namespace engine::render::vulkan::vkUtils {
         moduleCreateInfo.flags = vk::ShaderModuleCreateFlags();
         moduleCreateInfo.codeSize = sourceCode.size();
         moduleCreateInfo.pCode = reinterpret_cast<const u32*>(sourceCode.data());
-        return device.createShaderModule(moduleCreateInfo);
+        auto shaderModuleRes = device.createShaderModule(moduleCreateInfo);
+        GASSERT_MSG(shaderModuleRes.result == vk::Result::eSuccess, "Vulkan could not create shader module for shader " + filename)
+        return shaderModuleRes.value;
     }
 
 }

@@ -54,9 +54,9 @@ namespace engine::render::vulkan::vkInit {
      */
     SwapchainSupportDetails querySwapchainSupport(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface) {
         SwapchainSupportDetails supportDetails;
-        supportDetails.capabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface);
-        supportDetails.formats = physicalDevice.getSurfaceFormatsKHR(surface);
-        supportDetails.presentModes = physicalDevice.getSurfacePresentModesKHR(surface);
+        supportDetails.capabilities = physicalDevice.getSurfaceCapabilitiesKHR(surface).value;
+        supportDetails.formats = physicalDevice.getSurfaceFormatsKHR(surface).value;
+        supportDetails.presentModes = physicalDevice.getSurfacePresentModesKHR(surface).value;
         return supportDetails;
     }
 
@@ -146,8 +146,15 @@ namespace engine::render::vulkan::vkInit {
         swapchainCreateInfo.clipped = VK_TRUE;
 
         SwapchainBundle bundle {};
-        bundle.swapchain = device.createSwapchainKHR(swapchainCreateInfo);
-        vector<vk::Image> images = device.getSwapchainImagesKHR(bundle.swapchain);
+
+        auto swapchainRes = device.createSwapchainKHR(swapchainCreateInfo);
+        GASSERT_MSG(swapchainRes.result == vk::Result::eSuccess, "Vulkan could not create swapchain")
+        bundle.swapchain = swapchainRes.value;
+
+        auto imagesRes = device.getSwapchainImagesKHR(bundle.swapchain);
+        GASSERT_MSG(imagesRes.result == vk::Result::eSuccess, "Vulkan could not get swapchain images")
+        vector<vk::Image> images = imagesRes.value;
+
         bundle.frames.resize(images.size());
         for(size_t i = 0; i < images.size(); ++i) {
             vk::ImageViewCreateInfo createInfo {};
@@ -164,7 +171,10 @@ namespace engine::render::vulkan::vkInit {
             createInfo.subresourceRange.layerCount = 1;
             createInfo.format = format.format;
             bundle.frames[i].image = images[i];
-            bundle.frames[i].imageView = device.createImageView(createInfo);
+
+            auto imageViewRes = device.createImageView(createInfo);
+            GASSERT_MSG(imageViewRes.result == vk::Result::eSuccess, "Vulkan could not create image view for frame " + std::to_string(i));
+            bundle.frames[i].imageView = imageViewRes.value;
         }
         bundle.format = format.format;
         bundle.extent = extent;

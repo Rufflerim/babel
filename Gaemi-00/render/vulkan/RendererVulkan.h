@@ -5,6 +5,8 @@
 #ifndef RENDER_VULKAN_RENDERERVULKAN_H
 #define RENDER_VULKAN_RENDERERVULKAN_H
 
+#define VULKAN_HPP_NO_EXCEPTIONS = 1
+
 #include "../IRenderer.h"
 #include "../Texture.h"
 #include "Frame.h"
@@ -60,6 +62,12 @@ namespace engine::render::vulkan {
         vk::CommandBuffer mainCommandBuffer;
         i32 maxFrameInFlight;
         i32 currentFrameNumber;
+
+        void makeSwapchain();
+        void closeSwapchain();
+        void recreateSwapchain();
+        void makeFramebuffers();
+        void makeSyncObjects();
 
         void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& scene);
         void render(TestScene& testScene);

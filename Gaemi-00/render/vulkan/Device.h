@@ -52,7 +52,7 @@ namespace engine::render::vulkan::vkInit {
     bool checkDeviceExtensionsSupported(const vk::PhysicalDevice physicalDevice,
                                         const vector<const char*>& requestedExtensions) {
         set<str> uniqueExtensions { begin(requestedExtensions), end(requestedExtensions) };
-        for (auto& extension: physicalDevice.enumerateDeviceExtensionProperties()) {
+        for (auto& extension: physicalDevice.enumerateDeviceExtensionProperties().value) {
             uniqueExtensions.erase(extension.extensionName);
         }
         return uniqueExtensions.empty();
@@ -87,7 +87,9 @@ namespace engine::render::vulkan::vkInit {
      * @return A chosen physical device. nullptr if no physical device is found.
      */
     VkPhysicalDevice choosePhysicalDevice(vk::Instance& instance) {
-        vector<vk::PhysicalDevice> availableDevices = instance.enumeratePhysicalDevices();
+        auto availableDevicesRes = instance.enumeratePhysicalDevices();
+        GASSERT_MSG(availableDevicesRes.result == vk::Result::eSuccess, "Vulkan could not enumerate physical devices")
+        vector<vk::PhysicalDevice> availableDevices = availableDevicesRes.value;
         // Look for a discrete GPU first
         for (auto physicalDevice: availableDevices) {
             if (isSuitable(physicalDevice, vk::PhysicalDeviceType::eDiscreteGpu)) {
@@ -152,7 +154,9 @@ namespace engine::render::vulkan::vkInit {
         };
 
         LOG(LogLevel::Trace) << "Vulkan logical device creation.";
-        vk::Device device = physicalDevice.createDevice(createInfo);
+        auto deviceRes = physicalDevice.createDevice(createInfo);
+        GASSERT_MSG(deviceRes.result == vk::Result::eSuccess, "Vulkan could not create logical device");
+        vk::Device device = deviceRes.value;
         return device;
     }
 }

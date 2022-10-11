@@ -31,7 +31,9 @@ namespace engine::render::vulkan::vkInit {
             framebufferInfo.height = framebufferInput.extent.height;
             framebufferInfo.layers = 1;
             LOG(LogLevel::Trace) << "Create framebuffer for image " << i;
-            frames[i].framebuffer = framebufferInput.device.createFramebuffer(framebufferInfo);
+            auto framebufferRes = framebufferInput.device.createFramebuffer(framebufferInfo);
+            GASSERT_MSG(framebufferRes.result == vk::Result::eSuccess, "Vulkan could not create framebuffer for frame " + std::to_string(i))
+            frames[i].framebuffer = framebufferRes.value;
         }
     }
 
