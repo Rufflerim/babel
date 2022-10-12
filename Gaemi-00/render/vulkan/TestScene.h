@@ -17,6 +17,8 @@ namespace engine::render::vulkan {
     public:
         TestScene();
         vector<glm::vec3> trianglePositions;
+        vector<glm::vec3> squarePositions;
+        vector<glm::vec3> starPositions;
     };
 
 }

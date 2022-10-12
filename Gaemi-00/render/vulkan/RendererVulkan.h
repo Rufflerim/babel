@@ -65,6 +65,8 @@ namespace engine::render::vulkan {
         i32 currentFrameNumber;
 
         vkMesh::TriangleMesh* triangleMesh;
+        vkMesh::SquareMesh* squareMesh;
+        vkMesh::StarMesh* starMesh;
 
         void makeSwapchain();
         void closeSwapchain();

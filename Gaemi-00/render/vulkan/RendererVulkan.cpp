@@ -98,6 +98,8 @@ void RendererVulkan::close() {
     device.destroyPipelineLayout(layout);
 
     delete triangleMesh;
+    delete squareMesh;
+    delete starMesh;
 
     device.destroy();
     instance.destroySurfaceKHR(surface);
@@ -128,7 +130,60 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
     commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
 
-    prepareScene(commandBuffer);
+    //prepareScene(commandBuffer);
+    vk::DeviceSize offsets[] = { 0 };
+    commandBuffer.bindVertexBuffers(0, 1, &triangleMesh->vertexBuffer.buffer, offsets);
+    for (glm::vec3 position : testScene.trianglePositions) {
+
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        vkUtils::ObjectData objectData {};
+        objectData.model = model;
+        commandBuffer.pushConstants(
+                layout, vk::ShaderStageFlagBits::eVertex,
+                0, sizeof(objectData), &objectData
+        );
+
+        commandBuffer.draw(3, 1, 0, 0);
+
+    }
+
+    commandBuffer.bindVertexBuffers(0, 1, &squareMesh->vertexBuffer.buffer, offsets);
+    for (glm::vec3 position : testScene.squarePositions) {
+
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        vkUtils::ObjectData objectData {};
+        objectData.model = model;
+        commandBuffer.pushConstants(
+                layout, vk::ShaderStageFlagBits::eVertex,
+                0, sizeof(objectData), &objectData
+        );
+
+        commandBuffer.draw(6, 1, 0, 0);
+
+    }
+
+    commandBuffer.bindVertexBuffers(0, 1, &starMesh->vertexBuffer.buffer, offsets);
+    for (glm::vec3 position : testScene.starPositions) {
+
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        vkUtils::ObjectData objectData {};
+        objectData.model = model;
+        commandBuffer.pushConstants(
+                layout, vk::ShaderStageFlagBits::eVertex,
+                0, sizeof(objectData), &objectData
+        );
+
+        commandBuffer.draw(24, 1, 0, 0);
+
+    }
+
+
+
+
+
+
+
+
 
     for(auto& position : testScene.trianglePositions) {
         glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
@@ -247,7 +302,8 @@ void engine::render::vulkan::RendererVulkan::makeSyncObjects() {
 
 void engine::render::vulkan::RendererVulkan::makeAssets() {
     triangleMesh = new vkMesh::TriangleMesh(device, physicalDevice);
-
+    squareMesh = new vkMesh::SquareMesh(device, physicalDevice);
+    starMesh = new vkMesh::StarMesh(device, physicalDevice);
 }
 
 void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer) {

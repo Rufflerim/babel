@@ -36,12 +36,12 @@ namespace engine::render::vulkan::vkMesh {
 
     TriangleMesh::TriangleMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice)
             : device { deviceP } {
-        vector<float> vertices {
+        vector<float> vertices {{
             // Position         // Color
             0.0f, -0.05f, 0.0f, 1.0f, 0.0f,
             0.05f, 0.05f, 0.0f, 1.0f, 0.0f,
             -0.05f, 0.05f, 0.0f, 1.0f, 0.0f
-        };
+        }};
 
         vkUtils::BufferInput input;
         input.device = device;
@@ -57,6 +57,80 @@ namespace engine::render::vulkan::vkMesh {
     }
 
     TriangleMesh::~TriangleMesh() {
+        device.destroyBuffer(vertexBuffer.buffer);
+        device.freeMemory(vertexBuffer.bufferMemory);
+    }
+
+    SquareMesh::SquareMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice) : device {deviceP} {
+        std::vector<float> vertices = { {
+                                                -0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
+                                                -0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
+                                                0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
+                                                0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
+                                                0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
+                                                -0.05f,  0.05f, 1.0f, 0.0f, 0.0f
+                                        } };
+
+        vkUtils::BufferInput input;
+        input.device = device;
+        input.physicalDevice = physicalDevice;
+        input.size = sizeof(float) * vertices.size();
+        input.usageFlags = vk::BufferUsageFlagBits::eVertexBuffer;
+
+        vertexBuffer = vkUtils::createBuffer(input);
+
+        void* memoryLocation = device.mapMemory(vertexBuffer.bufferMemory, 0, input.size);
+        memcpy(memoryLocation, vertices.data(), input.size);
+        device.unmapMemory(vertexBuffer.bufferMemory);
+    }
+
+    SquareMesh::~SquareMesh() {
+        device.destroyBuffer(vertexBuffer.buffer);
+        device.freeMemory(vertexBuffer.bufferMemory);
+    }
+
+    StarMesh::StarMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice) : device {deviceP} {
+        std::vector<float> vertices = { {
+                                                -0.05f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                0.0f,  -0.05f, 0.0f, 0.0f, 1.0f,
+                                                0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                0.05f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+                                                0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                0.04f,   0.05f, 0.0f, 0.0f, 1.0f,
+                                                0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
+                                                -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
+                                                -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+                                                0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
+                                                -0.04f,   0.05f, 0.0f, 0.0f, 1.0f
+                                        } };
+
+        vkUtils::BufferInput inputChunk;
+        inputChunk.device = device;
+        inputChunk.physicalDevice = physicalDevice;
+        inputChunk.size = sizeof(float) * vertices.size();
+        inputChunk.usageFlags = vk::BufferUsageFlagBits::eVertexBuffer;
+
+        vertexBuffer = vkUtils::createBuffer(inputChunk);
+
+        void* memoryLocation = device.mapMemory(vertexBuffer.bufferMemory, 0, inputChunk.size);
+        memcpy(memoryLocation, vertices.data(), inputChunk.size);
+        device.unmapMemory(vertexBuffer.bufferMemory);
+    }
+
+    StarMesh::~StarMesh() {
         device.destroyBuffer(vertexBuffer.buffer);
         device.freeMemory(vertexBuffer.bufferMemory);
     }

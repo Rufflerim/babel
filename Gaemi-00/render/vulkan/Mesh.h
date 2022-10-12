@@ -13,6 +13,12 @@ using std::array;
 
 namespace engine::render::vulkan::vkMesh {
 
+    enum class GeometryTypes {
+        Triangle,
+        Square,
+        Star
+    };
+
     vk::VertexInputBindingDescription getPosColorBindingDescription() ;
 
     array<vk::VertexInputAttributeDescription, 2> getPosColorAttributeDescriptions();
@@ -24,7 +30,24 @@ namespace engine::render::vulkan::vkMesh {
         vkUtils::Buffer vertexBuffer;
     private:
         vk::Device device;
+    };
 
+    class SquareMesh {
+    public:
+        SquareMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice);
+        ~SquareMesh();
+        vkUtils::Buffer vertexBuffer;
+    private:
+        vk::Device device;
+    };
+
+    class StarMesh {
+    public:
+        StarMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice);
+        ~StarMesh();
+        vkUtils::Buffer vertexBuffer;
+    private:
+        vk::Device device;
     };
 
 }
