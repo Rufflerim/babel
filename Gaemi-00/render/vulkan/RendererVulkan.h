@@ -11,6 +11,7 @@
 #include "../Texture.h"
 #include "Frame.h"
 #include "TestScene.h"
+#include "Mesh.h"
 
 namespace engine::render::vulkan {
     class RendererVulkan : public IRenderer {
@@ -63,11 +64,16 @@ namespace engine::render::vulkan {
         i32 maxFrameInFlight;
         i32 currentFrameNumber;
 
+        vkMesh::TriangleMesh* triangleMesh;
+
         void makeSwapchain();
         void closeSwapchain();
         void recreateSwapchain();
         void makeFramebuffers();
         void makeSyncObjects();
+
+        void makeAssets();
+        void prepareScene(vk::CommandBuffer commandBuffer);
 
         void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& scene);
         void render(TestScene& testScene);

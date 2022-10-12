@@ -66,6 +66,8 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     vkInit::makeFrameCommandBuffers(commandBufferInput);
     makeSyncObjects();
 
+    makeAssets();
+
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
     return true;
 }
@@ -94,6 +96,9 @@ void RendererVulkan::close() {
     device.destroyPipeline(pipeline);
     device.destroyRenderPass(renderPass);
     device.destroyPipelineLayout(layout);
+
+    delete triangleMesh;
+
     device.destroy();
     instance.destroySurfaceKHR(surface);
     instance.destroyDebugUtilsMessengerEXT(debugMessenger, nullptr, dynamicInstanceLoader);
@@ -122,6 +127,9 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
 
     commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
+
+    prepareScene(commandBuffer);
+
     for(auto& position : testScene.trianglePositions) {
         glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
         vkUtils::ObjectData objectData;
@@ -235,4 +243,15 @@ void engine::render::vulkan::RendererVulkan::makeSyncObjects() {
         frame.imageAvailable = vkInit::makeSemaphore(device);
         frame.renderFinished = vkInit::makeSemaphore(device);
     }
+}
+
+void engine::render::vulkan::RendererVulkan::makeAssets() {
+    triangleMesh = new vkMesh::TriangleMesh(device, physicalDevice);
+
+}
+
+void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer) {
+    vk::Buffer vertexBuffers[] { triangleMesh->vertexBuffer.buffer };
+    vk::DeviceSize offsets[] = { 0 };
+    commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
 }
