@@ -7,6 +7,7 @@
 
 #include "Shader.h"
 #include "RenderData.h"
+#include "Mesh.h"
 
 namespace engine::render::vulkan::vkInit {
 
@@ -82,10 +83,14 @@ namespace engine::render::vulkan::vkInit {
         vector<vk::PipelineShaderStageCreateInfo> shaderStages;
 
         // Vertex input : data sent in
+        vk::VertexInputBindingDescription bindingDescription = vkMesh::getPosColorBindingDescription();
+        array<vk::VertexInputAttributeDescription, 2> attributeDescriptions = vkMesh::getPosColorAttributeDescriptions();
         vk::PipelineVertexInputStateCreateInfo vertexInputInfo {};
         vertexInputInfo.flags = vk::PipelineVertexInputStateCreateFlags();
-        vertexInputInfo.vertexBindingDescriptionCount = 0;
-        vertexInputInfo.vertexAttributeDescriptionCount = 0;
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+        vertexInputInfo.vertexAttributeDescriptionCount = 2;
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
         pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
 
         // Input assembly : how to organize input data
