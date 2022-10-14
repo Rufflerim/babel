@@ -12,6 +12,7 @@
 #include "Frame.h"
 #include "TestScene.h"
 #include "Mesh.h"
+#include "VertexBufferAtlas.h"
 
 namespace engine::render::vulkan {
     class RendererVulkan : public IRenderer {
@@ -64,9 +65,7 @@ namespace engine::render::vulkan {
         i32 maxFrameInFlight;
         i32 currentFrameNumber;
 
-        vkMesh::TriangleMesh* triangleMesh;
-        vkMesh::SquareMesh* squareMesh;
-        vkMesh::StarMesh* starMesh;
+        vkMesh::VertexBufferAtlas* geometryMeshes;
 
         void makeSwapchain();
         void closeSwapchain();

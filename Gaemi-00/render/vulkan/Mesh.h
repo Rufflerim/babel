@@ -13,7 +13,7 @@ using std::array;
 
 namespace engine::render::vulkan::vkMesh {
 
-    enum class GeometryTypes {
+    enum class GeometryType {
         Triangle,
         Square,
         Star

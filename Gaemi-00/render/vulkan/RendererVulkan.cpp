@@ -97,9 +97,8 @@ void RendererVulkan::close() {
     device.destroyRenderPass(renderPass);
     device.destroyPipelineLayout(layout);
 
-    delete triangleMesh;
-    delete squareMesh;
-    delete starMesh;
+    geometryMeshes->close();
+    delete geometryMeshes;
 
     device.destroy();
     instance.destroySurfaceKHR(surface);
@@ -130,11 +129,10 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
     commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
 
-    //prepareScene(commandBuffer);
-    vk::DeviceSize offsets[] = { 0 };
-    commandBuffer.bindVertexBuffers(0, 1, &triangleMesh->vertexBuffer.buffer, offsets);
+    prepareScene(commandBuffer);
+    i32 firstVertex = geometryMeshes->getFirstVertex(vkMesh::GeometryType::Triangle);
+    i32 vertexCount = geometryMeshes->getVertexCount(vkMesh::GeometryType::Triangle);
     for (glm::vec3 position : testScene.trianglePositions) {
-
         glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
         vkUtils::ObjectData objectData {};
         objectData.model = model;
@@ -142,14 +140,12 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
                 layout, vk::ShaderStageFlagBits::eVertex,
                 0, sizeof(objectData), &objectData
         );
-
-        commandBuffer.draw(3, 1, 0, 0);
-
+        commandBuffer.draw(vertexCount, 1, firstVertex, 0);
     }
 
-    commandBuffer.bindVertexBuffers(0, 1, &squareMesh->vertexBuffer.buffer, offsets);
+    firstVertex = geometryMeshes->getFirstVertex(vkMesh::GeometryType::Square);
+    vertexCount = geometryMeshes->getVertexCount(vkMesh::GeometryType::Square);
     for (glm::vec3 position : testScene.squarePositions) {
-
         glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
         vkUtils::ObjectData objectData {};
         objectData.model = model;
@@ -157,14 +153,12 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
                 layout, vk::ShaderStageFlagBits::eVertex,
                 0, sizeof(objectData), &objectData
         );
-
-        commandBuffer.draw(6, 1, 0, 0);
-
+        commandBuffer.draw(vertexCount, 1, firstVertex, 0);
     }
 
-    commandBuffer.bindVertexBuffers(0, 1, &starMesh->vertexBuffer.buffer, offsets);
+    firstVertex = geometryMeshes->getFirstVertex(vkMesh::GeometryType::Star);
+    vertexCount = geometryMeshes->getVertexCount(vkMesh::GeometryType::Star);
     for (glm::vec3 position : testScene.starPositions) {
-
         glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
         vkUtils::ObjectData objectData {};
         objectData.model = model;
@@ -172,17 +166,8 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
                 layout, vk::ShaderStageFlagBits::eVertex,
                 0, sizeof(objectData), &objectData
         );
-
-        commandBuffer.draw(24, 1, 0, 0);
-
+        commandBuffer.draw(vertexCount, 1, firstVertex, 0);
     }
-
-
-
-
-
-
-
 
 
     for(auto& position : testScene.trianglePositions) {
@@ -301,13 +286,60 @@ void engine::render::vulkan::RendererVulkan::makeSyncObjects() {
 }
 
 void engine::render::vulkan::RendererVulkan::makeAssets() {
-    triangleMesh = new vkMesh::TriangleMesh(device, physicalDevice);
-    squareMesh = new vkMesh::SquareMesh(device, physicalDevice);
-    starMesh = new vkMesh::StarMesh(device, physicalDevice);
+    geometryMeshes = new vkMesh::VertexBufferAtlas();
+    vector<float> vertices {{
+        // Position         // Color
+        0.0f, -0.05f, 0.0f, 1.0f, 0.0f,
+        0.05f, 0.05f, 0.0f, 1.0f, 0.0f,
+        -0.05f, 0.05f, 0.0f, 1.0f, 0.0f
+    }};
+    geometryMeshes->consume(vkMesh::GeometryType::Triangle, vertices);
+
+    vertices.clear();
+    vertices = { {
+        -0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
+        -0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
+        0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
+        0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
+        0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
+        -0.05f,  0.05f, 1.0f, 0.0f, 0.0f
+    } };
+    geometryMeshes->consume(vkMesh::GeometryType::Square, vertices);
+
+    vertices.clear();
+    vertices = { {
+         -0.05f, -0.025f, 0.0f, 0.0f, 1.0f,
+         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         0.0f,  -0.05f, 0.0f, 0.0f, 1.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         0.05f, -0.025f, 0.0f, 0.0f, 1.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         0.04f,   0.05f, 0.0f, 0.0f, 1.0f,
+         0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
+         0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
+         -0.04f,   0.05f, 0.0f, 0.0f, 1.0f
+    } };
+    geometryMeshes->consume(vkMesh::GeometryType::Star, vertices);
+
+    geometryMeshes->finalize(device, physicalDevice);
 }
 
 void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer) {
-    vk::Buffer vertexBuffers[] { triangleMesh->vertexBuffer.buffer };
+    vk::Buffer vertexBuffers[] { geometryMeshes->vertexBuffer.buffer };
     vk::DeviceSize offsets[] = { 0 };
     commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
 }

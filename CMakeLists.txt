@@ -39,8 +39,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC
         -Wno-c++98-compat-pedantic
         -Wno-reserved-id-macro
         -Wno-c11-extensions
-        -Wno-reserved-identifier
-        -Wno-reserved-macro-identifier
+        -Wno-reserved-id-macro
 
         # Optimization
         #$<$<CONFIG:DEBUG>:-Og>
