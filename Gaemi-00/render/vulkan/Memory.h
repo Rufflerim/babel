@@ -20,6 +20,7 @@ namespace engine::render::vulkan::vkUtils {
         vk::BufferUsageFlags usageFlags;
         vk::Device device;
         vk::PhysicalDevice physicalDevice;
+        vk::MemoryPropertyFlags memoryProperties;
     };
 
     u32 findMemoryTypeIndex(vk::PhysicalDevice physicalDevice, u32 supportedMemoryIndices,
@@ -28,6 +29,9 @@ namespace engine::render::vulkan::vkUtils {
     void allocateBufferMemory(Buffer& buffer, const BufferInput& input);
 
     Buffer createBuffer(BufferInput input);
+
+    void copyBuffer(Buffer& srcBuffer, Buffer& dstBuffer, vk::DeviceSize bufferSize,
+                    vk::Queue queue, vk::CommandBuffer commandBuffer);
 }
 
 #endif //RENDER_VULKAN_MEMORY_H

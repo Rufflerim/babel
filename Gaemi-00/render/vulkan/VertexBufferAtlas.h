@@ -16,9 +16,17 @@ using std::unordered_map;
 
 namespace engine::render::vulkan::vkMesh {
 
+    struct FinalizationInput {
+        vk::Device device;
+        vk::PhysicalDevice physicalDevice;
+        vk::Queue queue;
+        vk::CommandBuffer commandBuffer;
+    };
+
     class VertexBufferAtlas {
     public:
         VertexBufferAtlas() = default;
+        ~VertexBufferAtlas();
 
         i32 getFirstVertex(GeometryType geometryType) const {
             return offsets.find(geometryType)->second;
@@ -29,7 +37,7 @@ namespace engine::render::vulkan::vkMesh {
         }
 
         void consume(GeometryType geometryType, vector<float>& vertexData);
-        void finalize(vk::Device device, vk::PhysicalDevice physicalDevice);
+        void finalize(FinalizationInput finalizationInput);
         void close();
 
         vkUtils::Buffer vertexBuffer;
@@ -41,7 +49,6 @@ namespace engine::render::vulkan::vkMesh {
         /** How many points were sent */
         i32 offset { 0 };
         vk::Device device;
-
 
         vector<float> lump;
     };

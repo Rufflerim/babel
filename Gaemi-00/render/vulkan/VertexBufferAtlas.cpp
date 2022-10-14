@@ -6,6 +6,12 @@
 
 using engine::render::vulkan::vkMesh::VertexBufferAtlas;
 using engine::render::vulkan::vkMesh::GeometryType;
+using engine::render::vulkan::vkMesh::FinalizationInput;
+
+VertexBufferAtlas::~VertexBufferAtlas() {
+    device.destroyBuffer(vertexBuffer.buffer);
+    device.freeMemory(vertexBuffer.bufferMemory);
+}
 
 void VertexBufferAtlas::consume(GeometryType geometryType, vector<float>& vertexData) {
     lump.reserve(vertexData.size());
@@ -18,20 +24,31 @@ void VertexBufferAtlas::consume(GeometryType geometryType, vector<float>& vertex
     offset += vertexCount;
 }
 
-void VertexBufferAtlas::finalize(vk::Device device, vk::PhysicalDevice physicalDevice) {
+void VertexBufferAtlas::finalize(FinalizationInput finalizationInput) {
+    device = finalizationInput.device;
+
     vkUtils::BufferInput input {};
     input.device = device;
-    input.physicalDevice = physicalDevice;
+    input.physicalDevice = finalizationInput.physicalDevice;
     input.size = sizeof(float) * lump.size();
-    input.usageFlags = vk::BufferUsageFlagBits::eVertexBuffer;
-    vertexBuffer = vkUtils::createBuffer(input);
+    input.usageFlags = vk::BufferUsageFlagBits::eTransferSrc;
+    input.memoryProperties = vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent;
 
-    void* memoryLocation = device.mapMemory(vertexBuffer.bufferMemory, 0, input.size);
+    vkUtils::Buffer stagingBuffer = vkUtils::createBuffer(input);
+
+    // Load data on staging buffer
+    void* memoryLocation = device.mapMemory(stagingBuffer.bufferMemory, 0, input.size);
     memcpy(memoryLocation, lump.data(), input.size);
-    device.unmapMemory(vertexBuffer.bufferMemory);
-}
+    device.unmapMemory(stagingBuffer.bufferMemory);
 
-void VertexBufferAtlas::close() {
-    //device.destroyBuffer(vertexBuffer.buffer);
-    //device.freeMemory(vertexBuffer.bufferMemory);
+    // Copy from staging to vertex buffer
+    input.usageFlags = vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer;
+    input.memoryProperties = vk::MemoryPropertyFlagBits::eDeviceLocal;
+    vertexBuffer = vkUtils::createBuffer(input);
+    vkUtils::copyBuffer(stagingBuffer, vertexBuffer,input.size,
+                        finalizationInput.queue, finalizationInput.commandBuffer);
+
+    // Clear staging buffer
+    device.destroyBuffer(stagingBuffer.buffer);
+    device.freeMemory(stagingBuffer.bufferMemory);
 }

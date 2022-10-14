@@ -28,8 +28,7 @@ namespace engine::render::vulkan::vkUtils {
         vk::MemoryAllocateInfo allocateInfo;
         allocateInfo.allocationSize = memoryRequirements.size;
         allocateInfo.memoryTypeIndex = findMemoryTypeIndex(input.physicalDevice, memoryRequirements.memoryTypeBits,
-                                                           vk::MemoryPropertyFlagBits::eHostVisible |
-                                                           vk::MemoryPropertyFlagBits::eHostCoherent);
+                                                           input.memoryProperties);
         buffer.bufferMemory = input.device.allocateMemory(allocateInfo);
         input.device.bindBufferMemory(buffer.buffer, buffer.bufferMemory, 0);
     }
@@ -46,6 +45,31 @@ namespace engine::render::vulkan::vkUtils {
         buffer.buffer = input.device.createBuffer(bufferInfo);
         allocateBufferMemory(buffer, input);
         return buffer;
+    }
+
+    void copyBuffer(Buffer& srcBuffer, Buffer& dstBuffer, vk::DeviceSize size,
+                    vk::Queue queue, vk::CommandBuffer commandBuffer) {
+
+        // Reset and begin command buffer, for one time
+        commandBuffer.reset();
+        vk::CommandBufferBeginInfo beginInfo {};
+        beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+        commandBuffer.begin(beginInfo);
+
+        // Copy and end command
+        vk::BufferCopy copyRegion;
+        copyRegion.srcOffset = 0;
+        copyRegion.dstOffset = 0;
+        copyRegion.size = size;
+        commandBuffer.copyBuffer(srcBuffer.buffer, dstBuffer.buffer, 1, &copyRegion);
+        commandBuffer.end();
+
+        // Submit command
+        vk::SubmitInfo submitInfo {};
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+        auto subbitRes = queue.submit(1, &submitInfo, nullptr);
+        queue.waitIdle();
     }
 
 }

@@ -97,7 +97,6 @@ void RendererVulkan::close() {
     device.destroyRenderPass(renderPass);
     device.destroyPipelineLayout(layout);
 
-    geometryMeshes->close();
     delete geometryMeshes;
 
     device.destroy();
@@ -335,7 +334,12 @@ void engine::render::vulkan::RendererVulkan::makeAssets() {
     } };
     geometryMeshes->consume(vkMesh::GeometryType::Star, vertices);
 
-    geometryMeshes->finalize(device, physicalDevice);
+    vkMesh::FinalizationInput finalizationInput;
+    finalizationInput.device = device;
+    finalizationInput.physicalDevice = physicalDevice;
+    finalizationInput.queue = graphicsQueue;
+    finalizationInput.commandBuffer = mainCommandBuffer;
+    geometryMeshes->finalize(finalizationInput);
 }
 
 void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer) {
