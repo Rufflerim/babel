@@ -56,6 +56,9 @@ namespace engine::render::vulkan {
         vk::Format swapchainFormat;
         vk::Extent2D swapchainExtent;
 
+        vk::DescriptorSetLayout descriptorSetLayout;
+        vk::DescriptorPool descriptorPool;
+
         vk::PipelineLayout layout;
         vk::RenderPass renderPass;
         vk::Pipeline pipeline;
@@ -72,9 +75,10 @@ namespace engine::render::vulkan {
         void recreateSwapchain();
         void makeFramebuffers();
         void makeSyncObjects();
+        vk::DescriptorPool createDescriptorPool();
 
         void makeAssets();
-        void prepareScene(vk::CommandBuffer commandBuffer);
+        void prepareScene(vk::CommandBuffer commandBuffer, u32 imageIndex);
 
         void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& scene);
         void render(TestScene& testScene);

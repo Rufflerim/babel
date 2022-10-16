@@ -14,6 +14,11 @@ namespace engine::render::vulkan::vkUtils {
         glm::mat4 model;
     };
 
+    struct UniformBufferObject {
+        glm::mat4 view;
+        glm::mat4 proj;
+    };
+
 }
 
 #endif //RENDER_VULKAN_RENDERDATA_H

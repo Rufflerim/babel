@@ -44,15 +44,19 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     graphicsQueue = queues.at(0);
     presentQueue = queues.at(1);
 
+    descriptorPool = createDescriptorPool();
+    descriptorSetLayout = vkInit::createDescriptorSetLayout(device);
     makeSwapchain();
+
     currentFrameNumber = 0;
 
     vkInit::GraphicsPipelineIn specifications {};
     specifications.device = device;
-    specifications.vertexShaderPath = "Assets/shaders/first.vert.spv";
-    specifications.fragmentShaderPath = "Assets/shaders/first.frag.spv";
+    specifications.vertexShaderPath = "Assets/shaders/texture.vert.spv";
+    specifications.fragmentShaderPath = "Assets/shaders/texture.frag.spv";
     specifications.swapchainExtent = swapchainExtent;
     specifications.swapchainImageFormat = swapchainFormat;
+    specifications.descriptorSetLayout = descriptorSetLayout;
 
     vkInit::GraphicsPipelineOut out = vkInit::makeGraphicsPipeline(specifications);
     layout = out.layout;
@@ -128,7 +132,7 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
     commandBuffer.beginRenderPass(&renderPassBeginInfo, vk::SubpassContents::eInline);
     commandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
 
-    prepareScene(commandBuffer);
+    prepareScene(commandBuffer, imageIndex);
     i32 firstVertex = geometryMeshes->getFirstVertex(vkMesh::GeometryType::Triangle);
     i32 vertexCount = geometryMeshes->getVertexCount(vkMesh::GeometryType::Triangle);
     for (glm::vec3 position : testScene.trianglePositions) {
@@ -166,16 +170,6 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
                 0, sizeof(objectData), &objectData
         );
         commandBuffer.draw(vertexCount, 1, firstVertex, 0);
-    }
-
-
-    for(auto& position : testScene.trianglePositions) {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
-        vkUtils::ObjectData objectData;
-        objectData.model = model;
-        commandBuffer.pushConstants(layout, vk::ShaderStageFlagBits::eVertex, 0, sizeof(vkUtils::ObjectData), &objectData);
-        commandBuffer.draw(3, 1, 0, 0);
-
     }
 
     commandBuffer.endRenderPass();
@@ -237,9 +231,26 @@ void RendererVulkan::render(TestScene& testScene) {
     currentFrameNumber = (currentFrameNumber + 1) % maxFrameInFlight;
 }
 
+vk::DescriptorPool RendererVulkan::createDescriptorPool() {
+    // Create descriptor pool
+    vk::DescriptorPoolSize poolSize {};
+    poolSize.type = vk::DescriptorType::eUniformBuffer;
+    poolSize.descriptorCount = 10;
+
+    vk::DescriptorPoolCreateInfo descriptorPoolInfo {};
+    descriptorPoolInfo.flags = vk::DescriptorPoolCreateFlags();
+    descriptorPoolInfo.maxSets = 10;
+    descriptorPoolInfo.poolSizeCount = 1;
+    descriptorPoolInfo.pPoolSizes = &poolSize;
+
+    auto descriptorPoolRes = device.createDescriptorPool(descriptorPoolInfo);
+    GASSERT_MSG(descriptorPoolRes.result == vk::Result::eSuccess, "Vulkan could not create descriptor pool")
+    return descriptorPoolRes.value;
+}
+
 void engine::render::vulkan::RendererVulkan::makeSwapchain() {
     vkInit::SwapchainBundle bundle = vkInit::createSwapchain(device, physicalDevice, surface,
-                                                             width, height);
+                                                             width, height, descriptorPool, descriptorSetLayout);
     swapchain = bundle.swapchain;
     swapchainFrames = bundle.frames;
     swapchainFormat = bundle.format;
@@ -254,7 +265,10 @@ void engine::render::vulkan::RendererVulkan::closeSwapchain() {
         device.destroySemaphore(frame.renderFinished);
         device.destroySemaphore(frame.imageAvailable);
         device.destroyFence(frame.inFlightFence);
+        device.destroyBuffer(frame.uniformBuffer.buffer);
+        device.freeMemory(frame.uniformBuffer.bufferMemory);
     }
+    device.destroyDescriptorPool(descriptorPool);
     device.destroySwapchainKHR(swapchain);
 }
 
@@ -288,20 +302,20 @@ void engine::render::vulkan::RendererVulkan::makeAssets() {
     geometryMeshes = new vkMesh::VertexBufferAtlas();
     vector<float> vertices {{
         // Position         // Color
-        0.0f, -0.05f, 0.0f, 1.0f, 0.0f,
-        0.05f, 0.05f, 0.0f, 1.0f, 0.0f,
-        -0.05f, 0.05f, 0.0f, 1.0f, 0.0f
+        0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f, 1.0f, 0.0f
     }};
     geometryMeshes->consume(vkMesh::GeometryType::Triangle, vertices);
 
     vertices.clear();
     vertices = { {
-        -0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
-        -0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
-        0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
-        0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
-        0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
-        -0.05f,  0.05f, 1.0f, 0.0f, 0.0f
+        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f
     } };
     geometryMeshes->consume(vkMesh::GeometryType::Square, vertices);
 
@@ -342,8 +356,23 @@ void engine::render::vulkan::RendererVulkan::makeAssets() {
     geometryMeshes->finalize(finalizationInput);
 }
 
-void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer) {
+void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer, u32 imageIndex) {
     vk::Buffer vertexBuffers[] { geometryMeshes->vertexBuffer.buffer };
     vk::DeviceSize offsets[] = { 0 };
     commandBuffer.bindVertexBuffers(0, 1, vertexBuffers, offsets);
+
+
+    vkUtils::UniformBufferObject ubo {};
+    ubo.view = testScene.view;
+    ubo.proj = testScene.proj;
+
+    void* memoryLocation = device.mapMemory(swapchainFrames[imageIndex].uniformBuffer.bufferMemory, 0, sizeof(ubo)).value;
+    memcpy(memoryLocation, &ubo, sizeof(ubo));
+    device.unmapMemory(swapchainFrames[imageIndex].uniformBuffer.bufferMemory);
+
+    commandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, layout,
+                                     0, 1, &swapchainFrames[imageIndex].descriptorSet,
+                                     0, nullptr);
 }
+
+

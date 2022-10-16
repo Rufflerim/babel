@@ -31,7 +31,6 @@
 #define STBI_NO_LINEAR
 #define STBI_NO_HDR
 
-
 // General types
 // -- Unsigned integers
 using u8 = unsigned char;
@@ -113,4 +112,7 @@ GSTATIC_ASSERT(sizeof(f64) == 8, "Expected f64 to be 8 bytes.");
 enum class ErrorCode {
     None = 0,
 };
+
+constexpr i32 WINDOW_WIDTH = 1280;
+constexpr i32 WINDOW_HEIGHT = 720;
 

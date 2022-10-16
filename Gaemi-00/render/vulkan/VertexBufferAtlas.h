@@ -38,7 +38,6 @@ namespace engine::render::vulkan::vkMesh {
 
         void consume(GeometryType geometryType, vector<float>& vertexData);
         void finalize(FinalizationInput finalizationInput);
-        void close();
 
         vkUtils::Buffer vertexBuffer;
         unordered_map<GeometryType, int> offsets;

@@ -27,8 +27,6 @@ using engine::render::vulkan::WindowVulkan;
 
 constexpr i32 WINDOW_X = 100;
 constexpr i32 WINDOW_Y = 100;
-constexpr i32 WINDOW_WIDTH = 1280;
-constexpr i32 WINDOW_HEIGHT = 720;
 
 namespace engine {
 

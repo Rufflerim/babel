@@ -6,6 +6,7 @@
 #define RENDER_VULKAN_FRAME_H
 
 #include <vulkan/vulkan.hpp>
+#include "Memory.h"
 
 namespace engine::render::vulkan::vkUtils {
 
@@ -16,6 +17,8 @@ namespace engine::render::vulkan::vkUtils {
         vk::CommandBuffer commandBuffer;
         vk::Fence inFlightFence;
         vk::Semaphore imageAvailable, renderFinished;
+        Buffer uniformBuffer;
+        vk::DescriptorSet descriptorSet;
     };
 
 }

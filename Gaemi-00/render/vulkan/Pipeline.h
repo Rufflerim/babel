@@ -17,6 +17,7 @@ namespace engine::render::vulkan::vkInit {
         str fragmentShaderPath;
         vk::Extent2D swapchainExtent;
         vk::Format swapchainImageFormat;
+        vk::DescriptorSetLayout descriptorSetLayout;
     };
 
 
@@ -26,10 +27,12 @@ namespace engine::render::vulkan::vkInit {
         vk::Pipeline pipeline;
     };
 
-    vk::PipelineLayout makePipelineLayout(vk::Device device) {
+    vk::PipelineLayout makePipelineLayout(vk::Device device, vk::DescriptorSetLayout descriptorSetLayout) {
         vk::PipelineLayoutCreateInfo layoutCreateInfo {};
         layoutCreateInfo.flags = vk::PipelineLayoutCreateFlags();
-        layoutCreateInfo.setLayoutCount = 0;
+
+        layoutCreateInfo.setLayoutCount = 1;
+        layoutCreateInfo.pSetLayouts = &descriptorSetLayout;
 
         layoutCreateInfo.pushConstantRangeCount = 1;
         vk::PushConstantRange pushConstantInfo;
@@ -65,12 +68,24 @@ namespace engine::render::vulkan::vkInit {
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
 
+
+        vk::SubpassDependency dependency{};
+        dependency.srcSubpass = VK_SUBPASS_EXTERNAL; //implicit subpass before render begins/after it ends
+        dependency.dstSubpass = 0; //the rendering subpass
+        dependency.srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+        dependency.srcAccessMask = vk::AccessFlagBits::eNone; //once the color attachment has finished its output, the image isn't needed and can be drawn over
+        dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+        dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite; // color output waits on this, it won't occur until the write bit is set
+
         vk::RenderPassCreateInfo renderPassInfo {};
         renderPassInfo.flags = vk::RenderPassCreateFlags();
         renderPassInfo.attachmentCount = 1;
         renderPassInfo.pAttachments = &colorAttachment;
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
+        renderPassInfo.dependencyCount = 1;
+        renderPassInfo.pDependencies = &dependency;
+
 
         auto renderPassRes = device.createRenderPass(renderPassInfo);
         GASSERT_MSG(renderPassRes.result == vk::Result::eSuccess, "Vulkan could not create render pass");
@@ -135,8 +150,8 @@ namespace engine::render::vulkan::vkInit {
         rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
         rasterizationInfo.polygonMode = vk::PolygonMode::eFill;
         rasterizationInfo.lineWidth = 1.0f;
-        rasterizationInfo.cullMode = vk::CullModeFlagBits::eBack;
-        rasterizationInfo.frontFace = vk::FrontFace::eClockwise;
+        rasterizationInfo.cullMode = vk::CullModeFlagBits::eNone;
+        rasterizationInfo.frontFace = vk::FrontFace::eCounterClockwise;
         rasterizationInfo.depthBiasEnable = VK_FALSE;
         pipelineCreateInfo.pRasterizationState = &rasterizationInfo;
 
@@ -177,7 +192,7 @@ namespace engine::render::vulkan::vkInit {
         pipelineCreateInfo.pColorBlendState = &colorBlending;
 
         LOG(LogLevel::Trace) << "Create pipeline layout";
-        vk::PipelineLayout pipelineLayout = makePipelineLayout(specifications.device);
+        vk::PipelineLayout pipelineLayout = makePipelineLayout(specifications.device, specifications.descriptorSetLayout);
         pipelineCreateInfo.layout = pipelineLayout;
 
         LOG(LogLevel::Trace) << "Create render pass";

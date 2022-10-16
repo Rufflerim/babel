@@ -7,6 +7,7 @@
 
 #include "Device.h"
 #include "Frame.h"
+#include "RenderData.h"
 
 using std::vector;
 
@@ -118,7 +119,7 @@ namespace engine::render::vulkan::vkInit {
      */
     SwapchainBundle
     createSwapchain(vk::Device device, vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface, i32 width,
-                    i32 height) {
+                    i32 height, vk::DescriptorPool descriptorPool, vk::DescriptorSetLayout descriptorSetLayout) {
         // Create info
         SwapchainSupportDetails support = querySwapchainSupport(physicalDevice, surface);
         vk::SurfaceFormatKHR format = chooseSwapchainSurfaceFormat(support.formats);
@@ -147,16 +148,28 @@ namespace engine::render::vulkan::vkInit {
 
         SwapchainBundle bundle {};
 
+        // Create swapchain
         auto swapchainRes = device.createSwapchainKHR(swapchainCreateInfo);
         GASSERT_MSG(swapchainRes.result == vk::Result::eSuccess, "Vulkan could not create swapchain")
         bundle.swapchain = swapchainRes.value;
 
+        // Gather images
         auto imagesRes = device.getSwapchainImagesKHR(bundle.swapchain);
         GASSERT_MSG(imagesRes.result == vk::Result::eSuccess, "Vulkan could not get swapchain images")
         vector<vk::Image> images = imagesRes.value;
 
+        // Create image related storage
         bundle.frames.resize(images.size());
+
+        // Allocate descriptor sets to the descriptor pool
+        vector<vk::DescriptorSetLayout> descriptorSetLayouts { bundle.frames.size(), descriptorSetLayout };
+        vk::DescriptorSetAllocateInfo allocateInfo {};
+        allocateInfo.descriptorPool = descriptorPool;
+        allocateInfo.descriptorSetCount = bundle.frames.size();
+        allocateInfo.pSetLayouts = descriptorSetLayouts.data();
+
         for(size_t i = 0; i < images.size(); ++i) {
+            // Create image views
             vk::ImageViewCreateInfo createInfo {};
             createInfo.image = images[i];
             createInfo.viewType = vk::ImageViewType::e2D;
@@ -175,6 +188,33 @@ namespace engine::render::vulkan::vkInit {
             auto imageViewRes = device.createImageView(createInfo);
             GASSERT_MSG(imageViewRes.result == vk::Result::eSuccess, "Vulkan could not create image view for frame " + std::to_string(i));
             bundle.frames[i].imageView = imageViewRes.value;
+
+            // Create buffers for UBO
+            vkUtils::BufferInput uboBufferInput {};
+            uboBufferInput.device = device;
+            uboBufferInput.physicalDevice = physicalDevice;
+            uboBufferInput.size = sizeof(vkUtils::UniformBufferObject);
+            uboBufferInput.usageFlags = vk::BufferUsageFlagBits::eUniformBuffer;
+            uboBufferInput.memoryProperties = vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent;
+            bundle.frames[i].uniformBuffer = vkUtils::createBuffer(uboBufferInput);
+
+            // Create descriptors in order to put UBO in the shader
+            auto allocateDescriptorSetsRes = device.allocateDescriptorSets(&allocateInfo, &bundle.frames[i].descriptorSet);
+            GASSERT_MSG(allocateDescriptorSetsRes == vk::Result::eSuccess, "Vulkan could allocate descriptor sets");
+
+            vk::DescriptorBufferInfo bufferInfo {};
+            bufferInfo.buffer = bundle.frames[i].uniformBuffer.buffer;
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(vkUtils::UniformBufferObject);
+
+            vk::WriteDescriptorSet descriptorWrite {};
+            descriptorWrite.dstSet = bundle.frames[i].descriptorSet;
+            descriptorWrite.dstBinding = 0;
+            descriptorWrite.dstArrayElement = 0;
+            descriptorWrite.descriptorCount = 1;
+            descriptorWrite.descriptorType = vk::DescriptorType::eUniformBuffer;
+            descriptorWrite.pBufferInfo = &bufferInfo;
+            device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
         }
         bundle.format = format.format;
         bundle.extent = extent;
@@ -182,7 +222,6 @@ namespace engine::render::vulkan::vkInit {
         LOG(LogLevel::Trace) << "Vulkan swapchain creation";
         return bundle;
     }
-
 }
 
 #endif //RENDER_VULKAN_SWAPCHAIN_H
