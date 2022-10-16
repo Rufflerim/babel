@@ -302,20 +302,20 @@ void engine::render::vulkan::RendererVulkan::makeAssets() {
     geometryMeshes = new vkMesh::VertexBufferAtlas();
     vector<float> vertices {{
         // Position         // Color
-        0.0f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f, 1.0f, 0.0f
+        0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -1.0f, 1.0f, 0.0f, 1.0f, 0.0f
     }};
     geometryMeshes->consume(vkMesh::GeometryType::Triangle, vertices);
 
     vertices.clear();
     vertices = { {
-        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f,  0.5f, 1.0f, 0.0f, 0.0f,
-        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f
+        -1.0f,  1.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+        1.0f,  1.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f,  1.0f, 1.0f, 0.0f, 0.0f
     } };
     geometryMeshes->consume(vkMesh::GeometryType::Square, vertices);
 
