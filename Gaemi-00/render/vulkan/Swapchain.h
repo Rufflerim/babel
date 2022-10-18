@@ -161,13 +161,6 @@ namespace engine::render::vulkan::vkInit {
         // Create image related storage
         bundle.frames.resize(images.size());
 
-        // Allocate descriptor sets to the descriptor pool
-        vector<vk::DescriptorSetLayout> descriptorSetLayouts { bundle.frames.size(), descriptorSetLayout };
-        vk::DescriptorSetAllocateInfo allocateInfo {};
-        allocateInfo.descriptorPool = descriptorPool;
-        allocateInfo.descriptorSetCount = bundle.frames.size();
-        allocateInfo.pSetLayouts = descriptorSetLayouts.data();
-
         for(size_t i = 0; i < images.size(); ++i) {
             // Create image views
             vk::ImageViewCreateInfo createInfo {};
@@ -197,18 +190,39 @@ namespace engine::render::vulkan::vkInit {
             uboBufferInput.usageFlags = vk::BufferUsageFlagBits::eUniformBuffer;
             uboBufferInput.memoryProperties = vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent;
             bundle.frames[i].uniformBuffer = vkUtils::createBuffer(uboBufferInput);
+        }
 
+        bundle.format = format.format;
+        bundle.extent = extent;
+
+        LOG(LogLevel::Trace) << "Vulkan swapchain creation";
+        return bundle;
+    }
+
+
+
+    void createFrameDescriptors(vector<vkUtils::SwapchainFrame>& frames, vk::Device device,
+                                vk::DescriptorSetLayout descriptorSetLayout, vk::DescriptorPool descriptorPool) {
+
+        // Allocate descriptor sets to the descriptor pool
+        vector<vk::DescriptorSetLayout> descriptorSetLayouts { frames.size(), descriptorSetLayout };
+        vk::DescriptorSetAllocateInfo allocateInfo {};
+        allocateInfo.descriptorPool = descriptorPool;
+        allocateInfo.descriptorSetCount = frames.size();
+        allocateInfo.pSetLayouts = descriptorSetLayouts.data();
+
+        for(auto& frame : frames) {
             // Create descriptors in order to put UBO in the shader
-            auto allocateDescriptorSetsRes = device.allocateDescriptorSets(&allocateInfo, &bundle.frames[i].descriptorSet);
+            auto allocateDescriptorSetsRes = device.allocateDescriptorSets(&allocateInfo, &frame.descriptorSet);
             GASSERT_MSG(allocateDescriptorSetsRes == vk::Result::eSuccess, "Vulkan could allocate descriptor sets");
 
             vk::DescriptorBufferInfo bufferInfo {};
-            bufferInfo.buffer = bundle.frames[i].uniformBuffer.buffer;
+            bufferInfo.buffer = frame.uniformBuffer.buffer;
             bufferInfo.offset = 0;
             bufferInfo.range = sizeof(vkUtils::UniformBufferObject);
 
             vk::WriteDescriptorSet descriptorWrite {};
-            descriptorWrite.dstSet = bundle.frames[i].descriptorSet;
+            descriptorWrite.dstSet = frame.descriptorSet;
             descriptorWrite.dstBinding = 0;
             descriptorWrite.dstArrayElement = 0;
             descriptorWrite.descriptorCount = 1;
@@ -216,11 +230,6 @@ namespace engine::render::vulkan::vkInit {
             descriptorWrite.pBufferInfo = &bufferInfo;
             device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
         }
-        bundle.format = format.format;
-        bundle.extent = extent;
-
-        LOG(LogLevel::Trace) << "Vulkan swapchain creation";
-        return bundle;
     }
 }
 

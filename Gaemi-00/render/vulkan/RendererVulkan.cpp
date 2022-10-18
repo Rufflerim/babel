@@ -64,6 +64,9 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     pipeline = out.pipeline;
 
     makeFramebuffers();
+    vkInit::createFrameDescriptors(swapchainFrames, device, descriptorSetLayout, descriptorPool);
+
+
     commandPool = vkInit::makeCommandPool(device, physicalDevice, surface);
     vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
     mainCommandBuffer = vkInit::makeCommandBuffer(commandBufferInput);
@@ -269,14 +272,18 @@ void engine::render::vulkan::RendererVulkan::closeSwapchain() {
         device.freeMemory(frame.uniformBuffer.bufferMemory);
     }
     device.destroyDescriptorPool(descriptorPool);
+    device.destroyDescriptorSetLayout(descriptorSetLayout);
     device.destroySwapchainKHR(swapchain);
 }
 
 void engine::render::vulkan::RendererVulkan::recreateSwapchain() {
     auto waitRes = device.waitIdle();
     closeSwapchain();
+    descriptorPool = createDescriptorPool();
+    descriptorSetLayout = vkInit::createDescriptorSetLayout(device);
     makeSwapchain();
     makeFramebuffers();
+    vkInit::createFrameDescriptors(swapchainFrames, device, descriptorSetLayout, descriptorPool);
     makeSyncObjects();
     vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
     vkInit::makeFrameCommandBuffers(commandBufferInput);
