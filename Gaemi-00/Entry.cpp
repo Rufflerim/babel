@@ -9,7 +9,7 @@ GAPI i32 engine::Entry::start(engine::IGame* game, engine::ILocator& locator)
     Log::restart();
 
     // Engine
-    u32 errorCode { 0 };
+    i32 errorCode { 0 };
     auto engine { std::make_unique<Engine>()};
     engine->init(game, locator);
     errorCode = static_cast<i32>(engine->run());

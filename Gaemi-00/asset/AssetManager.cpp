@@ -7,8 +7,6 @@
 #include <SDL_image.h>
 #include "Files.h"
 
-using engine::render::SDLTextureDestroyer;
-
 bool engine::asset::AssetManager::init(engine::render::IRenderer& renderer) {
     rendererRef = &renderer;
     LOG(LogLevel::Trace) << "Asset Manager initialized";
@@ -40,10 +38,7 @@ bool engine::asset::AssetManager::loadTexture(const str& name) {
     }
 
     // Create a texture from the surface and store it as a shared pointer
-#ifndef GPLATFORM_WEB
-    SDL_Texture* t = SDL_CreateTextureFromSurface(
-            reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(), surf);
-#else
+#ifdef GPLATFORM_WEB
     SDL_Texture* t = SDL_CreateTextureFromSurface(
             reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(), surf);
     /*
@@ -51,7 +46,6 @@ bool engine::asset::AssetManager::loadTexture(const str& name) {
             reinterpret_cast<engine::render::sdl::RendererSDL*>(rendererRef)->getSdlRenderer(),
             static_cast<const unsigned char*>(surf->pixels), surf->w, surf->h, 4);
     */
-#endif
 
     if (t == nullptr) {
         LOG(LogLevel::Error) << "Could not create SDL texture: " << path << ". SDL Error:" << SDL_GetError();
@@ -61,7 +55,7 @@ bool engine::asset::AssetManager::loadTexture(const str& name) {
     // Push texture into asset manager
     textures[name] = std::make_shared<render::Texture>(
             name, surf->w, surf->h,
-            std::unique_ptr<SDL_Texture, SDLTextureDestroyer>(t)
+            std::unique_ptr<SDL_Texture, engine::render::SDLTextureDestroyer>(t)
     );
 
     // Close loading
@@ -69,5 +63,13 @@ bool engine::asset::AssetManager::loadTexture(const str& name) {
     if (result) {
         LOG(LogLevel::Trace) << "Texture " << path << " loaded";
     }
+#else
+    // Push texture into asset manager
+    textures[name] = std::make_shared<render::Texture>(
+            name, surf->w, surf->h,
+            surf
+    );
+    LOG(LogLevel::Trace) << "Texture " << path << " loaded";
+#endif
     return result;
 }

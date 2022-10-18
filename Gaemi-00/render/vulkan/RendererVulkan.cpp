@@ -262,7 +262,8 @@ void engine::render::vulkan::RendererVulkan::makeSwapchain() {
 }
 
 void engine::render::vulkan::RendererVulkan::closeSwapchain() {
-    for (auto frame: swapchainFrames) {
+    device.destroySwapchainKHR(swapchain);
+    for (auto& frame: swapchainFrames) {
         device.destroyFramebuffer(frame.framebuffer);
         device.destroyImageView(frame.imageView);
         device.destroySemaphore(frame.renderFinished);
@@ -273,7 +274,6 @@ void engine::render::vulkan::RendererVulkan::closeSwapchain() {
     }
     device.destroyDescriptorPool(descriptorPool);
     device.destroyDescriptorSetLayout(descriptorSetLayout);
-    device.destroySwapchainKHR(swapchain);
 }
 
 void engine::render::vulkan::RendererVulkan::recreateSwapchain() {

@@ -80,7 +80,8 @@ void RendererSDL::drawSprite(Texture* texture, const RectangleInt& srcRect, cons
     SDL_RenderCopy(renderer.get(), texture->sdlTexture.get(),
                    srcFinalRect, dstFinalRect);
 #else
-    SDL_RenderCopyEx(renderer.get(), texture->sdlTexture.get(),
+    /*SDL_RenderCopyEx(renderer.get(), texture->sdlTexture.get(),
                      srcFinalRect, dstFinalRect, angle, &center, sdlFlip);
+                     */
 #endif
 }

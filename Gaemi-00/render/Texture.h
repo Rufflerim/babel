@@ -11,6 +11,7 @@
 
 namespace engine { namespace render {
 
+#ifdef GPLATFORM_WEB
     struct SDLTextureDestroyer {
         void operator()(SDL_Texture* texture) const {
             SDL_DestroyTexture(texture);
@@ -25,6 +26,17 @@ namespace engine { namespace render {
         i32 height;
         std::unique_ptr<SDL_Texture, SDLTextureDestroyer> sdlTexture;
     };
+#else
+    struct Texture {
+        Texture(str name, i32 width, i32 height, SDL_Surface* surface);
+        ~Texture();
+
+        str name;
+        i32 width;
+        i32 height;
+        SDL_Surface* bitmap;
+    };
+#endif
 } }
 
 
