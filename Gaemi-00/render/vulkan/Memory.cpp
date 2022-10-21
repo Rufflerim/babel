@@ -72,4 +72,36 @@ namespace engine::render::vulkan::vkUtils {
         queue.waitIdle();
     }
 
+    AllocatedImage createImage(vk::Device device, vk::PhysicalDevice physicalDevice, u32 width, u32 height, vk::Format format, vk::ImageTiling tiling,
+                               vk::ImageUsageFlags usageFlags, vk::MemoryPropertyFlags memoryProperties) {
+        vk::ImageCreateInfo imageInfo {};
+        imageInfo.flags = vk::ImageCreateFlags();
+        imageInfo.imageType = vk::ImageType::e2D;
+        imageInfo.extent.width = width;
+        imageInfo.extent.height = height;
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = 1;
+        imageInfo.arrayLayers = 1;
+        imageInfo.format = format;
+        imageInfo.tiling = tiling;
+        imageInfo.initialLayout = vk::ImageLayout::eUndefined;
+        imageInfo.usage = usageFlags;
+        imageInfo.sharingMode = vk::SharingMode::eExclusive;
+        imageInfo.samples = vk::SampleCountFlagBits::e1;
+
+        AllocatedImage allocatedImage;
+        allocatedImage.image = device.createImage(imageInfo);
+
+        vk::MemoryRequirements memoryRequirements;
+        device.getImageMemoryRequirements(allocatedImage.image, &memoryRequirements);
+        vk::MemoryAllocateInfo allocateInfo {};
+        allocateInfo.allocationSize = memoryRequirements.size;
+        allocateInfo.memoryTypeIndex = findMemoryTypeIndex(physicalDevice, memoryRequirements.memoryTypeBits,
+                                                           memoryProperties);
+        allocatedImage.memory = device.allocateMemory(allocateInfo);
+
+        device.bindImageMemory(allocatedImage.image, allocatedImage.memory, 0);
+        return allocatedImage;
+    }
+
 }

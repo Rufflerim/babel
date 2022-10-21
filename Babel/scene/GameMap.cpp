@@ -59,8 +59,6 @@ void scene::GameMap::onInit() {
     controllerSignature.set(coordinator.getComponentType<Move2D>());
     coordinator.setSystemSignature<ControllerSystem>(controllerSignature);
 
-
-    /*
     std::default_random_engine generator;
     std::uniform_real_distribution<float> randPositionX(50.0f, 600.0f);
     std::uniform_real_distribution<float> randPositionY(50.0f, 600.0f);
@@ -86,7 +84,6 @@ void scene::GameMap::onInit() {
                                           engine::render::Flip::None });
         entities.push_back(furior);
     }
-     */
 }
 
 void scene::GameMap::onClose() {
@@ -102,18 +99,14 @@ void scene::GameMap::inactivate() {
 }
 
 void scene::GameMap::update(const GameTime& time, const InputState& inputState) {
-    /*
     controllerSystem->update(coordinator, inputState);
     moveSystem->update(coordinator, time);
     animationSystem->update(coordinator, time);
-     */
 }
 
 void scene::GameMap::draw(engine::render::IRenderer& renderer) {
-    /*
-    tileMap.draw(renderer);
+    //tileMap.draw(renderer);
     renderingSystem->draw(coordinator, renderer);
-     */
 }
 
 

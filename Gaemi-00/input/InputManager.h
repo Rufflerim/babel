@@ -54,7 +54,7 @@ namespace engine { namespace input {
     private:
         ILocator* locator{nullptr};
         u32 windowWidth { 1280 };
-        u32 windowHeight { 720 };
+        u32 windowHeight { 800 };
         InputState inputState {};
         bool isCursorDisplayed { false };
 

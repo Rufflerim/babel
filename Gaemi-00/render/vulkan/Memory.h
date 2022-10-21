@@ -23,6 +23,11 @@ namespace engine::render::vulkan::vkUtils {
         vk::MemoryPropertyFlags memoryProperties;
     };
 
+    struct AllocatedImage {
+        vk::Image image;
+        vk::DeviceMemory memory;
+    };
+
     u32 findMemoryTypeIndex(vk::PhysicalDevice physicalDevice, u32 supportedMemoryIndices,
                             vk::MemoryPropertyFlags requestedProperties);
 
@@ -32,6 +37,9 @@ namespace engine::render::vulkan::vkUtils {
 
     void copyBuffer(Buffer& srcBuffer, Buffer& dstBuffer, vk::DeviceSize bufferSize,
                     vk::Queue queue, vk::CommandBuffer commandBuffer);
+
+    AllocatedImage createImage(vk::Device device, vk::PhysicalDevice physicalDevice, u32 width, u32 height, vk::Format format, vk::ImageTiling tiling,
+                               vk::ImageUsageFlags usageFlags, vk::MemoryPropertyFlags memoryProperties);
 }
 
 #endif //RENDER_VULKAN_MEMORY_H

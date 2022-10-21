@@ -114,5 +114,5 @@ enum class ErrorCode {
 };
 
 constexpr i32 WINDOW_WIDTH = 1280;
-constexpr i32 WINDOW_HEIGHT = 720;
+constexpr i32 WINDOW_HEIGHT = 800;
 

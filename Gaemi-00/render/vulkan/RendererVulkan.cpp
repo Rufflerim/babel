@@ -84,15 +84,24 @@ void RendererVulkan::clearScreen() {
 }
 
 void RendererVulkan::beginDraw() {
-    render(testScene);
+    testScene.clear();
 }
 
 void RendererVulkan::drawRectangle(const gmath::Rectangle& rectangle, const gmath::Color& color) {
     //LOG(LogLevel::Trace) << "Draw rectangle request";
 }
 
-void RendererVulkan::endDraw() {
+void
+RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
+                           f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) {
 
+    testScene.squarePositions.emplace_back(dstRect.origin.x, dstRect.origin.y, -1.0f);
+    testScene.squareScales.emplace_back(dstRect.size.x / 2.0f, dstRect.size.y / 2.0f, 1.0f / 2.0f);
+    //LOG(LogLevel::Trace) << "Draw sprite request";
+}
+
+void RendererVulkan::endDraw() {
+    render(testScene);
 }
 
 void RendererVulkan::close() {
@@ -110,12 +119,6 @@ void RendererVulkan::close() {
     instance.destroySurfaceKHR(surface);
     instance.destroyDebugUtilsMessengerEXT(debugMessenger, nullptr, dynamicInstanceLoader);
     instance.destroy();
-}
-
-void
-RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect, const gmath::RectangleInt& dstRect,
-                           f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) {
-    //LOG(LogLevel::Trace) << "Draw sprite request";
 }
 
 void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& testScene) {
@@ -151,8 +154,10 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
 
     firstVertex = geometryMeshes->getFirstVertex(vkMesh::GeometryType::Square);
     vertexCount = geometryMeshes->getVertexCount(vkMesh::GeometryType::Square);
+    u32 i = 0;
     for (glm::vec3 position : testScene.squarePositions) {
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+        glm::vec3 scale = testScene.squareScales.at(i);
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), scale);
         vkUtils::ObjectData objectData {};
         objectData.model = model;
         commandBuffer.pushConstants(
@@ -160,6 +165,7 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
                 0, sizeof(objectData), &objectData
         );
         commandBuffer.draw(vertexCount, 1, firstVertex, 0);
+        ++i;
     }
 
     firstVertex = geometryMeshes->getFirstVertex(vkMesh::GeometryType::Star);
