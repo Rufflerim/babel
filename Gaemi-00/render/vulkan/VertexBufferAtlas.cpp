@@ -18,7 +18,7 @@ void VertexBufferAtlas::consume(GeometryType geometryType, vector<float>& vertex
     for (float attribute : vertexData) {
         lump.push_back(attribute);
     }
-    i32 vertexCount = vertexData.size() / 5; // 5 numbers per vertex : X, Y, R, G, B
+    i32 vertexCount = vertexData.size() / 7; // 5 numbers per vertex : X, Y, R, G, B, U, V
     offsets.insert(std::make_pair(geometryType, offset));
     sizes.insert(std::make_pair(geometryType, vertexCount));
     offset += vertexCount;

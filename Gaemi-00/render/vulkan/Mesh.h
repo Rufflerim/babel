@@ -21,7 +21,7 @@ namespace engine::render::vulkan::vkMesh {
 
     vk::VertexInputBindingDescription getPosColorBindingDescription() ;
 
-    array<vk::VertexInputAttributeDescription, 2> getPosColorAttributeDescriptions();
+    array<vk::VertexInputAttributeDescription, 3> getPosColorUVAttributeDescriptions();
 
     class TriangleMesh {
     public:

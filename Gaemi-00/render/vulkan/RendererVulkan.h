@@ -11,7 +11,6 @@
 #include "../Texture.h"
 #include "Frame.h"
 #include "TestScene.h"
-#include "Mesh.h"
 #include "VertexBufferAtlas.h"
 
 namespace engine::render::vulkan {
@@ -20,6 +19,8 @@ namespace engine::render::vulkan {
         RendererVulkan() = default;
 
         bool init(engine::ILocator* locator, IWindow& window) override;
+
+        void load() override;
 
         void clearScreen() override;
 
@@ -41,6 +42,7 @@ namespace engine::render::vulkan {
         i32 height { -1 };
 
         TestScene testScene {};
+        TextureGPU testTexture {};
 
         vk::Instance instance;
         vk::DebugUtilsMessengerEXT debugMessenger { nullptr };
@@ -78,6 +80,7 @@ namespace engine::render::vulkan {
         vk::DescriptorPool createDescriptorPool();
 
         void makeAssets();
+        void makeTextures();
         void prepareScene(vk::CommandBuffer commandBuffer, u32 imageIndex);
 
         void recordDrawCommands(vk::CommandBuffer commandBuffer, u32 imageIndex, TestScene& scene);

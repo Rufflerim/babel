@@ -32,6 +32,10 @@ void RendererSDL::drawRectangle(const Rectangle& rectangle, const Color& color) 
     SDL_RenderFillRect(renderer.get(), &fillRect);
 }
 
+void RendererSDL::load() {
+
+}
+
 void RendererSDL::clearScreen() {
     SDL_SetRenderDrawColor(renderer.get(), clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     SDL_RenderClear(renderer.get());

@@ -99,12 +99,12 @@ namespace engine::render::vulkan::vkInit {
 
         // Vertex input : data sent in
         vk::VertexInputBindingDescription bindingDescription = vkMesh::getPosColorBindingDescription();
-        array<vk::VertexInputAttributeDescription, 2> attributeDescriptions = vkMesh::getPosColorAttributeDescriptions();
+        array<vk::VertexInputAttributeDescription, 3> attributeDescriptions = vkMesh::getPosColorUVAttributeDescriptions();
         vk::PipelineVertexInputStateCreateInfo vertexInputInfo {};
         vertexInputInfo.flags = vk::PipelineVertexInputStateCreateFlags();
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-        vertexInputInfo.vertexAttributeDescriptionCount = 2;
+        vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
         pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
 

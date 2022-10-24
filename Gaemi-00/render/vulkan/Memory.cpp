@@ -68,7 +68,41 @@ namespace engine::render::vulkan::vkUtils {
         vk::SubmitInfo submitInfo {};
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &commandBuffer;
-        auto subbitRes = queue.submit(1, &submitInfo, nullptr);
+        auto submitRes = queue.submit(1, &submitInfo, nullptr);
+        queue.waitIdle();
+    }
+
+    void copyBufferToImage(Buffer& srcBuffer, vk::Image image, u32 width, u32 height,
+                           vk::Queue queue, vk::CommandBuffer commandBuffer) {
+
+        // Reset and begin command buffer, for one time
+        commandBuffer.reset();
+        vk::CommandBufferBeginInfo beginInfo {};
+        beginInfo.flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
+        commandBuffer.begin(beginInfo);
+
+        // Copy and end command
+        vk::BufferImageCopy copyRegion;
+        copyRegion.bufferOffset = 0;
+        copyRegion.bufferRowLength = 0;
+        copyRegion.bufferImageHeight = 0;
+
+        copyRegion.imageSubresource.aspectMask = vk::ImageAspectFlagBits::eColor;
+        copyRegion.imageSubresource.mipLevel = 0;
+        copyRegion.imageSubresource.baseArrayLayer = 0;
+        copyRegion.imageSubresource.layerCount = 1;
+
+        copyRegion.imageOffset = vk::Offset3D{ 0, 0, 0};
+        copyRegion.imageExtent = vk::Extent3D { width, height, 1 };
+
+        commandBuffer.copyBufferToImage(srcBuffer.buffer, image, vk::ImageLayout::eTransferDstOptimal, 1, &copyRegion);
+        commandBuffer.end();
+
+        // Submit command
+        vk::SubmitInfo submitInfo {};
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+        auto submitRes = queue.submit(1, &submitInfo, nullptr);
         queue.waitIdle();
     }
 
@@ -104,4 +138,21 @@ namespace engine::render::vulkan::vkUtils {
         return allocatedImage;
     }
 
+    vk::ImageView createImageView(vk::Device device, vk::Image image, vk::Format format) {
+        vk::ImageViewCreateInfo createInfo {};
+        createInfo.image = image;
+        createInfo.viewType = vk::ImageViewType::e2D;
+        createInfo.components.r = vk::ComponentSwizzle::eR;
+        createInfo.components.g = vk::ComponentSwizzle::eG;
+        createInfo.components.b = vk::ComponentSwizzle::eB;
+        createInfo.components.a = vk::ComponentSwizzle::eA;
+        createInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+        createInfo.subresourceRange.baseMipLevel = 0;
+        createInfo.subresourceRange.levelCount = 1;
+        createInfo.subresourceRange.baseArrayLayer = 0;
+        createInfo.subresourceRange.layerCount = 1;
+        createInfo.format = format;
+
+        return device.createImageView(createInfo);
+    }
 }

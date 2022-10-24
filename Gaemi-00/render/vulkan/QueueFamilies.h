@@ -7,6 +7,7 @@
 
 #include <optional>
 using std::optional;
+using std::vector;
 
 namespace engine::render::vulkan::vkUtils {
 

@@ -12,14 +12,14 @@ namespace engine::render::vulkan::vkMesh {
     vk::VertexInputBindingDescription getPosColorBindingDescription() {
         vk::VertexInputBindingDescription bindingDescription;
         bindingDescription.binding = 0;
-        bindingDescription.stride = 5 * sizeof(float);
+        bindingDescription.stride = 7 * sizeof(float);
         bindingDescription.inputRate = vk::VertexInputRate::eVertex;
 
         return bindingDescription;
     }
 
-    array<vk::VertexInputAttributeDescription, 2> getPosColorAttributeDescriptions() {
-        array<vk::VertexInputAttributeDescription, 2> attributes;
+    array<vk::VertexInputAttributeDescription, 3> getPosColorUVAttributeDescriptions() {
+        array<vk::VertexInputAttributeDescription, 3> attributes;
         // Position
         attributes[0].binding = 0;
         attributes[0].location = 0;
@@ -30,6 +30,11 @@ namespace engine::render::vulkan::vkMesh {
         attributes[1].location = 1;
         attributes[1].format = vk::Format::eR32G32B32Sfloat; // R, G, B
         attributes[1].offset = 2 * sizeof(float);
+        // Texture coords
+        attributes[2].binding = 0;
+        attributes[2].location = 2;
+        attributes[2].format = vk::Format::eR32G32Sfloat; // U, V
+        attributes[2].offset = 5 * sizeof(float);
 
         return attributes;
     }
@@ -37,10 +42,10 @@ namespace engine::render::vulkan::vkMesh {
     TriangleMesh::TriangleMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice)
             : device { deviceP } {
         vector<float> vertices {{
-            // Position         // Color
-            0.0f, -0.05f, 0.0f, 1.0f, 0.0f,
-            0.05f, 0.05f, 0.0f, 1.0f, 0.0f,
-            -0.05f, 0.05f, 0.0f, 1.0f, 0.0f
+            // Position     // Color            // UV
+            0.0f, -0.5f,    0.0f, 1.0f, 0.0f,   0.5f, 0.0f,
+            0.5f, 0.5f,     0.0f, 1.0f, 0.0f,   1.0f, 1.0f,
+            -0.5f, 0.5f,    0.0f, 1.0f, 0.0f,   0.0f, 1.0f
         }};
 
         vkUtils::BufferInput input;
@@ -63,12 +68,12 @@ namespace engine::render::vulkan::vkMesh {
 
     SquareMesh::SquareMesh(vk::Device deviceP, vk::PhysicalDevice physicalDevice) : device {deviceP} {
         std::vector<float> vertices = { {
-                                                -0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
-                                                -0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
-                                                0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
-                                                0.05f, -0.05f, 1.0f, 0.0f, 0.0f,
-                                                0.05f,  0.05f, 1.0f, 0.0f, 0.0f,
-                                                -0.05f,  0.05f, 1.0f, 0.0f, 0.0f
+                                                -0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
+                                                -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+                                                0.5f, -0.5f,    1.0f, 0.0f, 0.0f,   1.0f, 0.0f,
+                                                0.5f, -0.5f,    1.0f, 0.0f, 0.0f,   1.0f, 0.0f,
+                                                0.5f,  0.5f,    1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+                                                -0.5f, 0.5f,    1.0f, 0.0f, 0.0f,   0.0f, 1.0f
                                         } };
 
         vkUtils::BufferInput input;

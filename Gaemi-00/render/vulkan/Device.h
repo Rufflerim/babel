@@ -59,12 +59,22 @@ namespace engine::render::vulkan::vkInit {
     }
 
     /**
-     * Checks if a physical device supports requested extensions and is of a specific type (discrete, integrated, etc.). Requested extensions must be defined in this function.
+     * Checks if a physical device supports requested features and extensions and is of a specific type (discrete, integrated, etc.).
+     * Requested features and extensions must be defined in this function.
      * @param physicalDevice The physical device we want to check
      * @param type The type of physical physical device we want
      * @return true when extensions are supported and physical device is of the requested type
      */
     bool isSuitable(const vk::PhysicalDevice physicalDevice, vk::PhysicalDeviceType type) {
+        // Check features
+        auto features = physicalDevice.getFeatures();
+        if (!features.samplerAnisotropy) {
+            LOG(LogLevel::Trace) << "Device " << physicalDevice.getProperties().deviceName
+                                 << " does not support Sempler Anisotropy.";
+            return false;
+        }
+
+        // Check extensions
         const vector<const char*> requestedExtensions {
                 VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
@@ -139,6 +149,7 @@ namespace engine::render::vulkan::vkInit {
         };
 
         vk::PhysicalDeviceFeatures deviceFeatures {};
+        deviceFeatures.samplerAnisotropy = true;
 
         vector<const char*> enabledLayers;
         if (debugMode) {

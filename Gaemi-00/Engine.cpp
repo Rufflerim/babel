@@ -63,6 +63,7 @@ void engine::Engine::emscriptenPostInit() {
         bool rendererIgnited = renderer.init(state.locator, window);
         bool assetsIgnited = assetManager.init(renderer);
         state.game->load();
+        renderer.load();
     }
 }
 #endif
@@ -70,6 +71,7 @@ void engine::Engine::emscriptenPostInit() {
 ErrorCode engine::Engine::run() {
 #ifndef GPLATFORM_WEB
     state.game->load();
+    renderer.load();
 #endif
     loop();
     state.game->close();

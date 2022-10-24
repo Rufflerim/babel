@@ -12,6 +12,9 @@
 #include "FrameBuffer.h"
 #include "Commands.h"
 #include "Sync.h"
+#include "Mesh.h"
+#include "TextureGPU.h"
+#include "../../../Externals/SDL2-2.0.18/include/SDL_vulkan.h"
 
 using engine::render::vulkan::RendererVulkan;
 using gmath::Color;
@@ -27,7 +30,7 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
 #else
     bool debugMode { false };
 #endif
-    WindowVulkan& windowVulkan = dynamic_cast<WindowVulkan&>(window);
+    auto& windowVulkan = dynamic_cast<WindowVulkan&>(window);
     instance = vkInit::makeInstance(debugMode, "Babel", windowVulkan);
     dynamicInstanceLoader = { instance, vkGetInstanceProcAddr };
     if (debugMode) debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
@@ -40,9 +43,15 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     GASSERT_MSG(nullptr != physicalDevice, "No suitable Vulkan physical device found. Exiting.");
     device = vkInit::createLogicalDevice(physicalDevice, surface, debugMode);
     GASSERT_MSG(nullptr != device, "Vulkan logical device could not be created. Exiting.");
+
     array<vk::Queue, 2> queues = vkInit::getQueues(physicalDevice, device, surface);
     graphicsQueue = queues.at(0);
     presentQueue = queues.at(1);
+
+    return true;
+}
+
+void RendererVulkan::load() {
 
     descriptorPool = createDescriptorPool();
     descriptorSetLayout = vkInit::createDescriptorSetLayout(device);
@@ -63,20 +72,20 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     renderPass = out.renderPass;
     pipeline = out.pipeline;
 
-    makeFramebuffers();
-    vkInit::createFrameDescriptors(swapchainFrames, device, descriptorSetLayout, descriptorPool);
-
-
     commandPool = vkInit::makeCommandPool(device, physicalDevice, surface);
     vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
     mainCommandBuffer = vkInit::makeCommandBuffer(commandBufferInput);
     vkInit::makeFrameCommandBuffers(commandBufferInput);
-    makeSyncObjects();
 
+    makeTextures();
+
+    makeFramebuffers();
+    vkInit::createFrameDescriptors(swapchainFrames, device, descriptorSetLayout, descriptorPool, testTexture);
+
+    makeSyncObjects();
     makeAssets();
 
     LOG(LogLevel::Trace) << "Renderer:Vulkan initialized";
-    return true;
 }
 
 void RendererVulkan::clearScreen() {
@@ -96,8 +105,8 @@ RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect,
                            f64 angle, const gmath::Vec2& origin, engine::render::Flip flip) {
 
     testScene.squarePositions.emplace_back(dstRect.origin.x, dstRect.origin.y, -1.0f);
+    // Size is divided by two because projection matrix near and far planes make scale double
     testScene.squareScales.emplace_back(dstRect.size.x / 2.0f, dstRect.size.y / 2.0f, 1.0f / 2.0f);
-    //LOG(LogLevel::Trace) << "Draw sprite request";
 }
 
 void RendererVulkan::endDraw() {
@@ -106,6 +115,11 @@ void RendererVulkan::endDraw() {
 
 void RendererVulkan::close() {
     auto waitRes = device.waitIdle();
+
+    device.destroySampler(testTexture.sampler);
+    device.destroyImageView(testTexture.imageView);
+    device.destroyImage(testTexture.textureImage.image);
+    device.freeMemory(testTexture.textureImage.memory);
 
     device.destroyCommandPool(commandPool);
     closeSwapchain();
@@ -242,15 +256,17 @@ void RendererVulkan::render(TestScene& testScene) {
 
 vk::DescriptorPool RendererVulkan::createDescriptorPool() {
     // Create descriptor pool
-    vk::DescriptorPoolSize poolSize {};
-    poolSize.type = vk::DescriptorType::eUniformBuffer;
-    poolSize.descriptorCount = 10;
+    array<vk::DescriptorPoolSize, 2> poolSizes {};
+    poolSizes[0].type = vk::DescriptorType::eUniformBuffer;
+    poolSizes[0].descriptorCount = 10;
+    poolSizes[1].type = vk::DescriptorType::eCombinedImageSampler;
+    poolSizes[1].descriptorCount = 10;
 
     vk::DescriptorPoolCreateInfo descriptorPoolInfo {};
     descriptorPoolInfo.flags = vk::DescriptorPoolCreateFlags();
     descriptorPoolInfo.maxSets = 10;
-    descriptorPoolInfo.poolSizeCount = 1;
-    descriptorPoolInfo.pPoolSizes = &poolSize;
+    descriptorPoolInfo.poolSizeCount = poolSizes.size();
+    descriptorPoolInfo.pPoolSizes = poolSizes.data();
 
     auto descriptorPoolRes = device.createDescriptorPool(descriptorPoolInfo);
     GASSERT_MSG(descriptorPoolRes.result == vk::Result::eSuccess, "Vulkan could not create descriptor pool")
@@ -289,7 +305,7 @@ void engine::render::vulkan::RendererVulkan::recreateSwapchain() {
     descriptorSetLayout = vkInit::createDescriptorSetLayout(device);
     makeSwapchain();
     makeFramebuffers();
-    vkInit::createFrameDescriptors(swapchainFrames, device, descriptorSetLayout, descriptorPool);
+    vkInit::createFrameDescriptors(swapchainFrames, device, descriptorSetLayout, descriptorPool, testTexture);
     makeSyncObjects();
     vkInit::CommandBufferInput commandBufferInput { device, commandPool, swapchainFrames };
     vkInit::makeFrameCommandBuffers(commandBufferInput);
@@ -314,50 +330,50 @@ void engine::render::vulkan::RendererVulkan::makeSyncObjects() {
 void engine::render::vulkan::RendererVulkan::makeAssets() {
     geometryMeshes = new vkMesh::VertexBufferAtlas();
     vector<float> vertices {{
-        // Position         // Color
-        0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -1.0f, 1.0f, 0.0f, 1.0f, 0.0f
+        // Position         // Color    // UV
+        0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.5f, 0.0f,
+        1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
     }};
     geometryMeshes->consume(vkMesh::GeometryType::Triangle, vertices);
 
     vertices.clear();
     vertices = { {
-        -1.0f,  1.0f, 1.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
-        1.0f,  1.0f, 1.0f, 0.0f, 0.0f,
-        -1.0f,  1.0f, 1.0f, 0.0f, 0.0f
+        -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f
     } };
     geometryMeshes->consume(vkMesh::GeometryType::Square, vertices);
 
     vertices.clear();
     vertices = { {
-         -0.05f, -0.025f, 0.0f, 0.0f, 1.0f,
-         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         0.0f,  -0.05f, 0.0f, 0.0f, 1.0f,
-         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         0.05f, -0.025f, 0.0f, 0.0f, 1.0f,
-         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         0.02f, -0.025f, 0.0f, 0.0f, 1.0f,
-         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         0.04f,   0.05f, 0.0f, 0.0f, 1.0f,
-         0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
-         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
-         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f,
-         0.0f,   0.01f, 0.0f, 0.0f, 1.0f,
-         -0.04f,   0.05f, 0.0f, 0.0f, 1.0f
+         -0.05f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f,  -0.05f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.05f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.02f, -0.025f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.04f,   0.05f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f,   0.01f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f,   0.01f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.03f,    0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f,   0.01f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         -0.04f,   0.05f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f
     } };
     geometryMeshes->consume(vkMesh::GeometryType::Star, vertices);
 
@@ -368,6 +384,16 @@ void engine::render::vulkan::RendererVulkan::makeAssets() {
     finalizationInput.commandBuffer = mainCommandBuffer;
     geometryMeshes->finalize(finalizationInput);
 }
+
+void engine::render::vulkan::RendererVulkan::makeTextures() {
+    auto texture = locator->assets().getTexture("mathieu");
+    testTexture.textureImage = vkUtils::createTextureImage(device, physicalDevice, graphicsQueue, mainCommandBuffer,
+                                                           texture->bitmap, texture->width, texture->height);
+    testTexture.imageView = vkUtils::createImageView(device, testTexture.textureImage.image, vk::Format::eR8G8B8A8Srgb);
+    testTexture.sampler = vkUtils::createTextureSampler(device);
+
+}
+
 
 void engine::render::vulkan::RendererVulkan::prepareScene(vk::CommandBuffer commandBuffer, u32 imageIndex) {
     vk::Buffer vertexBuffers[] { geometryMeshes->vertexBuffer.buffer };

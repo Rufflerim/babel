@@ -47,16 +47,28 @@ namespace vkUtils {
 namespace vkInit {
 
     vk::DescriptorSetLayout createDescriptorSetLayout(vk::Device device) {
+        // UBO
         vk::DescriptorSetLayoutBinding uboLayoutBinding {};
         uboLayoutBinding.binding = 0;
         uboLayoutBinding.descriptorCount = 1;
         uboLayoutBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
         uboLayoutBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
 
+        // Sampler
+        vk::DescriptorSetLayoutBinding samplerLayoutBinding {};
+        samplerLayoutBinding.binding = 1;
+        samplerLayoutBinding.descriptorCount = 1;
+        samplerLayoutBinding.descriptorType = vk::DescriptorType::eCombinedImageSampler;
+        samplerLayoutBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
+        samplerLayoutBinding.pImmutableSamplers = nullptr;
+
+        // Bindings
+        array<vk::DescriptorSetLayoutBinding, 2> binding { uboLayoutBinding, samplerLayoutBinding };
+
         vk::DescriptorSetLayoutCreateInfo uboLayoutInfo {};
         uboLayoutInfo.flags = vk::DescriptorSetLayoutCreateFlags();
-        uboLayoutInfo.bindingCount = 1;
-        uboLayoutInfo.pBindings = &uboLayoutBinding;
+        uboLayoutInfo.bindingCount = binding.size();
+        uboLayoutInfo.pBindings = binding.data();
 
         return device.createDescriptorSetLayout(uboLayoutInfo).value;
     }

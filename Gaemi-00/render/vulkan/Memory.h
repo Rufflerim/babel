@@ -40,6 +40,11 @@ namespace engine::render::vulkan::vkUtils {
 
     AllocatedImage createImage(vk::Device device, vk::PhysicalDevice physicalDevice, u32 width, u32 height, vk::Format format, vk::ImageTiling tiling,
                                vk::ImageUsageFlags usageFlags, vk::MemoryPropertyFlags memoryProperties);
+
+    void copyBufferToImage(Buffer& srcBuffer, vk::Image image, u32 width, u32 height,
+                           vk::Queue queue, vk::CommandBuffer commandBuffer);
+
+    vk::ImageView createImageView(vk::Device device, vk::Image image, vk::Format format);
 }
 
 #endif //RENDER_VULKAN_MEMORY_H

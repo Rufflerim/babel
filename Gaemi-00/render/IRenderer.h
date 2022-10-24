@@ -35,6 +35,9 @@ namespace engine {
         /// \return True if the renderer is correctly initiliazed
         virtual bool init(ILocator* locator, IWindow& window) = 0;
 
+        /// Load renderer data, for instance textures on GPU
+        virtual void load() = 0;
+
         /// Clear the screen before drawing
         virtual void clearScreen() = 0;
 

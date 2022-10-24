@@ -24,6 +24,8 @@ namespace engine::render::sdl {
 
         bool init(engine::ILocator* locator, IWindow& window) override;
 
+        void load() override;
+
         void clearScreen() override;
 
         void beginDraw() override;

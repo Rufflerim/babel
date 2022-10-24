@@ -162,25 +162,8 @@ namespace engine::render::vulkan::vkInit {
         bundle.frames.resize(images.size());
 
         for(size_t i = 0; i < images.size(); ++i) {
-            // Create image views
-            vk::ImageViewCreateInfo createInfo {};
-            createInfo.image = images[i];
-            createInfo.viewType = vk::ImageViewType::e2D;
-            createInfo.components.r = vk::ComponentSwizzle::eR;
-            createInfo.components.g = vk::ComponentSwizzle::eG;
-            createInfo.components.b = vk::ComponentSwizzle::eB;
-            createInfo.components.a = vk::ComponentSwizzle::eA;
-            createInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
-            createInfo.subresourceRange.baseMipLevel = 0;
-            createInfo.subresourceRange.levelCount = 1;
-            createInfo.subresourceRange.baseArrayLayer = 0;
-            createInfo.subresourceRange.layerCount = 1;
-            createInfo.format = format.format;
             bundle.frames[i].image = images[i];
-
-            auto imageViewRes = device.createImageView(createInfo);
-            GASSERT_MSG(imageViewRes.result == vk::Result::eSuccess, "Vulkan could not create image view for frame " + std::to_string(i));
-            bundle.frames[i].imageView = imageViewRes.value;
+            bundle.frames[i].imageView = vkUtils::createImageView(device, images[i], format.format);
 
             // Create buffers for UBO
             vkUtils::BufferInput uboBufferInput {};
@@ -202,7 +185,8 @@ namespace engine::render::vulkan::vkInit {
 
 
     void createFrameDescriptors(vector<vkUtils::SwapchainFrame>& frames, vk::Device device,
-                                vk::DescriptorSetLayout descriptorSetLayout, vk::DescriptorPool descriptorPool) {
+                                vk::DescriptorSetLayout descriptorSetLayout, vk::DescriptorPool descriptorPool,
+                                const TextureGPU& texture) {
 
         // Allocate descriptor sets to the descriptor pool
         vector<vk::DescriptorSetLayout> descriptorSetLayouts { frames.size(), descriptorSetLayout };
@@ -221,14 +205,28 @@ namespace engine::render::vulkan::vkInit {
             bufferInfo.offset = 0;
             bufferInfo.range = sizeof(vkUtils::UniformBufferObject);
 
-            vk::WriteDescriptorSet descriptorWrite {};
-            descriptorWrite.dstSet = frame.descriptorSet;
-            descriptorWrite.dstBinding = 0;
-            descriptorWrite.dstArrayElement = 0;
-            descriptorWrite.descriptorCount = 1;
-            descriptorWrite.descriptorType = vk::DescriptorType::eUniformBuffer;
-            descriptorWrite.pBufferInfo = &bufferInfo;
-            device.updateDescriptorSets(1, &descriptorWrite, 0, nullptr);
+            vk::DescriptorImageInfo imageInfo {};
+            imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
+            imageInfo.imageView = texture.imageView;
+            imageInfo.sampler = texture.sampler;
+
+            array<vk::WriteDescriptorSet, 2> descriptorWrites {};
+            // UBO write
+            descriptorWrites[0].dstSet = frame.descriptorSet;
+            descriptorWrites[0].dstBinding = 0;
+            descriptorWrites[0].dstArrayElement = 0;
+            descriptorWrites[0].descriptorCount = 1;
+            descriptorWrites[0].descriptorType = vk::DescriptorType::eUniformBuffer;
+            descriptorWrites[0].pBufferInfo = &bufferInfo;
+            // Sampler write
+            descriptorWrites[1].dstSet = frame.descriptorSet;
+            descriptorWrites[1].dstBinding = 1;
+            descriptorWrites[1].dstArrayElement = 0;
+            descriptorWrites[1].descriptorCount = 1;
+            descriptorWrites[1].descriptorType = vk::DescriptorType::eCombinedImageSampler;
+            descriptorWrites[1].pImageInfo = &imageInfo;
+
+            device.updateDescriptorSets(descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
         }
     }
 }
