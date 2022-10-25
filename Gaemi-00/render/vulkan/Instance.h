@@ -13,7 +13,7 @@
 
 namespace engine::render::vulkan::vkInit {
 
-        bool supported(vector<const char*>& extensions, vector<const char*>& layers, bool debugMode) {
+        bool supported(vector<const char*>& extensions, vector<const char*>& layers) {
             auto extensionsRes = vk::enumerateInstanceExtensionProperties();
             GASSERT_MSG(extensionsRes.result == vk::Result::eSuccess, "Could not get vulkan extension properties");
             vector<vk::ExtensionProperties> supportedExtensions = extensionsRes.value;
@@ -24,15 +24,11 @@ namespace engine::render::vulkan::vkInit {
                 for (auto supportedExtension: supportedExtensions) {
                     if (strcmp(extension, supportedExtension.extensionName) == 0) {
                         found = true;
-                        if (debugMode) {
-                            LOG(LogLevel::Trace) << "    Extension " << extension << " is supported.";
-                        }
+                        LOG(LogLevel::Trace) << "    Extension " << extension << " is supported.";
                     }
                 }
                 if (!found) {
-                    if (debugMode) {
-                        LOG(LogLevel::Error) << "    Extension " << extension << " is not supported.";
-                    }
+                    LOG(LogLevel::Error) << "    Extension " << extension << " is not supported.";
                     return false;
                 }
             }
@@ -45,15 +41,11 @@ namespace engine::render::vulkan::vkInit {
                 for (auto supportedLayer: supportedLayers) {
                     if (strcmp(layer, supportedLayer.layerName) == 0) {
                         found = true;
-                        if (debugMode) {
-                            LOG(LogLevel::Trace) << "    Layer " << layer << " is supported.";
-                        }
+                        LOG(LogLevel::Trace) << "    Layer " << layer << " is supported.";
                     }
                 }
                 if (!found) {
-                    if (debugMode) {
-                        LOG(LogLevel::Error) << "    Layer " << layer << " is not supported.";
-                    }
+                    LOG(LogLevel::Error) << "    Layer " << layer << " is not supported.";
                     return false;
                 }
             }
@@ -61,7 +53,7 @@ namespace engine::render::vulkan::vkInit {
             return true;
         }
 
-        vk::Instance makeInstance(bool debug, const str& appName, WindowVulkan& window) {
+        vk::Instance makeInstance(const str& appName, WindowVulkan& window) {
             // Vulkan version we have
             u32 vkVersion { 0 };
             vkEnumerateInstanceVersion(&vkVersion);
@@ -90,9 +82,9 @@ namespace engine::render::vulkan::vkInit {
             std::vector<const char*> extensions = {
                     VK_EXT_DEBUG_REPORT_EXTENSION_NAME
             };
-            if (debug) {
-                extensions.push_back("VK_EXT_debug_utils");
-            }
+#ifdef GDEBUG
+            extensions.push_back("VK_EXT_debug_utils");
+#endif
             auto additionalExtensionCount { extensions.size() };
             extensions.resize(additionalExtensionCount + extensionCount);
             SDL_Vulkan_GetInstanceExtensions(window.get(), &extensionCount,
@@ -104,15 +96,15 @@ namespace engine::render::vulkan::vkInit {
 
             // Layers
             vector<const char*> layers;
-            if (debug) {
-                layers.push_back("VK_LAYER_KHRONOS_validation");
-            }
+#ifdef GDEBUG
+            layers.push_back("VK_LAYER_KHRONOS_validation");
+#endif
             LOG(LogLevel::Trace) << "Vulkan Layers:";
             for (auto name: layers) {
                 LOG(LogLevel::Trace) << "    " << name;
             }
 
-            if (!supported(extensions, layers, debug)) {
+            if (!supported(extensions, layers)) {
                 LOG(LogLevel::Fatal) << "Requested Vulkan extensions and layer not supported.";
                 return nullptr;
             }

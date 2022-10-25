@@ -25,15 +25,12 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
     width = windowBounds.size.x;
     height = windowBounds.size.y;
 
-#ifdef GDEBUG
-    bool debugMode { true };
-#else
-    bool debugMode { false };
-#endif
     auto& windowVulkan = dynamic_cast<WindowVulkan&>(window);
-    instance = vkInit::makeInstance(debugMode, "Babel", windowVulkan);
+    instance = vkInit::makeInstance("Babel", windowVulkan);
     dynamicInstanceLoader = { instance, vkGetInstanceProcAddr };
-    if (debugMode) debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
+#ifdef GDEBUG
+    debugMessenger = vkInit::makeDebugMessenger(instance, dynamicInstanceLoader);
+#endif
 
     VkSurfaceKHR tmpSurface;
     SDL_Vulkan_CreateSurface(windowVulkan.get(), instance, &tmpSurface);
@@ -41,7 +38,7 @@ bool RendererVulkan::init(engine::ILocator* locatorP, IWindow& window) {
 
     physicalDevice = vkInit::choosePhysicalDevice(instance);
     GASSERT_MSG(nullptr != physicalDevice, "No suitable Vulkan physical device found. Exiting.");
-    device = vkInit::createLogicalDevice(physicalDevice, surface, debugMode);
+    device = vkInit::createLogicalDevice(physicalDevice, surface);
     GASSERT_MSG(nullptr != device, "Vulkan logical device could not be created. Exiting.");
 
     array<vk::Queue, 2> queues = vkInit::getQueues(physicalDevice, device, surface);
@@ -106,7 +103,8 @@ RendererVulkan::drawSprite(Texture* texture, const gmath::RectangleInt& srcRect,
 
     testScene.squarePositions.emplace_back(dstRect.origin.x, dstRect.origin.y, -1.0f);
     // Size is divided by two because projection matrix near and far planes make scale double
-    testScene.squareScales.emplace_back(dstRect.size.x / 2.0f, dstRect.size.y / 2.0f, 1.0f / 2.0f);
+    float divider { 2.0f };
+    testScene.squareScales.emplace_back(dstRect.size.x / divider, dstRect.size.y / divider, 1.0f / divider);
 }
 
 void RendererVulkan::endDraw() {
@@ -199,7 +197,7 @@ void RendererVulkan::recordDrawCommands(vk::CommandBuffer commandBuffer, u32 ima
     auto commandBufferBeginEnd = commandBuffer.end();
 }
 
-void RendererVulkan::render(TestScene& testScene) {
+void RendererVulkan::render(TestScene& scene) {
     // Wait for the images to sent in queue
     auto waitForInFlightResult = device.waitForFences(1, &swapchainFrames[currentFrameNumber].inFlightFence, VK_TRUE, UINT64_MAX);
 
@@ -213,7 +211,7 @@ void RendererVulkan::render(TestScene& testScene) {
 
     vk::CommandBuffer commandBuffer = swapchainFrames[currentFrameNumber].commandBuffer;
     commandBuffer.reset();
-    recordDrawCommands(commandBuffer, imageIndex, testScene);
+    recordDrawCommands(commandBuffer, imageIndex, scene);
 
     vk::SubmitInfo submitInfo {};
     // We wait for the image to be available...

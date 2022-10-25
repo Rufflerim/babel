@@ -127,7 +127,7 @@ namespace engine::render::vulkan::vkInit {
      * @param debugMode True if we want debug info
      * @return Vulkan logical device
      */
-    vk::Device createLogicalDevice(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface, bool debugMode) {
+    vk::Device createLogicalDevice(vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface) {
         vkUtils::QueueFamilyIndices indices = vkUtils::findQueueFamilies(physicalDevice, surface);
         vector<u32> uniqueIndices;
         uniqueIndices.push_back(indices.graphicsFamily.value());
@@ -152,9 +152,9 @@ namespace engine::render::vulkan::vkInit {
         deviceFeatures.samplerAnisotropy = true;
 
         vector<const char*> enabledLayers;
-        if (debugMode) {
+#ifdef GDEBUG
             enabledLayers.push_back("VK_LAYER_KHRONOS_validation");
-        }
+#endif
 
         vk::DeviceCreateInfo createInfo {
                 vk::DeviceCreateFlags(),
